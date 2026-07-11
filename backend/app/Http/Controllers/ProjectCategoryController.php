@@ -22,7 +22,7 @@ class ProjectCategoryController extends Controller
             $search = $request->input('q');
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
@@ -46,7 +46,7 @@ class ProjectCategoryController extends Controller
             'name' => 'required|string|max:255|unique:project_categories,name',
             'slug' => 'nullable|string|max:255|unique:project_categories,slug|regex:/^[a-z0-9\-]+$/',
             'description' => 'nullable|string',
-            'icon' => 'nullable|string|max:255',
+            'icon' => 'nullable|string|max:65535',
             'order' => 'required|integer|min:0',
         ]);
 
@@ -58,7 +58,7 @@ class ProjectCategoryController extends Controller
         $originalSlug = $slug;
         $count = 1;
         while (ProjectCategory::where('slug', $slug)->exists()) {
-            $slug = $originalSlug . '-' . $count++;
+            $slug = $originalSlug.'-'.$count++;
         }
 
         ProjectCategory::create([
@@ -83,10 +83,10 @@ class ProjectCategoryController extends Controller
     public function update(Request $request, ProjectCategory $projectCategory)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:project_categories,name,' . $projectCategory->id,
-            'slug' => 'required|string|max:255|unique:project_categories,slug,' . $projectCategory->id . '|regex:/^[a-z0-9\-]+$/',
+            'name' => 'required|string|max:255|unique:project_categories,name,'.$projectCategory->id,
+            'slug' => 'required|string|max:255|unique:project_categories,slug,'.$projectCategory->id.'|regex:/^[a-z0-9\-]+$/',
             'description' => 'nullable|string',
-            'icon' => 'nullable|string|max:255',
+            'icon' => 'nullable|string|max:65535',
             'order' => 'required|integer|min:0',
         ]);
 
@@ -122,8 +122,9 @@ class ProjectCategoryController extends Controller
         if ($count > 0) {
             Inertia::flash('toast', [
                 'type' => 'error',
-                'message' => __("Kategori ini tidak dapat dihapus karena masih digunakan oleh :count proyek. Pindahkan proyek-proyek tersebut ke kategori lain terlebih dahulu.", ['count' => $count]),
+                'message' => __('Kategori ini tidak dapat dihapus karena masih digunakan oleh :count proyek. Pindahkan proyek-proyek tersebut ke kategori lain terlebih dahulu.', ['count' => $count]),
             ]);
+
             return redirect()->back();
         }
 
@@ -155,7 +156,7 @@ class ProjectCategoryController extends Controller
                 ->orderBy('order', 'desc')
                 ->first();
 
-            if (!$sibling) {
+            if (! $sibling) {
                 // If same order, swap by id
                 $sibling = ProjectCategory::where('order', '=', $currentOrder)
                     ->where('id', '<', $projectCategory->id)
@@ -168,7 +169,7 @@ class ProjectCategoryController extends Controller
                 ->orderBy('order', 'asc')
                 ->first();
 
-            if (!$sibling) {
+            if (! $sibling) {
                 // If same order, swap by id
                 $sibling = ProjectCategory::where('order', '=', $currentOrder)
                     ->where('id', '>', $projectCategory->id)

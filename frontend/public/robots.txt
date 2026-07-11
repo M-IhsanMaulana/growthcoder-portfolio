@@ -1,2 +1,7 @@
 User-Agent: *
-Disallow:
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_nuxt/
+Allow: /
+
+Sitemap: https://growthcoder.id/sitemap.xml

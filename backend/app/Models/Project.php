@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
@@ -15,15 +16,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property string|null $full_description
  * @property int $category_id
  * @property int|null $cover_image_id
+ * @property string|null $cover_image_caption
+ * @property string|null $role
+ * @property array|null $key_features
  * @property string $status
  * @property bool $is_featured
  * @property int $order
  * @property string|null $live_url
  * @property string|null $github_url
  * @property string|null $telegram_url
- * @property \Illuminate\Support\Carbon|null $published_at
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $published_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  */
 #[Fillable([
     'title',
@@ -33,6 +37,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
     'category_id',
     'cover_image_id',
     'cover_image_caption',
+    'role',
+    'key_features',
     'status',
     'is_featured',
     'order',
@@ -54,6 +60,7 @@ class Project extends Model
             'is_featured' => 'boolean',
             'order' => 'integer',
             'published_at' => 'datetime',
+            'key_features' => 'array',
         ];
     }
 

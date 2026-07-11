@@ -25,6 +25,7 @@ class ProjectResource extends JsonResource
             'live_url' => $this->live_url,
             'github_url' => $this->github_url,
             'telegram_url' => $this->telegram_url,
+            'role' => $this->role,
             'published_at' => $this->published_at,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

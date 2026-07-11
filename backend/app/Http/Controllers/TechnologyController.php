@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Technology;
 use App\Enums\TechnologyCategory;
+use App\Models\Technology;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -25,7 +25,7 @@ class TechnologyController extends Controller
             $search = $request->input('q');
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
@@ -46,8 +46,8 @@ class TechnologyController extends Controller
                 ? DB::table('project_technology')->where('technology_id', $tech->id)->count()
                 : 0;
 
-            $tech->skills_count = Schema::hasTable('skills')
-                ? DB::table('skills')->where('technology_id', $tech->id)->count()
+            $tech->skills_count = Schema::hasTable('skill_items')
+                ? DB::table('skill_items')->where('technology_id', $tech->id)->count()
                 : 0;
 
             return $tech;
@@ -89,7 +89,7 @@ class TechnologyController extends Controller
         $originalSlug = $slug;
         $count = 1;
         while (Technology::where('slug', $slug)->exists()) {
-            $slug = $originalSlug . '-' . $count++;
+            $slug = $originalSlug.'-'.$count++;
         }
 
         Technology::create([
@@ -116,8 +116,8 @@ class TechnologyController extends Controller
     public function update(Request $request, Technology $technology)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:technologies,name,' . $technology->id,
-            'slug' => 'required|string|max:255|unique:technologies,slug,' . $technology->id . '|regex:/^[a-z0-9\-]+$/',
+            'name' => 'required|string|max:255|unique:technologies,name,'.$technology->id,
+            'slug' => 'required|string|max:255|unique:technologies,slug,'.$technology->id.'|regex:/^[a-z0-9\-]+$/',
             'category' => ['required', new Enum(TechnologyCategory::class)],
             'logo_media_id' => 'nullable|integer|exists:media,id',
             'description' => 'nullable|string',
@@ -158,8 +158,8 @@ class TechnologyController extends Controller
             DB::table('project_technology')->where('technology_id', $technology->id)->delete();
         }
 
-        if (Schema::hasTable('skills')) {
-            DB::table('skills')->where('technology_id', $technology->id)->delete();
+        if (Schema::hasTable('skill_items')) {
+            DB::table('skill_items')->where('technology_id', $technology->id)->delete();
         }
 
         $technology->delete();

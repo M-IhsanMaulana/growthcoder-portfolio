@@ -1,0 +1,213 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Outfit:wght@100..900&display=swap');
+
+:root {
+    /* Fonts */
+    --font-heading: 'Outfit', sans-serif;
+    --font-body: 'Instrument Sans', sans-serif;
+
+    /* Latar Belakang & Teks */
+    --background: hsl(0 0% 100%);
+    --foreground: hsl(221 39% 11%); /* Dark Neutral #111827 */
+    
+    /* Kartu & Popover */
+    --card: hsl(0 0% 100%);
+    --card-foreground: hsl(221 39% 11%);
+    --popover: hsl(0 0% 100%);
+    --popover-foreground: hsl(221 39% 11%);
+    
+    /* Warna Aksi (Buttons & States) */
+    --primary: hsl(243 45% 30%); /* Brand Primary #2D2A6F */
+    --primary-foreground: hsl(0 0% 100%);
+    --secondary: hsl(241 100% 95%); /* Brand Secondary Light #E8E7FF */
+    --secondary-foreground: hsl(243 45% 30%);
+    --accent: hsl(151 62% 44%); /* Brand Accent #2BB673 */
+    --accent-foreground: hsl(0 0% 100%);
+    --destructive: hsl(0 84.2% 60.2%);
+    --destructive-foreground: hsl(0 0% 98%);
+    
+    /* Border & Focus Rings */
+    --border: hsl(220 13% 91%); /* Border #E5E7EB */
+    --input: hsl(220 13% 91%);
+    --ring: hsl(243 45% 30%);
+    --muted: hsl(220 9% 46%); /* Muted #6B7280 */
+    --muted-foreground: hsl(220 9% 46%);
+    
+    /* Radius Sudut */
+    --radius: 0.75rem;
+    
+    /* Brand Raw (Untuk Gradasi & Shadow Kustom) */
+    --brand-primary: #2d2a6f;
+    --brand-primary-hover: #3f3a94;
+    --brand-accent: #2bb673;
+    --brand-accent-hover: #24a566;
+    --brand-secondary: #5c59d9;
+    --brand-secondary-light: #e8e7ff;
+}
+
+.dark {
+    /* Latar Belakang & Teks */
+    --background: hsl(240 10% 3.9%);
+    --foreground: hsl(0 0% 98%);
+    
+    /* Kartu & Popover */
+    --card: hsl(240 10% 4.9%);
+    --card-foreground: hsl(0 0% 98%);
+    --popover: hsl(240 10% 4.9%);
+    --popover-foreground: hsl(0 0% 98%);
+    
+    /* Warna Aksi (Aksesibilitas Ditingkatkan) */
+    --primary: hsl(241 62% 60%); /* Secondary #5C59D9 untuk kontras yang lebih baik */
+    --primary-foreground: hsl(0 0% 100%);
+    --secondary: hsl(240 5% 15%);
+    --secondary-foreground: hsl(0 0% 98%);
+    --accent: hsl(151 62% 44%); /* Tetap Brand Accent #2BB673 */
+    --accent-foreground: hsl(0 0% 100%);
+    
+    /* Border & Focus Rings */
+    --border: hsl(240 5% 15%);
+    --input: hsl(240 5% 15%);
+    --ring: hsl(241 62% 60%);
+    --muted: hsl(240 5% 65%);
+    --muted-foreground: hsl(240 5% 65%);
+
+    --brand-primary: #5c59d9;
+    --brand-primary-hover: #7b78f0;
+}
+
+* {
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--background);
+    color: var(--foreground);
+    min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+}
+
+/* Custom premium classes */
+.hero-gradient {
+    background-image: radial-gradient(
+        circle at 50% -20%, 
+        rgba(92, 89, 217, 0.15) 0%, 
+        rgba(43, 182, 115, 0.05) 50%, 
+        transparent 100%
+    );
+}
+
+.text-brand-gradient {
+    background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.dark .text-brand-gradient {
+    background: linear-gradient(135deg, var(--brand-secondary) 0%, var(--brand-accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.glass-panel {
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(229, 231, 235, 0.5);
+}
+
+.dark .glass-panel {
+    background-color: rgba(20, 20, 25, 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(63, 63, 70, 0.4);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--muted);
+}
+
+/* Prose formatting */
+.prose {
+    font-size: 1.125rem;
+    line-height: 1.75;
+    color: var(--foreground);
+}
+.prose p {
+    margin-bottom: 1.25em;
+}
+.prose h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-top: 1.6em;
+    margin-bottom: 0.6em;
+    color: var(--foreground);
+}
+.prose h3 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-top: 1.4em;
+    margin-bottom: 0.6em;
+    color: var(--foreground);
+}
+.prose blockquote {
+    border-left: 4px solid var(--accent);
+    padding-left: 1.25em;
+    font-style: italic;
+    color: var(--muted);
+    margin: 1.5em 0;
+}
+.prose ul {
+    list-style-type: disc;
+    padding-left: 1.52em;
+    margin-bottom: 1.25em;
+}
+.prose li {
+    margin-bottom: 0.5em;
+}
+.prose pre {
+    background-color: #1e1e2e;
+    color: #cdd6f4;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin-bottom: 1.25em;
+    font-family: monospace;
+    font-size: 0.9em;
+}
+.prose code {
+    background-color: rgba(92, 89, 217, 0.1);
+    color: var(--brand-secondary);
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+    font-size: 0.9em;
+    font-family: monospace;
+}
+.prose pre code {
+    background-color: transparent;
+    color: inherit;
+    padding: 0;
+    font-size: inherit;
+}
+.prose a {
+    color: var(--accent);
+    text-decoration: underline;
+    font-weight: 500;
+}
+.prose img {
+    border-radius: var(--radius);
+    margin: 1.5em 0;
+    border: 1px solid var(--border);
+}

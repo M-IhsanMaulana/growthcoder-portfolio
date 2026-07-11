@@ -157,7 +157,7 @@ test('administrator can delete a technology that is in use and it cascades', fun
     $category = ProjectCategory::create([
         'name' => 'Web',
         'slug' => 'web',
-        'order' => 1
+        'order' => 1,
     ]);
 
     $project = Project::create([
@@ -171,18 +171,39 @@ test('administrator can delete a technology that is in use and it cascades', fun
     // Attach technology to project (real pivot table)
     $project->technologies()->attach($tech->id);
 
-    // Create temporary skills table (not migrated yet)
-    Schema::create('skills', function ($table) {
-        $table->id();
-        $table->unsignedBigInteger('technology_id');
-        $table->timestamps();
-    });
+    // Create temporary skills table (only if not migrated yet)
+    $hasSkillItemsTable = Schema::hasTable('skill_items');
 
-    DB::table('skills')->insert([
-        'technology_id' => $tech->id,
-        'created_at' => now(),
-        'updated_at' => now()
-    ]);
+    if (! $hasSkillItemsTable) {
+        $hasSkillsTable = Schema::hasTable('skills');
+        if (! $hasSkillsTable) {
+            Schema::create('skills', function ($table) {
+                $table->id();
+                $table->unsignedBigInteger('technology_id');
+                $table->timestamps();
+            });
+        }
+
+        DB::table('skills')->insert([
+            'technology_id' => $tech->id,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+    } else {
+        $groupId = DB::table('skills')->insertGetId([
+            'name' => 'Backend',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('skill_items')->insert([
+            'skill_id' => $groupId,
+            'technology_id' => $tech->id,
+            'level' => 'beginner',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+    }
 
     $response = $this->actingAs($user)
         ->delete("/admin-cms/technologies/{$tech->id}");
@@ -199,12 +220,19 @@ test('administrator can delete a technology that is in use and it cascades', fun
         'technology_id' => $tech->id,
     ]);
 
-    $this->assertDatabaseMissing('skills', [
-        'technology_id' => $tech->id,
-    ]);
+    if (! $hasSkillItemsTable) {
+        $this->assertDatabaseMissing('skills', [
+            'technology_id' => $tech->id,
+        ]);
 
-    // Clean up temporary table
-    Schema::dropIfExists('skills');
+        if (! $hasSkillsTable) {
+            Schema::dropIfExists('skills');
+        }
+    } else {
+        $this->assertDatabaseMissing('skill_items', [
+            'technology_id' => $tech->id,
+        ]);
+    }
 });
 
 test('public api can list, filter, and show technologies', function () {

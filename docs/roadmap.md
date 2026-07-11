@@ -10,14 +10,14 @@ Dokumen ini mendefinisikan langkah-langkah pembangunan platform **growthcoder.id
 |---|---|---|---|
 | 03 | Centralized Media Library | - | ✔ Selesai |
 | 06 | Project Categories | - | ✔ Selesai |
-| 07 | Tech Stack Management | Modul 03 | ⏳ Langkah Berikutnya |
-| 01 | Projects & Case Studies | Modul 03, 06, 07 | 📋 Antrean |
-| 08 | Skills Management | Modul 07 | 📋 Antrean |
-| 02 | Blog & Category Management | Modul 03 | 📋 Antrean |
-| 04 | Global Settings & SEO | Modul 03 | 📋 Antrean |
-| 09 | Services Management | - | 📋 Antrean |
-| 10 | Education & Experience | Modul 03 | 📋 Antrean |
-| 05 | Inbox & Otomasi Telegram Bot | - | 📋 Antrean |
+| 07 | Tech Stack Management | Modul 03 | ✔ Selesai |
+| 01 | Projects & Case Studies | Modul 03, 06, 07 | ✔ Selesai |
+| 08 | Skills Management | Modul 07 | ✔ Selesai |
+| 02 | Blog & Category Management | Modul 03 | ✔ Selesai |
+| 04 | Global Settings & SEO | Modul 03 | ✔ Selesai |
+| 09 | Services Management | - | ✔ Selesai |
+| 10 | Education & Experience | Modul 03 | ✔ Selesai |
+| 05 | Inbox & Otomasi Telegram Bot | - | ✔ Selesai |
 
 ---
 
@@ -27,14 +27,14 @@ Dokumen ini mendefinisikan langkah-langkah pembangunan platform **growthcoder.id
 graph TD
     M03[Modul 03: Media Library ✔]
     M06[Modul 06: Project Categories ✔]
-    M07[Modul 07: Tech Stack Master Data]
-    M01[Modul 01: Projects & Case Studies]
-    M08[Modul 08: Skills Management]
-    M02[Modul 02: Blog & Category]
-    M04[Modul 04: Global Settings]
-    M09[Modul 09: Services Management]
-    M10[Modul 10: Education & Experience]
-    M05[Modul 05: Inbox & Telegram Bot]
+    M07[Modul 07: Tech Stack Master Data ✔]
+    M01[Modul 01: Projects & Case Studies ✔]
+    M08[Modul 08: Skills Management ✔]
+    M02[Modul 02: Blog & Category ✔]
+    M04[Modul 04: Global Settings ✔]
+    M09[Modul 09: Services Management ✔]
+    M10[Modul 10: Education & Experience ✔]
+    M05[Modul 05: Inbox & Telegram Bot ✔]
     NUXT[Nuxt 4 Frontend & SEO Integration]
 
     M03 --> M07
@@ -114,9 +114,9 @@ graph TD
 ### Langkah 6: Modul 09 (Services) & Modul 10 (Education & Experience)
 * **Deskripsi:** Promosi jasa profesional dan resume akademis/karir Anda.
 * **Fitur Utama:**
-  - **Services:** CRUD layanan jasa, harga awal, deskripsi penawaran.
-  - **Resume:** CRUD riwayat karir/pendidikan secara kronologis dengan logo perusahaan dari Media Library.
-* **Tabel Database:** `services`, `experiences`
+  - **Services:** CRUD layanan jasa, deskripsi penawaran.
+  - **Resume:** CRUD riwayat karir (tabel `experiences`) & pendidikan (tabel `educations`) secara kronologis dengan logo institusi dari Media Library, dikelola dalam satu halaman CMS yang sama menggunakan tab.
+* **Tabel Database:** `services`, `experiences`, `educations`
 
 ### Langkah 7: Modul 05 (Inbox & Otomasi Telegram Bot)
 * **Deskripsi:** Form kontak terkonversi terintegrasi notifikasi real-time.

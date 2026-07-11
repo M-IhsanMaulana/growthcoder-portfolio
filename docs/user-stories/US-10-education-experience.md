@@ -1,15 +1,15 @@
 # US-10 — Modul Riwayat Pendidikan & Pengalaman / Education & Experience
 
 > **Referensi PRD:** Section 4.10
-> **Tabel Database Utama:** `experiences`
+> **Tabel Database Utama:** `experiences` (Pengalaman Kerja) & `educations` (Pendidikan)
 
 ---
 
 ## Gambaran Modul / Module Overview
 
-**ID:** Modul ini mengelola data portofolio karir dan akademis secara terstruktur untuk membangun resume digital. Menggunakan skema terpadu yang memisahkan tipe entitas antara Pendidikan (`education`) dan Pengalaman Kerja (`experience`) dalam satu tabel. Mendukung pengunggahan logo institusi melalui integrasi dengan Media Library.
+**ID:** Modul ini mengelola data portofolio karir dan akademis secara terstruktur untuk membangun resume digital. Menggunakan skema terpisah di mana riwayat Pengalaman Kerja disimpan di tabel `experiences` dan Pendidikan di tabel `educations`. Pengelolaan di CMS dilakukan pada satu halaman terpadu yang sama menggunakan antarmuka Tab (Tab Pengalaman Kerja & Tab Pendidikan). Masing-masing tab mengelola datanya dengan form/Sheet laci yang terpisah dan spesifik. Modul ini mendukung pengunggahan logo institusi melalui integrasi dengan Media Library.
 
-**EN:** This module manages career and academic portfolio data in a structured way to build a digital resume. It uses a unified schema that separates entity types between Education (`education`) and Work Experience (`experience`) in a single table. Supports uploading institution logos through integration with the Media Library.
+**EN:** This module manages career and academic portfolio data in a structured way to build a digital resume. It uses a separated schema where Work Experience is stored in the `experiences` table and Education is stored in the `educations` table. Management in CMS is performed on the same unified page using a Tabbed interface (Work Experience Tab & Education Tab). Each tab manages its data with separate and specific form drawers/Sheets. This module supports uploading institution logos through integration with the Media Library.
 
 ---
 
@@ -47,11 +47,11 @@ Feature: Tambah Riwayat Pengalaman Kerja / Add Work Experience Entry
   / Admin successfully adds a new work experience entry
     Given Admin berada di halaman "Education & Experience" di CMS
     / Admin is on the "Education & Experience" page in CMS
-    When Admin mengklik "Tambah Entri" dan memilih tipe "Experience" (Pengalaman Kerja)
-    / Admin clicks "Add Entry" and selects type "Experience" (Work Experience)
+    When Admin mengklik "Tambah Pengalaman"
+    / Admin clicks "Add Experience"
     And Admin mengisi field wajib:
     / Admin fills in required fields:
-      - Company/Institution: "PT. Solusi Digital Indonesia"
+      - Company: "PT. Solusi Digital Indonesia"
       - Title/Position: "Full-Stack Developer"
       - Start Date: "2024-01" (bulan/tahun)
       / Start Date: "2024-01" (month/year)
@@ -65,9 +65,9 @@ Feature: Tambah Riwayat Pengalaman Kerja / Add Work Experience Entry
       - Website URL: "https://solusidigital.id"
       - Logo: dipilih dari Media Library / Logo: selected from Media Library
       - Order: 1
-    And Admin menyimpan / Admin saves
-    Then Record tersimpan ke tabel `experiences` dengan `type = 'experience'`
-    / Record is saved to the `experiences` table with `type = 'experience'`
+    And Admin mengklik "Simpan" / Admin clicks "Save"
+    Then Record tersimpan ke tabel `experiences`
+    / Record is saved to the `experiences` table
     And Pengalaman kerja baru tampil di section "Pengalaman Kerja" pada halaman /about publik
     / New work experience appears in the "Work Experience" section on the public /about page
 
@@ -83,18 +83,13 @@ Feature: Tambah Riwayat Pengalaman Kerja / Add Work Experience Entry
 
 #### Referensi Teknis / Technical References
 
-**Tabel:** `experiences`
+**Tabel:** `experiences` (Work Experiences)
 ```
-id, type (enum: 'education'|'experience', not null),
-company_institution (varchar 255, not null),
-title_position (varchar 255, not null),
-location (varchar 255, nullable),
-start_date (date, not null), end_date (date, nullable — null = Present),
-description (text, nullable),
-website_url (varchar 255, nullable),
-logo_media_id (FK → media.id, nullable, set null on delete),
-order (integer, not null, default: 0),
-created_at, updated_at
+id, company (varchar 255, not null), title_position (varchar 255, not null),
+location (varchar 255, nullable), start_date (date, not null),
+end_date (date, nullable — null = Present), description (text, nullable),
+website_url (varchar 255, nullable), logo_media_id (FK → media.id, nullable, set null on delete),
+order (integer, not null, default: 0), created_at, updated_at
 ```
 
 ---
@@ -119,24 +114,24 @@ Feature: Tambah Riwayat Pendidikan / Add Education Entry
   / Admin adds university education
     Given Admin berada di halaman "Education & Experience" di CMS
     / Admin is on the "Education & Experience" page in CMS
-    When Admin mengklik "Tambah Entri" dan memilih tipe "Education" (Pendidikan)
-    / Admin clicks "Add Entry" and selects type "Education" (Education)
+    When Admin mengklik "Tambah Pendidikan"
+    / Admin clicks "Add Education"
     And Admin mengisi:
     / Admin fills in:
-      - Company/Institution: "Universitas Brawijaya"
-      - Title/Position: "S1 Teknik Informatika" (jurusan / gelar)
-      / Title/Position: "S1 Computer Science" (major / degree)
+      - Institution: "Universitas Brawijaya"
+      - Degree: "S1"
+      - Major: "Teknik Informatika"
+      - GPA: "3.85"
       - Start Date: "2020-09"
-      - End Date: "2024-07" (jika sudah lulus) atau kosong (jika masih kuliah)
-      / End Date: "2024-07" (if graduated) or empty (if still studying)
+      - End Date: "2024-07"
       - Location: "Malang, Jawa Timur"
-      - Description: "IPK: 3.85 / 4.00. Aktif dalam organisasi ..."
-      / Description: "GPA: 3.85 / 4.00. Active in organizations ..."
+      - Description: "Aktif dalam organisasi ..."
+      / Description: "Active in organizations ..."
       - Logo: Logo universitas dari Media Library
       / Logo: University logo from Media Library
-    And Admin menyimpan / Admin saves
-    Then Record tersimpan ke tabel `experiences` dengan `type = 'education'`
-    / Record is saved to `experiences` table with `type = 'education'`
+    And Admin mengklik "Simpan" / Admin clicks "Save"
+    Then Record tersimpan ke tabel `educations`
+    / Record is saved to `educations` table
     And Pendidikan baru tampil di section "Pendidikan" pada halaman /about publik
     / New education appears in the "Education" section on the public /about page
 
@@ -146,6 +141,18 @@ Feature: Tambah Riwayat Pendidikan / Add Education Entry
     When Admin mengosongkan field "End Date" / Admin leaves "End Date" empty
     Then `end_date = NULL` dan halaman publik menampilkan "2020 — Sekarang / Present"
     / `end_date = NULL` and public page displays "2020 — Present"
+```
+
+#### Referensi Teknis / Technical References
+
+**Tabel:** `educations` (Educations)
+```
+id, institution (varchar 255, not null), degree (varchar 255, nullable — misal: S1),
+major (varchar 255, not null — Jurusan), gpa (varchar 50, nullable — IPK),
+location (varchar 255, nullable), start_date (date, not null),
+end_date (date, nullable — null = Present), description (text, nullable),
+logo_media_id (FK → media.id, nullable, set null on delete),
+order (integer, not null, default: 0), created_at, updated_at
 ```
 
 ---
@@ -211,8 +218,8 @@ Feature: Hapus Riwayat Pendidikan / Pengalaman / Delete Education/Experience Ent
     / Admin is on the list or edit page of a history entry
     When Admin mengklik "Hapus" dan mengonfirmasi
     / Admin clicks "Delete" and confirms
-    Then Record dihapus dari tabel `experiences`
-    / Record is deleted from the `experiences` table
+    Then Record dihapus dari tabel `experiences` atau `educations` sesuai entri yang dipilih
+    / Record is deleted from the `experiences` or `educations` table according to selected entry
     And Entri tidak lagi tampil di halaman /about publik
     / Entry no longer appears on the public /about page
     And File logo di Media Library TIDAK ikut terhapus (hanya referensi FK yang hilang)
@@ -276,20 +283,21 @@ Feature: Timeline Riwayat Karir & Pendidikan di Halaman Publik
   Scenario: Recruiter melihat section Experience & Education di halaman About
   / Recruiter views Experience & Education section on the About page
     Given Recruiter membuka halaman /about / Recruiter opens the /about page
-    Then Section "Pengalaman Kerja" menampilkan entri dengan `type = 'experience'`
-    / "Work Experience" section displays entries with `type = 'experience'`
-    And Section "Pendidikan" menampilkan entri dengan `type = 'education'`
-    / "Education" section displays entries with `type = 'education'`
-    And Setiap entri di kedua section menampilkan:
-    / Each entry in both sections displays:
+    Then Section "Pengalaman Kerja" menampilkan entri dari tabel `experiences`
+    / "Work Experience" section displays entries from the `experiences` table
+    And Section "Pendidikan" menampilkan entri dari tabel `educations`
+    / "Education" section displays entries from the `educations` table
+    And Setiap entri di kedua section menampilkan detail data masing-masing:
+    / Each entry in both sections displays their respective detail data:
       - Logo institusi / perusahaan (dari Media Library, jika ada)
       / Institution / company logo (from Media Library, if available)
       - Nama perusahaan / institusi / Company / institution name
-      - Jabatan / Jurusan / Position / Major
+      - Jabatan / Jurusan & Gelar / Position / Major & Degree
       - Periode (Start — End atau Start — Sekarang)
       / Period (Start — End or Start — Present)
       - Lokasi (jika ada) / Location (if available)
       - Deskripsi kontribusi / pencapaian / Contribution / achievement description
+      - IPK / GPA (khusus Pendidikan jika ada)
     And Halaman di-render via SSR untuk SEO / Page is rendered via SSR for SEO
 
   Scenario: Entri dengan end_date = NULL ditampilkan sebagai "Sekarang / Present"
@@ -303,10 +311,9 @@ Feature: Timeline Riwayat Karir & Pendidikan di Halaman Publik
 
 #### Referensi Teknis / Technical References
 
-**API Endpoint:** 
-- `GET /api/v1/experiences?type=experience` — hanya `type = experience`
-- `GET /api/v1/experiences?type=education` — hanya `type = education`
-- Atau: `GET /api/v1/experiences` — mengembalikan semua, difilter di frontend
+**API Endpoints:** 
+- `GET /api/v1/experiences` — mengembalikan daftar pengalaman kerja (tabel `experiences`)
+- `GET /api/v1/educations` — mengembalikan daftar pendidikan (tabel `educations`)
 
 **Nuxt Page:** `pages/about.vue` — SSR dengan `useFetch`
 **Eager Load:** Relasi ke `media` (logo) via `with('logo')`
@@ -329,23 +336,23 @@ Feature: Timeline Riwayat Karir & Pendidikan di Halaman Publik
 ```gherkin
 Feature: Daftar Riwayat di CMS / History List in CMS
 
-  Scenario: Admin melihat semua entri dalam tampilan tabel
-  / Admin views all entries in table view
+  Scenario: Admin melihat semua entri dalam tampilan tabel di tab masing-masing
+  / Admin views all entries in table views inside their respective tabs
     Given Admin berada di halaman "Education & Experience" di CMS
     / Admin is on the "Education & Experience" page in CMS
-    Then Tabel menampilkan semua entri dengan kolom:
-    / Table displays all entries with columns:
-    Tipe (badge: Education/Experience), Institusi/Perusahaan, Jabatan/Jurusan, Periode, Lokasi, Aksi
-    / Type (badge: Education/Experience), Institution/Company, Position/Major, Period, Location, Actions
+    Then Terdapat dua tab: "Pengalaman Kerja" dan "Pendidikan"
+    / There are two tabs: "Work Experience" and "Education"
+    And Tab "Pengalaman Kerja" menampilkan tabel pengalaman kerja (kolom: Perusahaan, Jabatan, Periode, Lokasi, Aksi)
+    And Tab "Pendidikan" menampilkan tabel pendidikan (kolom: Institusi, Gelar/Jurusan, IPK, Periode, Aksi)
 
-  Scenario: Admin memfilter daftar berdasarkan tipe
-  / Admin filters list by type
-    Given Admin berada di daftar Education & Experience
-    / Admin is on the Education & Experience list
-    When Admin memilih filter "Tipe: Pengalaman Kerja"
-    / Admin selects filter "Type: Work Experience"
-    Then Hanya entri dengan `type = 'experience'` yang ditampilkan
-    / Only entries with `type = 'experience'` are displayed
+  Scenario: Admin menambah data menggunakan form laci (Sheet) yang berbeda
+    Given Admin berada di tab "Pengalaman Kerja"
+    When Admin mengklik "Tambah Pengalaman"
+    Then Laci (Sheet) form pengalaman kerja muncul dengan field khusus pengalaman
+
+    Given Admin berada di tab "Pendidikan"
+    When Admin mengklik "Tambah Pendidikan"
+    Then Laci (Sheet) form pendidikan muncul dengan field khusus pendidikan (Jurusan, Gelar, IPK)
 ```
 
 ---

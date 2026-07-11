@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="id" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studi Kasus: SIM Klinik — growthcoder.id</title>
+    <!-- Tailwind Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            navy: '#2d2a6f',
+                            purple: '#5c59d9',
+                            green: '#2bb673',
+                            light: '#e8e7ff',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="./style.css">
+    <script src="./main.js" defer></script>
+</head>
+<body class="bg-white dark:bg-zinc-950 text-gray-900 dark:text-gray-100 flex flex-col min-h-screen">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-40 w-full glass-panel border-b border-gray-100 dark:border-zinc-900/50 transition-all duration-300 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between relative z-10">
+            <a href="index.html" class="flex items-center space-x-2">
+                <span class="text-2xl font-bold tracking-tight text-brand-navy dark:text-white">growthcoder<span class="text-brand-green">.id</span></span>
+            </a>
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden lg:flex items-center space-x-6">
+                <a href="index.html" class="text-gray-600 dark:text-gray-300 hover:text-brand-purple dark:hover:text-brand-purple font-medium text-sm transition-colors">Home</a>
+                <a href="about.html" class="text-gray-600 dark:text-gray-300 hover:text-brand-purple dark:hover:text-brand-purple font-medium text-sm transition-colors">About</a>
+                <a href="services.html" class="text-gray-600 dark:text-gray-300 hover:text-brand-purple dark:hover:text-brand-purple font-medium text-sm transition-colors">Services</a>
+                <a href="skills.html" class="text-gray-600 dark:text-gray-300 hover:text-brand-purple dark:hover:text-brand-purple font-medium text-sm transition-colors">Skills</a>
+                <a href="projects.html" class="text-brand-purple dark:text-brand-purple font-semibold text-sm relative py-2">
+                    Projects
+                    <span class="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-brand-purple to-brand-green rounded-full shadow-[0_0_8px_rgba(92,89,217,0.8)]"></span>
+                </a>
+                <a href="experience.html" class="text-gray-600 dark:text-gray-300 hover:text-brand-purple dark:hover:text-brand-purple font-medium text-sm transition-colors">Experience</a>
+                <a href="education.html" class="text-gray-600 dark:text-gray-300 hover:text-brand-purple dark:hover:text-brand-purple font-medium text-sm transition-colors">Education</a>
+                <a href="contact.html" class="text-gray-600 dark:text-gray-300 hover:text-brand-purple dark:hover:text-brand-purple font-medium text-sm transition-colors">Contact</a>
+            </nav>
+
+            <!-- Actions -->
+            <div class="flex items-center space-x-4">
+                <button id="theme-toggle" class="p-2.5 rounded-lg border border-gray-200 dark:border-zinc-800 hover:bg-gray-100 dark:hover:bg-zinc-800 focus:outline-none transition-colors" aria-label="Toggle Theme">
+                    <span id="theme-toggle-icon"></span>
+                </button>
+                <button id="mobile-menu-open" class="lg:hidden p-2.5 rounded-lg border border-gray-200 dark:border-zinc-800 hover:bg-gray-100 dark:hover:bg-zinc-800 focus:outline-none transition-colors" aria-label="Open Menu">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-600 dark:text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="4" x2="20" y1="12" y2="12"></line>
+                        <line x1="4" x2="20" y1="6" y2="6"></line>
+                        <line x1="4" x2="20" y1="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-menu-container" class="fixed inset-0 z-50 bg-black/60 hidden transition-opacity duration-300 flex justify-end">
+        <div class="glass-panel w-4/5 max-w-sm h-full p-6 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col justify-between bg-white dark:bg-zinc-950 border-l border-gray-200 dark:border-zinc-800">
+            <div>
+                <div class="flex items-center justify-between mb-8">
+                    <span class="text-xl font-bold text-gray-900 dark:text-white">Navigasi</span>
+                    <button id="mobile-menu-close" class="p-2 rounded-lg border border-gray-200 dark:border-zinc-800 hover:bg-gray-100 dark:hover:bg-zinc-800" aria-label="Close Menu">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 6 6 18"></path>
+                            <path d="m6 6 12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <nav class="flex flex-col space-y-3">
+                    <a href="index.html" class="text-gray-600 dark:text-gray-300 hover:text-brand-purple dark:hover:text-brand-purple text-base py-2 border-b border-gray-100 dark:border-zinc-900 transition-colors">Home</a>
+                    <a href="about.html" class="text-gray-600 dark:text-gray-300 hover:text-brand-purple dark:hover:text-brand-purple text-base py-2 border-b border-gray-100 dark:border-zinc-900 transition-colors">About</a>
+                    <a href="services.html" class="text-gray-600 dark:text-gray-300 hover:text-brand-purple dark:hover:text-brand-purple text-base py-2 border-b border-gray-100 dark:border-zinc-900 transition-colors">Services</a>
+                    <a href="skills.html" class="text-gray-600 dark:text-gray-300 hover:text-brand-purple dark:hover:text-brand-purple text-base py-2 border-b border-gray-100 dark:border-zinc-900 transition-colors">Skills</a>
+                    <a href="projects.html" class="text-brand-purple dark:text-brand-purple font-semibold text-base py-2 border-b border-gray-100 dark:border-zinc-900">Projects</a>
+                    <a href="experience.html" class="text-gray-600 dark:text-gray-300 hover:text-brand-purple dark:hover:text-brand-purple text-base py-2 border-b border-gray-100 dark:border-zinc-900 transition-colors">Experience</a>
+                    <a href="education.html" class="text-gray-600 dark:text-gray-300 hover:text-brand-purple dark:hover:text-brand-purple text-base py-2 border-b border-gray-100 dark:border-zinc-900 transition-colors">Education</a>
+                    <a href="contact.html" class="text-gray-600 dark:text-gray-300 hover:text-brand-purple dark:hover:text-brand-purple text-base py-2 border-b border-gray-100 dark:border-zinc-900 transition-colors">Contact</a>
+                </nav>
+            </div>
+            <div class="text-xs text-center text-gray-400">
+                &copy; 2026 growthcoder.id. All rights reserved.
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-grow">
+        
+        <!-- Project Hero Header -->
+        <section class="bg-gray-50 dark:bg-zinc-950 border-b border-gray-100 dark:border-zinc-900 py-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Breadcrumbs -->
+                <nav class="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400 mb-4 uppercase tracking-wider font-semibold">
+                    <a href="index.html" class="hover:text-brand-green">Beranda</a>
+                    <span>/</span>
+                    <a href="projects.html" class="hover:text-brand-green">Studi Kasus</a>
+                    <span>/</span>
+                    <span class="text-brand-green">SIM Klinik</span>
+                </nav>
+
+                <h1 class="text-3xl md:text-5xl font-extrabold text-brand-navy dark:text-white mb-6">Sistem Informasi Manajemen Klinik Pratama</h1>
+                
+                <!-- Project Specs & Actions Grid -->
+                <div class="grid md:grid-cols-3 gap-8 items-center pt-4">
+                    <!-- Project metadata list -->
+                    <div class="md:col-span-2 flex flex-wrap gap-x-8 gap-y-4 text-sm text-gray-600 dark:text-gray-400">
+                        <div>
+                            <span class="block font-bold text-xs uppercase text-gray-400 dark:text-gray-500 mb-1">Kategori</span>
+                            <span class="font-semibold text-brand-navy dark:text-white">Web Application</span>
+                        </div>
+                        <div>
+                            <span class="block font-bold text-xs uppercase text-gray-400 dark:text-gray-500 mb-1">Klien</span>
+                            <span class="font-semibold text-brand-navy dark:text-white">Klinik Pratama Sentosa</span>
+                        </div>
+                        <div>
+                            <span class="block font-bold text-xs uppercase text-gray-400 dark:text-gray-500 mb-1">Tahun Rilis</span>
+                            <span class="font-semibold text-brand-navy dark:text-white">2025</span>
+                        </div>
+                    </div>
+                    
+                    <!-- CTAs -->
+                    <div class="flex flex-wrap gap-3 justify-start md:justify-end">
+                        <a href="https://demo.example.com" target="_blank" class="px-6 py-2.5 bg-brand-green hover:bg-brand-accent-hover text-white font-semibold rounded-lg text-sm shadow-md transition-colors flex items-center gap-1.5">
+                            🌐 Live Demo
+                        </a>
+                        <a href="https://github.com" target="_blank" class="px-6 py-2.5 bg-gray-100 dark:bg-zinc-800 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-zinc-700 font-semibold rounded-lg text-sm transition-colors flex items-center gap-1.5">
+                            ⚙️ GitHub Repo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Project Media Showcase (Gallery) -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <h2 class="text-xl font-bold text-brand-navy dark:text-white mb-6 uppercase tracking-wider text-xs border-b border-gray-100 dark:border-zinc-900 pb-2">Galeri Antarmuka (Klik Gambar untuk Detail)</h2>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Gallery Item -->
+                <div class="cursor-zoom-in group border border-gray-100 dark:border-zinc-900 rounded-xl overflow-hidden shadow-sm bg-white dark:bg-zinc-950">
+                    <div class="h-44 bg-gradient-to-br from-indigo-900 to-indigo-950 flex items-center justify-center text-white relative">
+                        <span class="text-4xl select-none">🏥 Dashboard</span>
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-semibold">🔍 PERBESAR</div>
+                    </div>
+                    <div class="p-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400">Dashboard Utama Admin Medis</div>
+                </div>
+                
+                <div class="cursor-zoom-in group border border-gray-100 dark:border-zinc-900 rounded-xl overflow-hidden shadow-sm bg-white dark:bg-zinc-950">
+                    <div class="h-44 bg-gradient-to-br from-teal-800 to-teal-950 flex items-center justify-center text-white relative">
+                        <span class="text-4xl select-none">📝 Resep Elektronik</span>
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-semibold">🔍 PERBESAR</div>
+                    </div>
+                    <div class="p-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400">Form E-Resep & Riwayat Obat</div>
+                </div>
+
+                <div class="cursor-zoom-in group border border-gray-100 dark:border-zinc-900 rounded-xl overflow-hidden shadow-sm bg-white dark:bg-zinc-950">
+                    <div class="h-44 bg-gradient-to-br from-purple-900 to-purple-950 flex items-center justify-center text-white relative">
+                        <span class="text-4xl select-none">📊 Grafik Kunjungan</span>
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-semibold">🔍 PERBESAR</div>
+                    </div>
+                    <div class="p-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400">Laporan Statistik Pasien Harian</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Project Case Study Prose Narrative -->
+        <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 border-t border-gray-100 dark:border-zinc-900">
+            <div class="prose max-w-none">
+                <h2>Latar Belakang & Masalah</h2>
+                <p>
+                    Klinik Pratama Sentosa memiliki volume pelayanan pasien rawat jalan harian yang meningkat pesat. Proses administrasi pendaftaran pasien, pencatatan rekam medis, dan penulisan resep obat yang masih berbasis kertas mengakibatkan antrean panjang di loket pendaftaran. Selain itu, penyimpanan dokumen fisik berisiko rusak serta menyulitkan dokter dalam melacak riwayat medis pasien secara historis.
+                </p>
+
+                <h2>Pendekatan Solusi</h2>
+                <p>
+                    Solusi yang dirancang adalah membangun aplikasi web <strong>Sistem Informasi Manajemen Klinik (SIM Klinik)</strong> terintegrasi. Sistem membagi hak akses ke 3 aktor utama: Admin Loket (mengelola registrasi), Dokter (menginput rekam medis dan merilis e-resep), dan Apoteker (melihat pesanan obat masuk dan mengelola stok apotek).
+                </p>
+
+                <h2>Arsitektur Sistem (Simulasi Diagram)</h2>
+                <div class="glass-panel p-6 rounded-xl my-6 flex flex-col items-center bg-gray-50/50 dark:bg-zinc-950/20 text-center space-y-4">
+                    <div class="text-xs uppercase font-bold text-brand-green tracking-wider">Bagan Alur Data</div>
+                    <div class="flex flex-col md:flex-row items-center gap-4 text-xs font-semibold text-gray-800 dark:text-gray-200">
+                        <div class="px-4 py-2 border border-gray-200 dark:border-zinc-800 rounded bg-white dark:bg-zinc-900 shadow-sm">Nuxt Frontend (Browser Klien)</div>
+                        <div class="text-brand-purple">── HTTP REST API ──▶</div>
+                        <div class="px-4 py-2 border border-gray-200 dark:border-zinc-800 rounded bg-white dark:bg-zinc-900 shadow-sm">Laravel Backend Controller</div>
+                        <div class="text-brand-purple">── Query ──▶</div>
+                        <div class="px-4 py-2 border border-gray-200 dark:border-zinc-800 rounded bg-white dark:bg-zinc-900 shadow-sm">MySQL Database Server</div>
+                    </div>
+                </div>
+
+                <h2>Hasil & Dampak Kerja</h2>
+                <ul>
+                    <li><strong>Efisiensi Waktu:</strong> Waktu rata-rata registrasi pasien berkurang drastis dari 8 menit menjadi kurang dari 2 menit per orang.</li>
+                    <li><strong>Akurasi Rekam Medis:</strong> Menghilangkan kesalahan pembacaan resep berkat digitalisasi penulisan e-resep oleh dokter.</li>
+                    <li><strong>Otomasi Laporan:</strong> Laporan bulanan dokter dan penjualan obat apotek di-generate instan & otomatis.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Related Projects Section -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-t border-gray-100 dark:border-zinc-900">
+            <h3 class="text-2xl font-extrabold text-brand-navy dark:text-white mb-8 text-center sm:text-left">Studi Kasus Lainnya</h3>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Related Project 1 -->
+                <div class="flex flex-col bg-white dark:bg-zinc-950 rounded-2xl border border-gray-100 dark:border-zinc-900 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                    <div class="h-40 bg-gradient-to-br from-emerald-800 to-emerald-950 flex items-center justify-center text-white relative">
+                        <span class="text-5xl select-none">🤖</span>
+                    </div>
+                    <div class="p-6">
+                        <h4 class="font-bold text-brand-navy dark:text-white hover:text-brand-purple transition-colors mb-2">
+                            <a href="projects.html">Bot Telegram Notifikasi & Audit Server</a>
+                        </h4>
+                        <span class="text-xs font-semibold text-brand-green uppercase">Telegram Bot</span>
+                    </div>
+                </div>
+
+                <!-- Related Project 2 -->
+                <div class="flex flex-col bg-white dark:bg-zinc-950 rounded-2xl border border-gray-100 dark:border-zinc-900 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                    <div class="h-40 bg-gradient-to-br from-purple-900 to-purple-950 flex items-center justify-center text-white relative">
+                        <span class="text-5xl select-none">🛍️</span>
+                    </div>
+                    <div class="p-6">
+                        <h4 class="font-bold text-brand-navy dark:text-white hover:text-brand-purple transition-colors mb-2">
+                            <a href="projects.html">Restful API E-Commerce & Payment Gateway</a>
+                        </h4>
+                        <span class="text-xs font-semibold text-brand-purple dark:text-indigo-400 uppercase">API Integration</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Lightbox Modal Container -->
+    <div id="lightbox-modal" class="fixed inset-0 z-50 bg-black/90 flex flex-col items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <!-- Close Button -->
+        <button id="lightbox-close" class="absolute top-5 right-5 text-white/75 hover:text-white p-3 focus:outline-none" aria-label="Close Lightbox">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 6 6 18"></path>
+                <path d="m6 6 12 12"></path>
+            </svg>
+        </button>
+        <!-- Large Image -->
+        <div class="max-w-5xl max-h-[80vh] px-4">
+            <div id="lightbox-image-placeholder" class="w-[80vw] h-[50vh] max-w-3xl bg-gradient-to-br from-indigo-950 to-zinc-900 rounded-xl flex items-center justify-center border border-zinc-800 text-white font-bold text-xl select-none">
+                <!-- Large Image Preview text / container -->
+            </div>
+            <p id="lightbox-caption" class="text-center text-gray-400 text-sm mt-4 font-semibold"></p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-100 dark:border-zinc-900 bg-white dark:bg-zinc-950 transition-colors mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex flex-col items-center md:items-start space-y-2">
+                <span class="text-xl font-bold tracking-tight text-brand-navy dark:text-white">growthcoder<span class="text-brand-green">.id</span></span>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Muhammad Ihsan Maulana — Portofolio &amp; Personal Blog</p>
+            </div>
+            <div class="flex items-center space-x-6">
+                <a href="https://github.com" target="_blank" class="text-gray-500 hover:text-brand-purple dark:hover:text-white transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
+                </a>
+                <a href="https://linkedin.com" target="_blank" class="text-gray-500 hover:text-brand-purple dark:hover:text-white transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect width="4" height="12" x="2" y="9"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                </a>
+                <a href="https://t.me" target="_blank" class="text-gray-500 hover:text-brand-purple dark:hover:text-white transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path></svg>
+                </a>
+            </div>
+            <div class="text-xs text-gray-400 dark:text-gray-500">
+                &copy; 2026 growthcoder.id. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive script for Lightbox modal -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const galleryItems = document.querySelectorAll('.cursor-zoom-in');
+            const lightboxModal = document.getElementById('lightbox-modal');
+            const lightboxClose = document.getElementById('lightbox-close');
+            const placeholder = document.getElementById('lightbox-image-placeholder');
+            const caption = document.getElementById('lightbox-caption');
+
+            if (galleryItems && lightboxModal && lightboxClose && placeholder) {
+                galleryItems.forEach(item => {
+                    item.addEventListener('click', () => {
+                        const titleText = item.querySelector('.text-4xl').textContent;
+                        const subText = item.querySelector('.text-center').textContent;
+
+                        // Set content inside placeholder
+                        placeholder.innerHTML = `<span class="text-6xl mb-4 select-none">${titleText.split(' ')[0]}</span><span class="text-2xl">${titleText.substring(2)}</span>`;
+                        caption.textContent = subText;
+
+                        // Open Modal with transition
+                        lightboxModal.classList.remove('hidden');
+                        setTimeout(() => {
+                            lightboxModal.classList.remove('opacity-0');
+                        }, 50);
+                    });
+                });
+
+                const closeModal = () => {
+                    lightboxModal.classList.add('opacity-0');
+                    setTimeout(() => {
+                        lightboxModal.classList.add('hidden');
+                    }, 300);
+                };
+
+                lightboxClose.addEventListener('click', closeModal);
+                lightboxModal.addEventListener('click', (e) => {
+                    if (e.target === lightboxModal) {
+                        closeModal();
+                    }
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

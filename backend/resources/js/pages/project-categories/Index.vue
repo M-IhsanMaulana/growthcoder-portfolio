@@ -60,7 +60,9 @@ import {
     Binary,
     Braces
 } from '@lucide/vue';
+import * as LucideIcons from '@lucide/vue';
 import { index as projectCategoriesIndex } from '@/routes/project-categories';
+import { getLucideSvgString, isSvgString } from '@/utils/icon';
 
 const props = defineProps<{
     categories: any[];
@@ -160,6 +162,7 @@ const openCreate = () => {
     form.reset();
     form.clearErrors();
     isSlugManuallyEdited.value = false;
+    activeIconTab.value = 'picker';
     sheetOpen.value = true;
 };
 
@@ -174,6 +177,7 @@ const openEdit = (category: any) => {
     form.order = category.order;
     form.clearErrors();
     isSlugManuallyEdited.value = true;
+    activeIconTab.value = isSvgString(category.icon) ? 'custom' : 'picker';
     sheetOpen.value = true;
 };
 
@@ -216,6 +220,7 @@ const isLast = (category: any) => {
 // Visual Icon Picker Dialog State
 const iconPickerOpen = ref(false);
 const iconSearch = ref('');
+const activeIconTab = ref<'picker' | 'custom'>('picker');
 const filteredIcons = computed(() => {
     const keys = Object.keys(availableIcons);
     if (!iconSearch.value) return keys;
@@ -224,7 +229,7 @@ const filteredIcons = computed(() => {
 });
 
 const selectIcon = (iconName: string) => {
-    form.icon = iconName;
+    form.icon = getLucideSvgString(iconName);
     iconPickerOpen.value = false;
 };
 
@@ -335,7 +340,8 @@ const showSlugWarning = computed(() => {
                             <!-- Icon Column -->
                             <td class="p-4 text-center">
                                 <div class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300">
-                                    <component :is="availableIcons[category.icon]" v-if="category.icon && availableIcons[category.icon]" class="h-5 w-5" />
+                                    <div v-if="isSvgString(category.icon)" v-html="category.icon" class="h-5 w-5 flex items-center justify-center [&_svg]:h-5 [&_svg]:w-5 [&_svg]:text-current" />
+                                    <component :is="availableIcons[category.icon]" v-else-if="category.icon && availableIcons[category.icon]" class="h-5 w-5" />
                                     <Folder v-else class="h-5 w-5 text-neutral-400" />
                                 </div>
                             </td>
@@ -450,17 +456,60 @@ const showSlugWarning = computed(() => {
                         <!-- Icon Field -->
                         <div class="grid gap-2">
                             <Label class="font-semibold text-sm">Ikon Kategori</Label>
-                            <div class="flex items-center gap-3">
+                            
+                            <div class="flex border-b border-border mb-2">
+                                <button 
+                                    type="button" 
+                                    @click="activeIconTab = 'picker'" 
+                                    class="px-4 py-2 text-xs font-medium border-b-2 transition-colors"
+                                    :class="activeIconTab === 'picker' ? 'border-primary text-primary font-semibold' : 'border-transparent text-muted-foreground'"
+                                >
+                                    Pilih dari Lucide
+                                </button>
+                                <button 
+                                    type="button" 
+                                    @click="activeIconTab = 'custom'" 
+                                    class="px-4 py-2 text-xs font-medium border-b-2 transition-colors"
+                                    :class="activeIconTab === 'custom' ? 'border-primary text-primary font-semibold' : 'border-transparent text-muted-foreground'"
+                                >
+                                    Custom SVG
+                                </button>
+                            </div>
+
+                            <div v-if="activeIconTab === 'picker'" class="flex items-center gap-3">
                                 <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border bg-neutral-50 dark:bg-neutral-900 text-neutral-600 dark:text-neutral-300">
-                                    <component :is="availableIcons[form.icon]" v-if="form.icon && availableIcons[form.icon]" class="h-5 w-5 text-primary" />
+                                    <div v-if="isSvgString(form.icon)" v-html="form.icon" class="h-5 w-5 flex items-center justify-center [&_svg]:h-5 [&_svg]:w-5 [&_svg]:text-primary" />
+                                    <component :is="availableIcons[form.icon]" v-else-if="form.icon && availableIcons[form.icon]" class="h-5 w-5 text-primary" />
                                     <Folder v-else class="h-5 w-5 text-muted-foreground" />
                                 </div>
                                 <Button type="button" variant="outline" class="font-medium text-xs" @click="iconPickerOpen = true">
-                                    Pilih Ikon
+                                    Pilih Ikon...
                                 </Button>
                                 <Button v-if="form.icon" type="button" variant="ghost" size="icon" class="text-muted-foreground hover:text-destructive h-8 w-8" @click="form.icon = ''">
                                     <X class="h-4 w-4" />
                                 </Button>
+                            </div>
+
+                            <div v-else class="space-y-2">
+                                <textarea
+                                    v-model="form.icon"
+                                    rows="4"
+                                    class="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-xs font-mono shadow-sm placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                    placeholder="Tempel kode markup SVG Anda di sini (misal: <svg>...</svg>)"
+                                ></textarea>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[10px] text-muted-foreground">Pastikan kode SVG memiliki stroke='currentColor' atau fill='currentColor'.</span>
+                                    <Button 
+                                        v-if="form.icon" 
+                                        type="button" 
+                                        variant="ghost" 
+                                        size="sm" 
+                                        class="text-destructive hover:bg-destructive/10 h-7 text-[10px]"
+                                        @click="form.icon = ''"
+                                    >
+                                        Hapus
+                                    </Button>
+                                </div>
                             </div>
                             <InputError :message="form.errors.icon" />
                         </div>
