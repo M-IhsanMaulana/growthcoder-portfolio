@@ -364,7 +364,7 @@
 
               <!-- Right action button -->
               <div class="flex-shrink-0">
-                <Button as="NuxtLink" to="/contact" label="Hubungi Saya" icon="pi pi-arrow-up-right" iconPos="right"
+                <Button as="router-link" to="/contact" label="Hubungi Saya" icon="pi pi-arrow-up-right" iconPos="right"
                   class="!px-6 !py-3.5 !font-bold !rounded-xl !text-xs shadow-md shadow-brand-purple/20 transition-all duration-300 cursor-pointer" />
               </div>
             </div>

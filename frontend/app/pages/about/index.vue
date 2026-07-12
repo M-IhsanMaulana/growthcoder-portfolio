@@ -36,7 +36,7 @@
               </div>
               <div class="min-w-0">
                 <h4 class="text-xs font-bold text-gray-900 dark:text-white">{{ settings?.owner_title || 'Software Developer' }}</h4>
-                <p class="text-[10px] text-gray-500 dark:text-gray-400 leading-tight truncate">Building digital solutions with clean code.</p>
+                <p class="text-[10px] text-gray-500 dark:text-gray-400 leading-tight truncate">Membangun solusi digital dengan kode yang bersih.</p>
               </div>
             </div>
           </div>
@@ -51,7 +51,7 @@
         </div>
         
         <h2 class="text-3xl md:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight">
-          Hai, Saya <span class="bg-gradient-to-r from-brand-purple via-indigo-500 to-brand-green bg-clip-text text-transparent">{{ firstName }}</span> 👋
+          Hai, Saya <span class="bg-gradient-to-r from-brand-purple via-indigo-500 to-brand-green bg-clip-text text-transparent">{{ fullName }}</span> 👋
         </h2>
         <h3 class="text-lg md:text-xl font-medium text-gray-600 dark:text-gray-300">
           {{ settings?.owner_title || 'Software Developer' }}
@@ -115,7 +115,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
               </svg>
             </div>
-            <h3 class="font-bold text-gray-900 dark:text-white uppercase tracking-wider text-xs">My Workflow</h3>
+            <h3 class="font-bold text-gray-900 dark:text-white uppercase tracking-wider text-xs">Alur Kerja Saya</h3>
           </div>
           <div class="space-y-4">
             <!-- Dynamic workflows list -->
@@ -165,7 +165,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12" />
               </svg>
             </div>
-            <h3 class="font-bold text-gray-900 dark:text-white uppercase tracking-wider text-xs">Development Philosophy</h3>
+            <h3 class="font-bold text-gray-900 dark:text-white uppercase tracking-wider text-xs">Filosofi Pengembangan</h3>
           </div>
           <div class="space-y-4">
             <!-- Dynamic philosophies list -->
@@ -217,7 +217,7 @@
             <!-- Action button -->
             <div class="flex-shrink-0">
               <Button 
-                as="NuxtLink"
+                as="router-link"
                 to="/contact" 
                 label="Hubungi Saya"
                 icon="pi pi-envelope"
@@ -326,9 +326,8 @@ const stats = computed(() => {
   return settings.value?.about_stats || []
 })
 
-const firstName = computed(() => {
-  const name = settings.value?.owner_full_name || 'Ihsan'
-  return name.split(' ')[0]
+const fullName = computed(() => {
+  return settings.value?.owner_full_name || 'Muhammad Ihsan Maulana'
 })
 
 const initials = computed(() => {

@@ -220,7 +220,7 @@
           <!-- Right: Hubungi Saya button with arrow-up-right -->
           <div class="flex-shrink-0">
             <Button
-              as="NuxtLink"
+              as="router-link"
               to="/contact"
               label="Hubungi Saya"
               icon="pi pi-arrow-up-right"
@@ -298,7 +298,7 @@
             @click="isModalOpen = false"
           />
           <Button
-            as="NuxtLink"
+            as="router-link"
             to="/contact"
             label="Hubungi Saya"
             icon="pi pi-envelope"

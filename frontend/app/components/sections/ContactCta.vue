@@ -21,7 +21,7 @@
       <!-- Primary Action -->
       <div class="relative z-10 pt-4 flex justify-center">
         <Button 
-          as="NuxtLink"
+          as="router-link"
           to="/contact" 
           label="Kirim Pesan Sekarang"
           icon="pi pi-send"

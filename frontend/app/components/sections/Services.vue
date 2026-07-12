@@ -69,8 +69,8 @@
         <!-- Button -->
         <div class="pt-2">
           <Button 
-            as="NuxtLink"
-            to="/contact" 
+            as="router-link"
+            to="/services" 
             label="Lihat Semua Layanan"
             class="!px-6 !py-3 !font-semibold !rounded-xl bg-zinc-950 dark:bg-zinc-800 hover:bg-zinc-900 dark:hover:bg-zinc-700 !text-white !border-0 transition-all duration-300 hover:-translate-y-0.5 cursor-pointer text-sm shadow-sm inline-flex items-center gap-2"
           >
@@ -128,7 +128,7 @@
                 <!-- Footer Link -->
                 <div class="pt-6 mt-auto">
                   <NuxtLink 
-                    to="/contact"
+                    to="/services"
                     class="inline-flex items-center text-xs font-bold transition-colors group/link gap-1"
                     :class="getColorScheme(idx).link"
                   >

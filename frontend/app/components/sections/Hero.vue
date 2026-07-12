@@ -19,7 +19,7 @@
         <div class="animate-left-item opacity-0">
           <span class="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-medium bg-emerald-500/5 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse mr-2"></span>
-            Available for freelance &amp; collaboration
+            Tersedia untuk freelance &amp; kolaborasi
           </span>
         </div>
         
@@ -30,9 +30,9 @@
             <Skeleton width="20rem" height="3.5rem" />
           </template>
           <template v-else>
-            Hi, I'm <span class="text-zinc-800 dark:text-zinc-300 font-bold">{{ displayName }}</span>.<br />
-            <span class="text-blue-purple-gradient">{{ settings?.owner_title || 'Software Developer' }}</span> &<br />
-            Informatics Student.
+            Hai, Saya <span class="text-zinc-800 dark:text-zinc-300 font-bold">{{ displayName }}</span>.<br />
+            <span class="text-blue-purple-gradient">{{ settings?.owner_title || 'Software Developer' }}</span> &amp;<br />
+            Mahasiswa Informatika.
           </template>
         </h1>
         
@@ -46,7 +46,7 @@
             </div>
           </template>
           <p v-else class="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed font-normal">
-            {{ settings?.hero_subheadline || 'Informatics student and software developer specializing in building modern web applications, backend systems, robust REST APIs, and native mobile applications.' }}
+            {{ settings?.hero_subheadline || 'Mahasiswa informatika dan software developer yang berspesialisasi dalam membangun aplikasi web modern, sistem backend, REST API yang andal, dan aplikasi mobile native.' }}
           </p>
         </div>
                 <!-- Action Buttons -->
@@ -55,13 +55,13 @@
             :to="settings?.hero_cta_url || '/proyek'" 
             class="inline-flex items-center justify-center px-7 py-3.5 font-semibold rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-950 hover:bg-zinc-800 dark:hover:bg-zinc-100 border border-transparent shadow-lg transition-all duration-300 hover:-translate-y-0.5 cursor-pointer"
           >
-            {{ settings?.hero_cta_text || 'View Projects' }}
+            {{ settings?.hero_cta_text || 'Lihat Proyek' }}
           </NuxtLink>
           <NuxtLink 
             to="/contact" 
             class="inline-flex items-center justify-center px-7 py-3.5 font-semibold rounded-xl border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-all duration-300 hover:-translate-y-0.5 cursor-pointer"
           >
-            Contact Me
+            Hubungi Saya
           </NuxtLink>
         </div>
 
@@ -217,13 +217,9 @@ const { data: technologiesResponse, pending: technologiesPending } = await useFe
 // Derived: loading state for stats (all three must resolve)
 const statsPending = computed(() => settingsPending.value || projectsPending.value || technologiesPending.value)
 
-// Derived: display name (first name or full name from API)
+// Derived: display name (full name from API or fallback)
 const displayName = computed(() => {
-  const full = settings.value?.owner_full_name
-  if (!full) return 'Developer'
-  // Show the last word as a "short name" — e.g. "Muhammad Ihsan Maulana" → "Maulana"
-  // Change this logic if a nickname field is added in the future
-  return full.split(' ').pop() ?? full
+  return settings.value?.owner_full_name || 'Muhammad Ihsan Maulana'
 })
 
 // Derived: project count

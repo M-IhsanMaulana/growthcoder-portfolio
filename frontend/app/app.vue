@@ -42,6 +42,11 @@ useHead({
       content: () => gscCode.value || undefined
     }
   ],
+  link: [
+    { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+    { rel: 'icon', type: 'image/png', href: '/favicon.png' },
+    { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' }
+  ],
   script: [
     {
       innerHTML: `
