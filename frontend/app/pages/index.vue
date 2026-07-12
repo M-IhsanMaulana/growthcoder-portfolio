@@ -26,10 +26,10 @@ await fetchSettings()
 
 useSeoMeta({
   title: 'Home',
-  description: 'Premium Software Developer Portfolio of Muhammad Ihsan Maulana. Full-Stack Developer specializing in Laravel, Vue.js, Nuxt, and Telegram Bot Ecosystems.',
-  ogTitle: 'Muhammad Ihsan Maulana | growthcoder.id',
-  ogDescription: 'Premium Software Developer Portfolio of Muhammad Ihsan Maulana. Full-Stack Developer specializing in Laravel, Vue.js, Nuxt, and Telegram Bot Ecosystems.',
-  ogImage: settings.value?.profile_photo?.urls?.medium || 'https://growthcoder.id/logo-gc-dark.png',
+  description: () => settings.value?.default_meta_desc || 'Premium Software Developer Portfolio of Muhammad Ihsan Maulana. Full-Stack Developer specializing in Laravel, Vue.js, Nuxt, and Telegram Bot Ecosystems.',
+  ogTitle: () => settings.value?.owner_full_name ? `${settings.value.owner_full_name}${settings.value.meta_title_suffix || ' | growthcoder.id'}` : 'Muhammad Ihsan Maulana | growthcoder.id',
+  ogDescription: () => settings.value?.default_meta_desc || 'Premium Software Developer Portfolio of Muhammad Ihsan Maulana. Full-Stack Developer specializing in Laravel, Vue.js, Nuxt, and Telegram Bot Ecosystems.',
+  ogImage: () => settings.value?.default_og_image?.urls?.medium || settings.value?.default_og_image?.urls?.original || settings.value?.profile_photo?.urls?.medium || 'https://growthcoder.id/logo-gc-dark.png',
   ogType: 'website',
   twitterCard: 'summary_large_image',
 })

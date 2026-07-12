@@ -9,15 +9,15 @@
     <div 
       v-if="technologies && technologies.length" 
       ref="techContainer"
-      class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6"
+      class="flex flex-wrap justify-center gap-6"
     >
       <div 
         v-for="tech in technologies" 
         :key="tech.id"
-        class="tech-card flex flex-col items-center justify-center p-6 bg-white dark:bg-zinc-950 border border-gray-100 dark:border-zinc-900 rounded-2xl shadow-sm hover:shadow-md hover:border-brand-purple dark:hover:border-brand-green hover:-translate-y-1.5 transition-all duration-300 group opacity-0 transform translate-y-8"
+        class="tech-card w-[calc(50%-12px)] sm:w-[calc(33.333%-16px)] md:w-[calc(25%-18px)] lg:w-[calc(16.666%-20px)] flex flex-col items-center justify-center p-6 bg-white dark:bg-zinc-950 border border-gray-100 dark:border-zinc-900 rounded-2xl shadow-sm hover:shadow-md hover:border-brand-purple dark:hover:border-brand-green hover:-translate-y-1.5 transition-all duration-300 group opacity-0 transform translate-y-8"
       >
         <!-- Logo -->
-        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-navy/5 to-brand-purple/5 dark:from-zinc-900 dark:to-zinc-800 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 overflow-hidden p-2">
+        <div class="w-16 h-16 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
           <NuxtImg
             v-if="tech.logo?.urls?.thumbnail || tech.logo?.urls?.original"
             :src="tech.logo.urls.thumbnail || tech.logo.urls.original"
@@ -34,24 +34,18 @@
         <h4 class="text-sm font-semibold text-brand-navy dark:text-white text-center group-hover:text-brand-purple dark:group-hover:text-brand-green transition-colors">
           {{ tech.name }}
         </h4>
-        
-        <!-- Category Badge -->
-        <span class="mt-1.5 text-[10px] text-zinc-400 dark:text-zinc-500 font-medium px-2.5 py-0.5 rounded bg-zinc-150 dark:bg-zinc-900">
-          {{ tech.category }}
-        </span>
       </div>
     </div>
 
     <!-- Skeleton Loading -->
-    <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+    <div v-else class="flex flex-wrap justify-center gap-6">
       <div 
         v-for="i in 12" 
         :key="i"
-        class="flex flex-col items-center justify-center p-6 bg-white dark:bg-zinc-950 border border-gray-100 dark:border-zinc-900 rounded-2xl shadow-sm"
+        class="w-[calc(50%-12px)] sm:w-[calc(33.333%-16px)] md:w-[calc(25%-18px)] lg:w-[calc(16.666%-20px)] flex flex-col items-center justify-center p-6 bg-white dark:bg-zinc-950 border border-gray-100 dark:border-zinc-900 rounded-2xl shadow-sm"
       >
         <Skeleton shape="circle" size="4rem" class="mb-4" />
-        <Skeleton width="5rem" height="1rem" class="mb-2" />
-        <Skeleton width="3rem" height="0.75rem" />
+        <Skeleton width="5rem" height="1rem" />
       </div>
     </div>
   </section>
