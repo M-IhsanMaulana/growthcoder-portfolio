@@ -375,8 +375,15 @@ const confirmDelete = () => {
                     id="services-search"
                     v-model="searchQuery"
                     placeholder="Cari layanan..."
-                    class="pl-9"
+                    class="pl-9 pr-8 bg-card border-border/80 h-9 text-xs"
                 />
+                <button
+                    v-if="searchQuery"
+                    @click="searchQuery = ''"
+                    class="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-0.5 rounded-full"
+                >
+                    <X class="h-3.5 w-3.5" />
+                </button>
             </div>
 
             <!-- Right side: Stats + Add button -->
@@ -403,14 +410,14 @@ const confirmDelete = () => {
         <!-- ================================================================
              SERVICES TABLE
         ================================================================ -->
-        <div class="rounded-xl border border-sidebar-border/70 bg-card overflow-hidden shadow-sm">
+        <div class="rounded-2xl border border-border/70 bg-card overflow-hidden shadow-2xs">
             <!-- Table header -->
-            <div class="grid grid-cols-[auto_1fr_120px_100px_80px] items-center gap-4 border-b border-sidebar-border/50 bg-muted/30 px-4 py-3">
+            <div class="grid grid-cols-[auto_1fr_120px_100px_80px] items-center gap-4 border-b border-border/70 bg-muted/20 px-4 py-3">
                 <div class="w-8"></div>
-                <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Layanan</span>
-                <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground text-center">Status</span>
-                <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground text-center">Urutan</span>
-                <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground text-right">Aksi</span>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Layanan</span>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-center">Status</span>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-center">Urutan</span>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-right">Aksi</span>
             </div>
 
             <!-- Empty state -->
@@ -446,15 +453,17 @@ const confirmDelete = () => {
                 @dragover="onDragOver(index, $event)"
                 @dragend="onDragEnd"
                 @dragleave="onDragLeave"
-                class="grid grid-cols-[auto_1fr_120px_100px_80px] items-center gap-4 border-b border-sidebar-border/30 px-4 py-4 transition-all duration-150 last:border-b-0"
+                @click="openEdit(service)"
+                class="grid grid-cols-[auto_1fr_120px_100px_80px] items-center gap-4 border-b border-border/40 px-4 py-4 transition-all duration-150 last:border-b-0 cursor-pointer"
                 :class="{
                     'bg-primary/5 scale-[1.01] shadow-md': dragOverIndex === index && draggedIndex !== index,
                     'opacity-40': draggedIndex === index,
-                    'hover:bg-muted/30': dragOverIndex !== index || draggedIndex === index,
+                    'hover:bg-muted/20': dragOverIndex !== index || draggedIndex === index,
                 }"
             >
                 <!-- Drag Handle -->
                 <div
+                    @click.stop
                     class="flex w-8 items-center justify-center transition-colors"
                     :class="searchQuery ? 'cursor-not-allowed opacity-30' : 'cursor-grab text-muted-foreground hover:text-foreground active:cursor-grabbing'"
                     :title="searchQuery ? 'Hapus filter untuk mengurutkan' : 'Seret untuk mengurutkan'"
@@ -465,7 +474,7 @@ const confirmDelete = () => {
                 <!-- Service Info -->
                 <div class="flex items-center gap-3 min-w-0">
                     <!-- Icon -->
-                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-sidebar-border/50 bg-muted/40 text-foreground">
+                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border/60 bg-muted/30 text-primary">
                         <div v-if="isSvgString(service.icon)" v-html="service.icon" class="h-5 w-5 flex items-center justify-center [&_svg]:h-5 [&_svg]:w-5 [&_svg]:text-current" />
                         <component
                             v-else-if="service.icon && getIcon(service.icon)"
@@ -487,15 +496,15 @@ const confirmDelete = () => {
                 </div>
 
                 <!-- Status Toggle -->
-                <div class="flex justify-center">
+                <div class="flex justify-center" @click.stop>
                     <button
                         :id="`toggle-service-${service.id}`"
                         @click="toggleActive(service)"
                         :disabled="togglingId === service.id"
-                        class="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1"
+                        class="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1 cursor-pointer"
                         :class="service.is_active
-                            ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 focus:ring-emerald-500/30'
-                            : 'bg-muted/60 text-muted-foreground hover:bg-muted focus:ring-muted-foreground/30'"
+                            ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
+                            : 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border border-slate-500/20'"
                     >
                         <Loader2 v-if="togglingId === service.id" class="h-3 w-3 animate-spin" />
                         <ToggleRight v-else-if="service.is_active" class="h-3.5 w-3.5" />
@@ -512,7 +521,7 @@ const confirmDelete = () => {
                 </div>
 
                 <!-- Actions -->
-                <div class="flex items-center justify-end gap-1.5">
+                <div class="flex items-center justify-end gap-1.5" @click.stop>
                     <Button
                         :id="`btn-edit-service-${service.id}`"
                         variant="ghost"
@@ -633,20 +642,20 @@ const confirmDelete = () => {
                 <div class="grid gap-2">
                     <Label class="text-xs font-bold text-foreground">Ikon Pendukung</Label>
 
-                    <div class="flex border-b border-border mb-1">
+                    <div class="flex bg-card p-1 rounded-xl border border-border/60 gap-1 mb-3">
                         <button 
                             type="button" 
                             @click="activeIconTab = 'picker'" 
-                            class="px-4 py-2 text-xs font-medium border-b-2 transition-colors"
-                            :class="activeIconTab === 'picker' ? 'border-primary text-primary font-semibold' : 'border-transparent text-muted-foreground'"
+                            class="flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer"
+                            :class="activeIconTab === 'picker' ? 'bg-primary/10 text-primary font-bold' : 'text-muted-foreground hover:text-foreground'"
                         >
                             Pilih dari Lucide
                         </button>
                         <button 
                             type="button" 
                             @click="activeIconTab = 'custom'" 
-                            class="px-4 py-2 text-xs font-medium border-b-2 transition-colors"
-                            :class="activeIconTab === 'custom' ? 'border-primary text-primary font-semibold' : 'border-transparent text-muted-foreground'"
+                            class="flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer"
+                            :class="activeIconTab === 'custom' ? 'bg-primary/10 text-primary font-bold' : 'text-muted-foreground hover:text-foreground'"
                         >
                             Custom SVG
                         </button>

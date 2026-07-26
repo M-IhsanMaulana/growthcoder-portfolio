@@ -188,24 +188,24 @@ const executeDelete = () => {
                 <Input
                     v-model="listSearch"
                     placeholder="Cari kategori..."
-                    class="pl-9 bg-card w-full"
+                    class="pl-9 pr-8 bg-card border-border/80 h-9 text-xs w-full"
                 />
                 <button
                     v-if="listSearch"
                     @click="listSearch = ''"
-                    class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    class="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-0.5 rounded-full"
                 >
-                    <X class="h-4 w-4" />
+                    <X class="h-3.5 w-3.5" />
                 </button>
             </div>
         </div>
 
         <!-- Categories Table -->
-        <div v-if="filteredCategories.length > 0" class="border border-border rounded-xl overflow-hidden bg-card/50 shadow-xs">
+        <div v-if="filteredCategories.length > 0" class="border border-border/70 rounded-2xl overflow-hidden bg-card shadow-2xs">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="border-b border-border bg-neutral-50/50 dark:bg-neutral-900/50 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        <tr class="border-b border-border/70 bg-muted/20 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                             <th class="p-4 w-12">#</th>
                             <th class="p-4">Nama Kategori</th>
                             <th class="p-4">Slug</th>
@@ -214,29 +214,36 @@ const executeDelete = () => {
                             <th class="p-4 text-right w-28">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-border/50 text-sm">
-                        <tr v-for="(cat, idx) in filteredCategories" :key="cat.id" class="hover:bg-neutral-50/30 dark:hover:bg-neutral-900/30 transition-colors">
+                    <tbody class="divide-y divide-border/60 text-sm">
+                        <tr
+                            v-for="(cat, idx) in filteredCategories"
+                            :key="cat.id"
+                            @click="openEditSheet(cat)"
+                            class="hover:bg-muted/20 transition-colors cursor-pointer"
+                        >
                             <td class="p-4 text-muted-foreground font-mono text-xs">{{ idx + 1 }}</td>
                             <td class="p-4 font-semibold text-foreground flex items-center gap-2">
-                                <BookOpen class="h-4 w-4 text-primary" />
+                                <div class="h-7 w-7 rounded-md bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                                    <BookOpen class="h-3.5 w-3.5" />
+                                </div>
                                 {{ cat.name }}
                             </td>
                             <td class="p-4 text-muted-foreground font-mono text-xs">{{ cat.slug }}</td>
-                            <td class="p-4 text-muted-foreground max-w-xs truncate" :title="cat.description">
+                            <td class="p-4 text-muted-foreground text-xs max-w-xs truncate" :title="cat.description">
                                 {{ cat.description || '-' }}
                             </td>
                             <td class="p-4 text-center">
-                                <span class="inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                                <span class="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
                                     {{ cat.posts_count ?? 0 }}
                                 </span>
                             </td>
-                            <td class="p-4 text-right">
-                                <div class="flex items-center justify-end gap-2">
+                            <td class="p-4 text-right" @click.stop>
+                                <div class="flex items-center justify-end gap-1">
                                     <Button
                                         variant="ghost"
                                         size="icon"
                                         @click="openEditSheet(cat)"
-                                        class="h-8 w-8 text-neutral-500 hover:text-primary hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer"
+                                        class="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 cursor-pointer"
                                         title="Edit Kategori"
                                     >
                                         <Edit2 class="h-4 w-4" />
@@ -245,7 +252,7 @@ const executeDelete = () => {
                                         variant="ghost"
                                         size="icon"
                                         @click="confirmDelete(cat)"
-                                        class="h-8 w-8 text-neutral-500 hover:text-destructive hover:bg-red-50 dark:hover:bg-red-950/20 cursor-pointer"
+                                        class="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 cursor-pointer"
                                         title="Hapus Kategori"
                                     >
                                         <Trash2 class="h-4 w-4" />

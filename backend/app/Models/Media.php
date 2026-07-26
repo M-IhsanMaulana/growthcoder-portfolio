@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Services\HashidsHelper;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
@@ -16,8 +17,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $height
  * @property string|null $alt_text
  * @property array|null $variants
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property-read string $encoded_id
  * @property-read array<string, string> $urls
  */
@@ -71,7 +72,7 @@ class Media extends Model
      */
     public function getUrlsAttribute(): array
     {
-        $slugId = $this->filename . '-' . $this->encoded_id;
+        $slugId = $this->filename.'-'.$this->encoded_id;
 
         return [
             'original' => route('media.show', ['slug_id' => $slugId, 'variant' => 'original']),

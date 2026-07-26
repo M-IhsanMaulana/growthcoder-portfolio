@@ -69,6 +69,7 @@ class ProjectController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255|unique:projects,slug|regex:/^[a-z0-9\-]+$/',
+            'role' => 'nullable|string|max:255',
             'short_description' => 'required|string|max:1000',
             'full_description' => 'nullable|string',
             'category_id' => 'required|exists:project_categories,id',
@@ -82,6 +83,10 @@ class ProjectController extends Controller
             'telegram_url' => 'nullable|url|max:255',
             'technology_ids' => 'nullable|array',
             'technology_ids.*' => 'exists:technologies,id',
+            'key_features' => 'nullable|array',
+            'key_features.*.title' => 'required|string|max:255',
+            'key_features.*.description' => 'nullable|string',
+            'key_features.*.icon' => 'nullable|string|max:100',
             'gallery' => 'nullable|array',
             'gallery.*.media_id' => 'required|exists:media,id',
             'gallery.*.order' => 'required|integer|min:0',
@@ -100,7 +105,7 @@ class ProjectController extends Controller
         $originalSlug = $slug;
         $count = 1;
         while (Project::where('slug', $slug)->exists()) {
-            $slug = $originalSlug . '-' . $count++;
+            $slug = $originalSlug.'-'.$count++;
         }
 
         $publishedAt = null;
@@ -113,11 +118,13 @@ class ProjectController extends Controller
             $project = Project::create([
                 'title' => $request->input('title'),
                 'slug' => $slug,
+                'role' => $request->input('role'),
                 'short_description' => $request->input('short_description'),
                 'full_description' => $request->input('full_description'),
                 'category_id' => $request->input('category_id'),
                 'cover_image_id' => $request->input('cover_image_id'),
                 'cover_image_caption' => $request->input('cover_image_caption'),
+                'key_features' => $request->input('key_features'),
                 'status' => $request->input('status'),
                 'is_featured' => $request->input('is_featured'),
                 'order' => $request->input('order'),
@@ -154,7 +161,8 @@ class ProjectController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->withErrors(['error' => __('Gagal menyimpan proyek: ') . $e->getMessage()]);
+
+            return redirect()->back()->withErrors(['error' => __('Gagal menyimpan proyek: ').$e->getMessage()]);
         }
     }
 
@@ -181,7 +189,8 @@ class ProjectController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:projects,slug,' . $project->id . '|regex:/^[a-z0-9\-]+$/',
+            'slug' => 'required|string|max:255|unique:projects,slug,'.$project->id.'|regex:/^[a-z0-9\-]+$/',
+            'role' => 'nullable|string|max:255',
             'short_description' => 'required|string|max:1000',
             'full_description' => 'nullable|string',
             'category_id' => 'required|exists:project_categories,id',
@@ -195,6 +204,10 @@ class ProjectController extends Controller
             'telegram_url' => 'nullable|url|max:255',
             'technology_ids' => 'nullable|array',
             'technology_ids.*' => 'exists:technologies,id',
+            'key_features' => 'nullable|array',
+            'key_features.*.title' => 'required|string|max:255',
+            'key_features.*.description' => 'nullable|string',
+            'key_features.*.icon' => 'nullable|string|max:100',
             'gallery' => 'nullable|array',
             'gallery.*.media_id' => 'required|exists:media,id',
             'gallery.*.order' => 'required|integer|min:0',
@@ -217,11 +230,13 @@ class ProjectController extends Controller
             $project->update([
                 'title' => $request->input('title'),
                 'slug' => Str::slug($request->input('slug')),
+                'role' => $request->input('role'),
                 'short_description' => $request->input('short_description'),
                 'full_description' => $request->input('full_description'),
                 'category_id' => $request->input('category_id'),
                 'cover_image_id' => $request->input('cover_image_id'),
                 'cover_image_caption' => $request->input('cover_image_caption'),
+                'key_features' => $request->input('key_features'),
                 'status' => $request->input('status'),
                 'is_featured' => $request->input('is_featured'),
                 'order' => $request->input('order'),
@@ -263,7 +278,8 @@ class ProjectController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->withErrors(['error' => __('Gagal memperbarui proyek: ') . $e->getMessage()]);
+
+            return redirect()->back()->withErrors(['error' => __('Gagal memperbarui proyek: ').$e->getMessage()]);
         }
     }
 
@@ -273,6 +289,7 @@ class ProjectController extends Controller
     public function show(Project $project)
     {
         $project->load(['category', 'coverImage', 'technologies', 'galleryImages']);
+
         return Inertia::render('projects/Show', [
             'project' => $project,
         ]);

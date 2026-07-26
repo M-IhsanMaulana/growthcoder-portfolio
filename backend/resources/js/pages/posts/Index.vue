@@ -12,6 +12,13 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
+    Select,
+    SelectTrigger,
+    SelectValue,
+    SelectContent,
+    SelectItem,
+} from '@/components/ui/select';
+import {
     Plus,
     FileText,
     AlertTriangle,
@@ -131,71 +138,73 @@ const executeDelete = () => {
         </div>
 
         <!-- Toolbar Filters -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-neutral-50/50 dark:bg-neutral-900/30 p-3.5 rounded-xl border border-border">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-card p-3 rounded-2xl border border-border/70 shadow-2xs">
             <!-- Search -->
             <div class="relative flex-1 max-w-md">
                 <Search class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                     v-model="searchFilter"
                     placeholder="Cari artikel..."
-                    class="pl-9 bg-card w-full"
+                    class="pl-9 pr-8 bg-background border-border/80 h-9 text-xs w-full"
                 />
                 <button
                     v-if="searchFilter"
                     @click="searchFilter = ''"
-                    class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    class="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-0.5 rounded-full"
                 >
-                    <X class="h-4 w-4" />
+                    <X class="h-3.5 w-3.5" />
                 </button>
             </div>
 
-            <div class="flex flex-wrap items-center gap-3">
+            <div class="flex flex-wrap items-center gap-2">
                 <!-- Category Filter -->
-                <div class="flex items-center gap-1.5">
-                    <Filter class="h-3.5 w-3.5 text-muted-foreground" />
-                    <select
-                        v-model="categoryFilter"
-                        class="text-xs rounded-lg border border-input bg-card px-2.5 py-1.5 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                    >
-                        <option value="all">Semua Kategori</option>
-                        <option v-for="cat in categories" :key="cat.id" :value="cat.id">
+                <Select :model-value="String(categoryFilter)" @update:model-value="(v) => categoryFilter = String(v)">
+                    <SelectTrigger class="h-9 min-w-[150px] text-xs bg-background border-border/80 font-medium">
+                        <div class="flex items-center gap-1.5 truncate">
+                            <Filter class="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                            <SelectValue placeholder="Semua Kategori" />
+                        </div>
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">Semua Kategori</SelectItem>
+                        <SelectItem v-for="cat in categories" :key="cat.id" :value="String(cat.id)">
                             {{ cat.name }}
-                        </option>
-                    </select>
-                </div>
+                        </SelectItem>
+                    </SelectContent>
+                </Select>
 
                 <!-- Status Filter -->
-                <div class="flex items-center gap-1.5">
-                    <select
-                        v-model="statusFilter"
-                        class="text-xs rounded-lg border border-input bg-card px-2.5 py-1.5 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                    >
-                        <option value="all">Semua Status</option>
-                        <option value="draft">Draft</option>
-                        <option value="published">Published</option>
-                        <option value="scheduled">Scheduled</option>
-                    </select>
-                </div>
+                <Select :model-value="String(statusFilter)" @update:model-value="(v) => statusFilter = String(v)">
+                    <SelectTrigger class="h-9 w-[130px] text-xs bg-background border-border/80 font-medium">
+                        <SelectValue placeholder="Semua Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">Semua Status</SelectItem>
+                        <SelectItem value="published">Published</SelectItem>
+                        <SelectItem value="draft">Draft</SelectItem>
+                        <SelectItem value="scheduled">Scheduled</SelectItem>
+                    </SelectContent>
+                </Select>
 
                 <!-- Reset Filters Button -->
                 <Button
                     v-if="searchFilter || categoryFilter !== 'all' || statusFilter !== 'all'"
                     variant="ghost"
+                    size="sm"
                     @click="resetFilters"
-                    class="h-8 px-2.5 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-xs font-semibold cursor-pointer flex items-center gap-1.5 border border-border bg-card"
+                    class="h-9 px-2.5 text-xs text-muted-foreground hover:text-primary cursor-pointer"
                 >
-                    <X class="h-3.5 w-3.5" />
                     Reset
                 </Button>
             </div>
         </div>
 
         <!-- Posts Table -->
-        <div v-if="posts.length > 0" class="border border-border rounded-xl overflow-hidden bg-card/50 shadow-xs">
+        <div v-if="posts.length > 0" class="border border-border/70 rounded-2xl overflow-hidden bg-card shadow-2xs">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="border-b border-border bg-neutral-50/50 dark:bg-neutral-900/50 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        <tr class="border-b border-border/70 bg-muted/20 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
                             <th class="p-4 w-20">Cover</th>
                             <th class="p-4">Judul Artikel</th>
                             <th class="p-4">Kategori</th>
@@ -205,28 +214,33 @@ const executeDelete = () => {
                             <th class="p-4 text-right w-28">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-border/50 text-sm">
-                        <tr v-for="post in posts" :key="post.id" class="hover:bg-neutral-50/30 dark:hover:bg-neutral-900/30 transition-colors">
+                    <tbody class="divide-y divide-border/60 text-sm">
+                        <tr
+                            v-for="post in posts"
+                            :key="post.id"
+                            @click="router.visit(postsEdit(post.id).url)"
+                            class="hover:bg-muted/20 transition-colors cursor-pointer"
+                        >
                             <!-- Cover Column -->
                             <td class="p-4">
-                                <div class="h-10 w-16 rounded-md overflow-hidden bg-neutral-100 dark:bg-neutral-800 border border-border flex items-center justify-center shrink-0">
+                                <div class="h-10 w-16 rounded-lg overflow-hidden bg-slate-50 dark:bg-slate-900 border border-border/60 flex items-center justify-center shrink-0">
                                     <img
                                         v-if="post.cover_image"
                                         :src="post.cover_image.urls.thumbnail"
                                         :alt="post.title"
                                         class="h-full w-full object-cover"
                                     />
-                                    <FileText v-else class="h-5 w-5 text-muted-foreground/60" />
+                                    <FileText v-else class="h-5 w-5 text-muted-foreground/50" />
                                 </div>
                             </td>
 
                             <!-- Title Column -->
                             <td class="p-4">
                                 <div class="flex flex-col gap-0.5">
-                                    <Link :href="postsShow(post.id)" class="font-semibold text-foreground hover:text-primary transition-colors line-clamp-1">
+                                    <span class="font-semibold text-foreground hover:text-primary transition-colors line-clamp-1">
                                         {{ post.title }}
-                                    </Link>
-                                    <span class="text-xs text-muted-foreground font-mono truncate max-w-[280px]">/blog/{{ post.slug }}</span>
+                                    </span>
+                                    <span class="text-[11px] text-muted-foreground font-mono truncate max-w-[280px]">/blog/{{ post.slug }}</span>
                                 </div>
                             </td>
 
@@ -236,7 +250,7 @@ const executeDelete = () => {
                                     <span
                                         v-for="cat in post.categories"
                                         :key="cat.id"
-                                        class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-medium bg-neutral-100 dark:bg-neutral-800 text-muted-foreground border border-border"
+                                        class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-medium bg-muted/50 text-foreground border border-border/60"
                                     >
                                         {{ cat.name }}
                                     </span>
@@ -246,17 +260,17 @@ const executeDelete = () => {
 
                             <!-- Status Badges -->
                             <td class="p-4">
-                                <!-- Draft Badge -->
-                                <span v-if="post.status === 'draft'" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700">
-                                    Draft
-                                </span>
-                                <!-- Published Badge -->
-                                <span v-else-if="post.status === 'published'" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-50 text-green-700 dark:bg-green-950/30 dark:text-green-400 border border-green-200 dark:border-green-800/40">
-                                    Published
-                                </span>
-                                <!-- Scheduled Badge -->
-                                <span v-else-if="post.status === 'scheduled'" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400 border border-amber-200 dark:border-amber-800/40">
-                                    Scheduled
+                                <span
+                                    :class="[
+                                        'inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border',
+                                        post.status === 'published'
+                                            ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
+                                            : post.status === 'scheduled'
+                                                ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30'
+                                                : 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20'
+                                    ]"
+                                >
+                                    {{ post.status }}
                                 </span>
                             </td>
 
@@ -270,7 +284,7 @@ const executeDelete = () => {
                                     <Calendar class="h-3.5 w-3.5 shrink-0" />
                                     <span title="Jadwal rilis">{{ formatDate(post.scheduled_at) }}</span>
                                 </div>
-                                <span v-else class="text-neutral-400 dark:text-neutral-600">-</span>
+                                <span v-else class="text-muted-foreground">-</span>
                             </td>
 
                             <!-- Reading Time -->
@@ -282,13 +296,13 @@ const executeDelete = () => {
                             </td>
 
                             <!-- Actions Column -->
-                            <td class="p-4 text-right">
-                                <div class="flex items-center justify-end gap-2">
+                            <td class="p-4 text-right" @click.stop>
+                                <div class="flex items-center justify-end gap-1">
                                     <Link :href="postsShow(post.id)">
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            class="h-8 w-8 text-neutral-500 hover:text-primary hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer"
+                                            class="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 cursor-pointer"
                                             title="Detail & Statistik Artikel"
                                         >
                                             <Eye class="h-4 w-4" />
@@ -298,7 +312,7 @@ const executeDelete = () => {
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            class="h-8 w-8 text-neutral-500 hover:text-primary hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer"
+                                            class="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 cursor-pointer"
                                             title="Edit Artikel"
                                         >
                                             <Edit2 class="h-4 w-4" />
@@ -308,7 +322,7 @@ const executeDelete = () => {
                                         variant="ghost"
                                         size="icon"
                                         @click="confirmDelete(post)"
-                                        class="h-8 w-8 text-neutral-500 hover:text-destructive hover:bg-red-50 dark:hover:bg-red-950/20 cursor-pointer"
+                                        class="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 cursor-pointer"
                                         title="Hapus Artikel"
                                     >
                                         <Trash2 class="h-4 w-4" />

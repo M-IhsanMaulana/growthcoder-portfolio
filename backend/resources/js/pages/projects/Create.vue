@@ -4,6 +4,14 @@ import { Head, useForm, Link } from '@inertiajs/vue3';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import InputError from '@/components/InputError.vue';
 import {
     ArrowLeft,
@@ -50,9 +58,10 @@ const activeTab = ref('general');
 const form = useForm({
     title: '',
     slug: '',
+    role: '',
     short_description: '',
     full_description: '',
-    category_id: '',
+    category_id: '' as string | number,
     cover_image_id: null as number | null,
     cover_image_caption: '',
     status: 'draft',
@@ -62,6 +71,11 @@ const form = useForm({
     github_url: '',
     telegram_url: '',
     technology_ids: [] as number[],
+    key_features: [] as Array<{
+        title: string;
+        description: string;
+        icon: string;
+    }>,
     gallery: [] as Array<{
         media_id: number;
         order: number;
@@ -70,6 +84,18 @@ const form = useForm({
         original_filename: string;
     }>
 });
+
+const addKeyFeature = () => {
+    form.key_features.push({
+        title: '',
+        description: '',
+        icon: 'Zap'
+    });
+};
+
+const removeKeyFeature = (index: number) => {
+    form.key_features.splice(index, 1);
+};
 
 // Slugify Utility
 const slugify = (text: string) => {
@@ -186,38 +212,66 @@ const submit = () => {
 <template>
     <Head title="Tambah Proyek Baru" />
 
-    <div class="flex h-full flex-1 flex-col gap-6 p-4 md:p-6 overflow-y-auto max-w-5xl mx-auto w-full">
-        <!-- Header -->
-        <div class="flex items-center gap-3 border-b border-sidebar-border/70 pb-4">
-            <Link :href="projectsIndex()">
-                <Button variant="ghost" size="icon" class="h-9 w-9 rounded-lg border border-sidebar-border/70 cursor-pointer">
-                    <ArrowLeft class="h-4 w-4" />
+    <div class="flex h-full flex-1 flex-col gap-6 p-4 md:p-6 overflow-y-auto w-full">
+        <!-- Header & Action Bar -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border/70 pb-4">
+            <div class="flex items-center gap-3">
+                <Link :href="projectsIndex()">
+                    <Button variant="ghost" size="icon" class="h-9 w-9 rounded-xl border border-border/80 cursor-pointer">
+                        <ArrowLeft class="h-4 w-4" />
+                    </Button>
+                </Link>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-foreground">Tambah Proyek Baru</h1>
+                    <p class="text-xs text-muted-foreground">
+                        Buat entri portofolio baru dengan narasi lengkap dan galeri visual dalam satu langkah.
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <Link :href="projectsIndex()">
+                    <Button type="button" variant="outline" class="cursor-pointer h-9 text-xs px-4">
+                        Batal
+                    </Button>
+                </Link>
+                <Button
+                    type="button"
+                    @click="submit"
+                    :disabled="form.processing"
+                    class="bg-primary text-white hover:bg-primary/90 font-semibold cursor-pointer h-9 text-xs px-5 shadow-xs flex items-center gap-2"
+                >
+                    <Check class="h-4 w-4" v-if="!form.processing" />
+                    {{ form.processing ? 'Menyimpan...' : 'Simpan Proyek' }}
                 </Button>
-            </Link>
-            <div>
-                <h1 class="text-xl font-bold tracking-tight">Tambah Proyek Baru</h1>
-                <p class="text-xs text-muted-foreground">
-                    Buat entri portofolio baru dengan narasi lengkap dan galeri visual dalam satu langkah.
-                </p>
             </div>
         </div>
 
         <!-- Custom tabs navigation -->
-        <div class="flex border-b border-sidebar-border/70 gap-2">
+        <div class="flex border-b border-border/70 gap-2 bg-card p-1 rounded-2xl border border-border/60">
             <button
                 type="button"
                 @click="activeTab = 'general'"
-                :class="activeTab === 'general' ? 'border-primary text-primary font-bold' : 'border-transparent text-muted-foreground hover:text-foreground'"
-                class="pb-3 px-3 border-b-2 text-sm font-semibold transition-all cursor-pointer flex items-center gap-2"
+                :class="activeTab === 'general' ? 'bg-primary/10 text-primary font-bold border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'"
+                class="py-2.5 px-4 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-2"
             >
                 <Sparkles class="h-4 w-4" />
                 Informasi Utama
             </button>
             <button
                 type="button"
+                @click="activeTab = 'features'"
+                :class="activeTab === 'features' ? 'bg-primary/10 text-primary font-bold border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'"
+                class="py-2.5 px-4 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-2"
+            >
+                <Star class="h-4 w-4" />
+                Fitur Utama (Key Features)
+            </button>
+            <button
+                type="button"
                 @click="activeTab = 'narrative'"
-                :class="activeTab === 'narrative' ? 'border-primary text-primary font-bold' : 'border-transparent text-muted-foreground hover:text-foreground'"
-                class="pb-3 px-3 border-b-2 text-sm font-semibold transition-all cursor-pointer flex items-center gap-2"
+                :class="activeTab === 'narrative' ? 'bg-primary/10 text-primary font-bold border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'"
+                class="py-2.5 px-4 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-2"
             >
                 <FileText class="h-4 w-4" />
                 Studi Kasus (Detail)
@@ -225,8 +279,8 @@ const submit = () => {
             <button
                 type="button"
                 @click="activeTab = 'gallery'"
-                :class="activeTab === 'gallery' ? 'border-primary text-primary font-bold' : 'border-transparent text-muted-foreground hover:text-foreground'"
-                class="pb-3 px-3 border-b-2 text-sm font-semibold transition-all cursor-pointer flex items-center gap-2"
+                :class="activeTab === 'gallery' ? 'bg-primary/10 text-primary font-bold border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'"
+                class="py-2.5 px-4 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-2"
             >
                 <Images class="h-4 w-4" />
                 Galeri Visual
@@ -239,7 +293,7 @@ const submit = () => {
             <div v-show="activeTab === 'general'" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Left panel: Form fields -->
                 <div class="lg:col-span-2 space-y-6">
-                    <div class="rounded-xl border border-sidebar-border bg-card p-5 space-y-4 shadow-xs">
+                    <div class="rounded-2xl border border-border/70 bg-card p-6 space-y-5 shadow-2xs">
                         <h2 class="text-sm font-bold text-foreground">Informasi Utama</h2>
                         
                         <!-- Title -->
@@ -250,6 +304,7 @@ const submit = () => {
                                 v-model="form.title"
                                 required
                                 placeholder="Contoh: E-Commerce Microservices Architecture"
+                                class="bg-card border-border/80"
                             />
                             <InputError :message="form.errors.title" />
                         </div>
@@ -263,27 +318,38 @@ const submit = () => {
                                 required
                                 @input="isSlugManuallyEdited = true"
                                 placeholder="Contoh: ecommerce-microservices"
-                                class="font-mono text-xs"
+                                class="font-mono text-xs bg-card border-border/80"
                             />
                             <p class="text-[10px] text-muted-foreground">URL unik: domain.com/proyek/<strong>{{ form.slug || 'slug-otomatis' }}</strong></p>
                             <InputError :message="form.errors.slug" />
+                        </div>
+
+                        <!-- Role -->
+                        <div class="grid gap-2">
+                            <Label for="role" class="font-semibold text-xs text-foreground">Role / Tanggung Jawab Pengembang</Label>
+                            <Input
+                                id="role"
+                                v-model="form.role"
+                                placeholder="Contoh: Full-Stack Developer, Lead Backend Engineer"
+                                class="text-xs bg-card border-border/80"
+                            />
+                            <InputError :message="form.errors.role" />
                         </div>
 
                         <!-- Category & Order -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="grid gap-2">
                                 <Label for="category" class="font-semibold text-xs text-foreground">Kategori <span class="text-red-500">*</span></Label>
-                                <select
-                                    id="category"
-                                    v-model="form.category_id"
-                                    required
-                                    class="flex h-9 w-full rounded-md border border-input bg-card px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                                >
-                                    <option value="" disabled>Pilih Kategori</option>
-                                    <option v-for="cat in categories" :key="cat.id" :value="cat.id">
-                                        {{ cat.name }}
-                                    </option>
-                                </select>
+                                <Select :model-value="String(form.category_id)" @update:model-value="(v) => form.category_id = String(v)">
+                                    <SelectTrigger class="h-9 w-full text-xs bg-card border-border/80 font-medium">
+                                        <SelectValue placeholder="Pilih Kategori" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem v-for="cat in categories" :key="cat.id" :value="String(cat.id)">
+                                            {{ cat.name }}
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
                                 <InputError :message="form.errors.category_id" />
                             </div>
 
@@ -295,6 +361,7 @@ const submit = () => {
                                     v-model.number="form.order"
                                     min="0"
                                     required
+                                    class="bg-card border-border/80"
                                 />
                                 <InputError :message="form.errors.order" />
                             </div>
@@ -309,7 +376,7 @@ const submit = () => {
                                 rows="3"
                                 required
                                 placeholder="Tuliskan rangkuman ringkas proyek ini untuk preview card portofolio..."
-                                class="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                                class="flex min-h-[80px] w-full rounded-md border border-border/80 bg-card px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                             ></textarea>
                             <p class="text-[10px] text-muted-foreground text-right">{{ form.short_description.length }}/1000 karakter</p>
                             <InputError :message="form.errors.short_description" />
@@ -317,7 +384,7 @@ const submit = () => {
                     </div>
 
                     <!-- External Links -->
-                    <div class="rounded-xl border border-sidebar-border bg-card p-5 space-y-4 shadow-xs">
+                    <div class="rounded-2xl border border-border/70 bg-card p-6 space-y-5 shadow-2xs">
                         <h2 class="text-sm font-bold text-foreground">Link Eksternal (Opsional)</h2>
                         
                         <div class="space-y-3">
@@ -328,6 +395,7 @@ const submit = () => {
                                     v-model="form.live_url"
                                     type="url"
                                     placeholder="https://example.com"
+                                    class="bg-card border-border/80"
                                 />
                                 <InputError :message="form.errors.live_url" />
                             </div>
@@ -339,6 +407,7 @@ const submit = () => {
                                     v-model="form.github_url"
                                     type="url"
                                     placeholder="https://github.com/username/project"
+                                    class="bg-card border-border/80"
                                 />
                                 <InputError :message="form.errors.github_url" />
                             </div>
@@ -350,6 +419,7 @@ const submit = () => {
                                     v-model="form.telegram_url"
                                     type="url"
                                     placeholder="https://t.me/your_bot"
+                                    class="bg-card border-border/80"
                                 />
                                 <InputError :message="form.errors.telegram_url" />
                             </div>
@@ -360,16 +430,16 @@ const submit = () => {
                 <!-- Right panel: Cover, Status, Technologies -->
                 <div class="space-y-6">
                     <!-- Cover Image Selector -->
-                    <div class="rounded-xl border border-sidebar-border bg-card p-5 space-y-4 shadow-xs flex flex-col justify-between">
+                    <div class="rounded-2xl border border-border/70 bg-card p-6 space-y-5 shadow-2xs flex flex-col justify-between">
                         <div>
                             <h2 class="text-sm font-bold text-foreground">Gambar Cover</h2>
                             
-                            <div class="flex flex-col items-center justify-center border-2 border-dashed border-sidebar-border rounded-xl p-3 min-h-[160px] bg-neutral-50/50 dark:bg-neutral-900/10 mt-3">
-                                <div v-if="selectedCoverMedia" class="w-full relative group rounded-lg overflow-hidden border border-sidebar-border">
+                            <div class="flex flex-col items-center justify-center border-2 border-dashed border-border/80 rounded-xl p-3 min-h-[160px] bg-muted/20 mt-3">
+                                <div v-if="selectedCoverMedia" class="w-full relative group rounded-lg overflow-hidden border border-border/80">
                                     <img
                                         :src="selectedCoverMedia.urls.medium"
                                         alt="Cover preview"
-                                        class="w-full h-32 object-cover"
+                                        class="w-full h-36 object-cover"
                                     />
                                     <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex items-center justify-center gap-2">
                                         <Button type="button" size="sm" variant="secondary" @click="coverMediaOpen = true" class="cursor-pointer">
@@ -381,7 +451,7 @@ const submit = () => {
                                     </div>
                                 </div>
                                 <div v-else class="text-center py-4 flex flex-col items-center gap-2">
-                                    <ImageIcon class="h-8 w-8 text-neutral-400" />
+                                    <ImageIcon class="h-8 w-8 text-muted-foreground/60" />
                                     <p class="text-xs text-muted-foreground">Belum ada cover terpilih</p>
                                     <Button type="button" size="sm" variant="outline" @click="coverMediaOpen = true" class="mt-1 cursor-pointer">
                                         Pilih dari Media Library
@@ -392,62 +462,102 @@ const submit = () => {
                         </div>
 
                         <!-- Cover Image Caption Input -->
-                        <div class="grid gap-1.5 mt-4 border-t border-sidebar-border/50 pt-3" v-if="selectedCoverMedia">
+                        <div class="grid gap-1.5 mt-4 border-t border-border/50 pt-3" v-if="selectedCoverMedia">
                             <Label for="cover_image_caption" class="text-[11px] font-bold text-muted-foreground uppercase">Keterangan Cover (Caption)</Label>
                             <Input
                                 id="cover_image_caption"
                                 v-model="form.cover_image_caption"
                                 placeholder="Contoh: Tampilan dashboard analitik platform."
-                                class="h-8 text-xs bg-card"
+                                class="h-8 text-xs bg-card border-border/80"
                             />
                             <InputError :message="form.errors.cover_image_caption" />
                         </div>
                     </div>
 
                     <!-- Publish Status & Featured Settings -->
-                    <div class="rounded-xl border border-sidebar-border bg-card p-5 space-y-4 shadow-xs">
+                    <div class="rounded-2xl border border-border/70 bg-card p-6 space-y-5 shadow-2xs">
                         <h2 class="text-sm font-bold text-foreground">Status & Pengaturan</h2>
                         
                         <div class="space-y-4">
                             <div class="grid gap-2">
                                 <Label for="status" class="font-semibold text-xs text-foreground">Status Publikasi</Label>
-                                <select
-                                    id="status"
-                                    v-model="form.status"
-                                    class="flex h-9 w-full rounded-md border border-input bg-card px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                                >
-                                    <option value="draft">Draft</option>
-                                    <option value="published">Published</option>
-                                </select>
+                                <Select :model-value="form.status" @update:model-value="(v) => form.status = String(v)">
+                                    <SelectTrigger class="h-9 w-full text-xs bg-card border-border/80 font-medium">
+                                        <SelectValue placeholder="Pilih Status">
+                                            <span class="flex items-center gap-2">
+                                                <span class="h-2 w-2 rounded-full" :class="form.status === 'published' ? 'bg-emerald-500' : 'bg-slate-400'"></span>
+                                                {{ form.status === 'published' ? 'Published' : 'Draft' }}
+                                            </span>
+                                        </SelectValue>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="draft">
+                                            <span class="flex items-center gap-2">
+                                                <span class="h-2 w-2 rounded-full bg-slate-400"></span>
+                                                Draft
+                                            </span>
+                                        </SelectItem>
+                                        <SelectItem value="published">
+                                            <span class="flex items-center gap-2">
+                                                <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                                                Published
+                                            </span>
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
                                 <InputError :message="form.errors.status" />
                             </div>
 
-                            <!-- Featured Project Toggle -->
-                            <label class="flex items-center gap-3 p-3 rounded-lg border border-sidebar-border bg-neutral-50/30 dark:bg-neutral-900/10 cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-900 transition-colors">
+                            <!-- Featured Project Toggle Box -->
+                            <label
+                                class="flex items-center justify-between p-3.5 rounded-xl border transition-all cursor-pointer select-none"
+                                :class="form.is_featured
+                                    ? 'border-amber-500/40 bg-amber-500/10 dark:bg-amber-500/15 shadow-2xs'
+                                    : 'border-border/70 bg-card hover:bg-muted/30'"
+                            >
+                                <div class="flex items-center gap-3">
+                                    <div
+                                        class="h-9 w-9 rounded-xl flex items-center justify-center transition-colors"
+                                        :class="form.is_featured ? 'bg-amber-500 text-white shadow-xs' : 'bg-muted text-muted-foreground'"
+                                    >
+                                        <Star class="h-4.5 w-4.5" :class="{ 'fill-white': form.is_featured }" />
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="text-xs font-bold text-foreground">Proyek Unggulan</span>
+                                        <span class="text-[10px] text-muted-foreground">Tampilkan prioritas di Homepage</span>
+                                    </div>
+                                </div>
                                 <input
                                     type="checkbox"
                                     v-model="form.is_featured"
-                                    class="rounded border-input text-primary focus:ring-primary h-4.5 w-4.5 cursor-pointer"
+                                    class="h-4 w-4 rounded border-border text-amber-500 focus:ring-amber-500 cursor-pointer"
                                 />
-                                <div class="flex flex-col">
-                                    <span class="text-xs font-bold flex items-center gap-1.5 text-foreground">
-                                        <Star class="h-3.5 w-3.5 text-amber-500 fill-amber-500" v-if="form.is_featured" />
-                                        Proyek Unggulan
-                                    </span>
-                                    <span class="text-[10px] text-muted-foreground">Tampilkan prioritas di Homepage</span>
-                                </div>
                             </label>
                             <InputError :message="form.errors.is_featured" />
                         </div>
                     </div>
 
                     <!-- Tech Stack Tagging -->
-                    <div class="rounded-xl border border-sidebar-border bg-card p-5 space-y-4 shadow-xs">
+                    <div class="rounded-2xl border border-border/70 bg-card p-6 space-y-4 shadow-2xs">
                         <div class="flex items-center justify-between">
                             <h2 class="text-sm font-bold text-foreground">Tech Stack Tags</h2>
-                            <span class="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">
+                            <Badge variant="secondary" class="text-[10px] font-bold">
                                 {{ form.technology_ids.length }} terpilih
-                            </span>
+                            </Badge>
+                        </div>
+
+                        <!-- Selected Badges Quick Remove View -->
+                        <div v-if="form.technology_ids.length > 0" class="flex flex-wrap gap-1.5 p-2 rounded-xl bg-muted/20 border border-border/50 max-h-24 overflow-y-auto">
+                            <Badge
+                                v-for="id in form.technology_ids"
+                                :key="id"
+                                variant="secondary"
+                                class="text-[10px] gap-1 bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors pr-1 cursor-pointer"
+                                @click="form.technology_ids = form.technology_ids.filter(tId => tId !== id)"
+                            >
+                                <span>{{ technologies.find(t => t.id === id)?.name || id }}</span>
+                                <X class="h-3 w-3 hover:text-destructive" />
+                            </Badge>
                         </div>
 
                         <!-- Search Tech -->
@@ -456,27 +566,46 @@ const submit = () => {
                             <Input
                                 v-model="techSearch"
                                 placeholder="Cari teknologi..."
-                                class="pl-8 h-8 text-xs bg-muted/40"
+                                class="pl-8 pr-7 h-8 text-xs bg-card border-border/80"
                             />
+                            <button
+                                v-if="techSearch"
+                                @click="techSearch = ''"
+                                class="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-0.5 rounded-full"
+                            >
+                                <X class="h-3 w-3" />
+                            </button>
                         </div>
 
                         <!-- Scrollable checklist grid -->
-                        <div class="border border-sidebar-border rounded-lg max-h-[180px] overflow-y-auto p-2 bg-neutral-50/30 dark:bg-neutral-900/10 space-y-1">
+                        <div class="border border-border/70 rounded-xl max-h-[220px] overflow-y-auto p-1.5 bg-card space-y-1">
                             <label
                                 v-for="tech in filteredTechnologies"
                                 :key="tech.id"
-                                class="flex items-center justify-between p-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md cursor-pointer text-xs"
+                                class="flex items-center justify-between p-2 px-2.5 rounded-lg cursor-pointer text-xs transition-all border"
+                                :class="form.technology_ids.includes(tech.id)
+                                    ? 'bg-primary/10 border-primary/30 text-primary font-semibold'
+                                    : 'border-transparent hover:bg-muted/40 text-foreground'"
                             >
-                                <div class="flex items-center gap-2">
+                                <div class="flex items-center gap-2.5">
                                     <input
                                         type="checkbox"
                                         :value="tech.id"
                                         v-model="form.technology_ids"
-                                        class="rounded border-input text-primary focus:ring-primary h-3.5 w-3.5 cursor-pointer"
+                                        class="rounded border-border text-primary focus:ring-primary h-3.5 w-3.5 cursor-pointer"
                                     />
-                                    <span class="font-medium text-foreground">{{ tech.name }}</span>
+                                    <span>{{ tech.name }}</span>
                                 </div>
-                                <span class="text-[9px] text-muted-foreground uppercase font-semibold bg-neutral-100 dark:bg-neutral-800 px-1.5 py-0.5 rounded">
+                                <span
+                                    class="text-[9px] uppercase font-bold px-2 py-0.5 rounded-full border"
+                                    :class="{
+                                        'bg-sky-500/10 text-sky-600 border-sky-500/20 dark:text-sky-400': (tech.category || '').toLowerCase().includes('front'),
+                                        'bg-emerald-500/10 text-emerald-600 border-emerald-500/20 dark:text-emerald-400': (tech.category || '').toLowerCase().includes('back'),
+                                        'bg-amber-500/10 text-amber-600 border-amber-500/20 dark:text-amber-400': (tech.category || '').toLowerCase().includes('data'),
+                                        'bg-purple-500/10 text-purple-600 border-purple-500/20 dark:text-purple-400': (tech.category || '').toLowerCase().includes('devops') || (tech.category || '').toLowerCase().includes('tool'),
+                                        'bg-slate-500/10 text-slate-600 border-slate-500/20 dark:text-slate-400': !(tech.category || '').toLowerCase().match(/front|back|data|devops|tool/)
+                                    }"
+                                >
                                     {{ tech.category }}
                                 </span>
                             </label>
@@ -485,6 +614,83 @@ const submit = () => {
                             </div>
                         </div>
                         <InputError :message="form.errors.technology_ids" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: KEY FEATURES -->
+            <div v-show="activeTab === 'features'" class="space-y-4">
+                <div class="rounded-xl border border-sidebar-border bg-card p-5 space-y-6 shadow-xs">
+                    <div class="flex items-center justify-between pb-3 border-b border-sidebar-border/70">
+                        <div>
+                            <h2 class="text-sm font-bold text-foreground">Fitur Utama (Key Features)</h2>
+                            <p class="text-[11px] text-muted-foreground mt-0.5">Kelola poin-poin fitur unggulan proyek yang ditampilkan di halaman detail.</p>
+                        </div>
+                        <Button type="button" size="sm" @click="addKeyFeature" class="flex items-center gap-1.5 cursor-pointer">
+                            <Plus class="h-4 w-4" />
+                            Tambah Fitur
+                        </Button>
+                    </div>
+
+                    <!-- List of Key Features -->
+                    <div v-if="form.key_features.length > 0" class="space-y-4">
+                        <div
+                            v-for="(feature, index) in form.key_features"
+                            :key="index"
+                            class="p-4 rounded-lg border border-sidebar-border/80 bg-neutral-50/50 dark:bg-neutral-900/40 space-y-4"
+                        >
+                            <div class="flex items-center justify-between gap-4">
+                                <span class="text-xs font-bold text-muted-foreground">Fitur #{{ index + 1 }}</span>
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    @click="removeKeyFeature(index)"
+                                    class="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 h-8 text-xs cursor-pointer"
+                                >
+                                    <Trash2 class="h-3.5 w-3.5 mr-1" />
+                                    Hapus Fitur
+                                </Button>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="md:col-span-2 space-y-1.5">
+                                    <Label class="text-xs font-semibold">Judul Fitur <span class="text-red-500">*</span></Label>
+                                    <Input
+                                        v-model="feature.title"
+                                        placeholder="misal: High Performance"
+                                        class="h-9 text-xs"
+                                        required
+                                    />
+                                </div>
+                                <div class="space-y-1.5">
+                                    <Label class="text-xs font-semibold">Nama Ikon (Lucide Icon)</Label>
+                                    <Input
+                                        v-model="feature.icon"
+                                        placeholder="misal: Zap, Search, Code2, Smartphone"
+                                        class="h-9 text-xs"
+                                    />
+                                </div>
+                                <div class="md:col-span-3 space-y-1.5">
+                                    <Label class="text-xs font-semibold">Deskripsi Singkat Fitur</Label>
+                                    <textarea
+                                        v-model="feature.description"
+                                        rows="2"
+                                        placeholder="Penjelasan ringkas mengenai keunggulan fitur ini..."
+                                        class="w-full px-3 py-2 rounded-md border border-input bg-background text-xs focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
+                                    ></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-else class="py-8 text-center border border-dashed border-sidebar-border rounded-lg">
+                        <Star class="h-8 w-8 mx-auto text-muted-foreground/50 mb-2" />
+                        <p class="text-xs font-medium text-muted-foreground">Belum ada fitur utama yang ditambahkan.</p>
+                        <Button type="button" variant="outline" size="sm" @click="addKeyFeature" class="mt-3 text-xs cursor-pointer">
+                            <Plus class="h-3.5 w-3.5 mr-1" />
+                            Tambah Fitur Pertama
+                        </Button>
                     </div>
                 </div>
             </div>

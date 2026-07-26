@@ -26,7 +26,7 @@
     </div>
 
     <!-- ─── FILTER & SORT BAR SECTION ───────────────────────────────────── -->
-    <div ref="filterSection" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 opacity-0 translate-y-3">
+    <div ref="filterSection" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 opacity-0 translate-y-3 relative z-30">
       <div class="flex flex-col lg:flex-row gap-6 lg:items-center justify-between pb-6 border-b border-zinc-200/50 dark:border-zinc-800/40">
         <!-- Dynamic Category Pills (Horizontal Scrollable) -->
         <div class="flex flex-nowrap items-center gap-2.5 overflow-x-auto pb-3 scrollbar-none w-full lg:w-auto flex-1 lg:flex-none pr-4">
@@ -54,20 +54,11 @@
 
         <!-- Sort selection dropdown -->
         <div class="flex items-center gap-3 w-full lg:w-auto justify-end flex-shrink-0">
-          <div class="relative w-36 flex-shrink-0">
-            <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 pointer-events-none text-zinc-450">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                <path d="m6 9 6 6 6-6"/>
-              </svg>
-            </span>
-            <select 
-              v-model="sortBy" 
-              class="w-full !pl-4 !pr-10 !py-2.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs font-semibold text-zinc-750 dark:text-zinc-300 appearance-none focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple/30 transition-all duration-300 cursor-pointer shadow-xs"
-            >
-              <option value="latest">Terbaru</option>
-              <option value="oldest">Terlama</option>
-            </select>
-          </div>
+          <UiSelectFilter 
+            v-model="sortBy" 
+            :options="sortOptions" 
+            class="w-36 flex-shrink-0"
+          />
         </div>
       </div>
     </div>
@@ -352,6 +343,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch, nextTick } from 'vue'
+import UiSelectFilter from '~/components/ui/SelectFilter.vue'
 
 definePageMeta({ layout: 'default' })
 
@@ -384,6 +376,11 @@ const activeCategory = ref((route.query.category as string) || 'all')
 const searchInput = ref((route.query.q as string) || '')
 const searchQuery = ref((route.query.q as string) || '')
 const sortBy = ref((route.query.sort as string) || 'latest')
+
+const sortOptions = [
+  { label: 'Terbaru', value: 'latest' },
+  { label: 'Terlama', value: 'oldest' },
+]
 
 // DOM Refs for animations
 const heroSection = ref<HTMLElement | null>(null)

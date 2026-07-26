@@ -17,9 +17,7 @@ class ProcessImageJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(public Media $media)
-    {
-    }
+    public function __construct(public Media $media) {}
 
     /**
      * Execute the job.
@@ -34,20 +32,20 @@ class ProcessImageJob implements ShouldQueue
         }
 
         $originalPath = $this->media->storage_path;
-        if (!$disk->exists($originalPath)) {
+        if (! $disk->exists($originalPath)) {
             return;
         }
 
         try {
             $absolutePath = $disk->path($originalPath);
-            $manager = new ImageManager(new Driver());
+            $manager = new ImageManager(new Driver);
 
             // 1. Convert original to WebP (main image file)
             $img = $manager->decode($absolutePath);
             $webpData = $img->encodeUsingFileExtension('webp', 80);
 
             $baseName = pathinfo($originalPath, PATHINFO_FILENAME);
-            $webpPath = 'webp/' . $baseName . '.webp';
+            $webpPath = 'webp/'.$baseName.'.webp';
             $disk->put($webpPath, (string) $webpData);
 
             // 2. Generate variants (thumbnail, medium, large)
@@ -89,7 +87,7 @@ class ProcessImageJob implements ShouldQueue
             ]);
 
         } catch (\Throwable $e) {
-            logger()->error('Failed to process image ID ' . $this->media->id . ': ' . $e->getMessage());
+            logger()->error('Failed to process image ID '.$this->media->id.': '.$e->getMessage());
             throw $e;
         }
     }

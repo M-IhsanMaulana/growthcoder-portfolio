@@ -22,6 +22,13 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import InputError from '@/components/InputError.vue';
 import {
+    Select,
+    SelectTrigger,
+    SelectValue,
+    SelectContent,
+    SelectItem,
+} from '@/components/ui/select';
+import {
     Plus,
     Search,
     Grid,
@@ -40,7 +47,8 @@ import {
     HelpCircle,
     Layers,
     BookOpen,
-    FolderPlus
+    FolderPlus,
+    X
 } from '@lucide/vue';
 import { index as skillsIndex } from '@/routes/skills';
 
@@ -450,7 +458,7 @@ const toggleItemFeatured = (item: any) => {
         </div>
 
         <!-- Controls -->
-        <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between bg-card p-4 rounded-xl border border-border/60 shadow-xs">
+        <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between bg-card p-4 rounded-2xl border border-border/70 shadow-2xs">
             <div class="flex flex-col gap-3 sm:flex-row sm:items-center flex-1">
                 <!-- Search -->
                 <div class="relative w-full sm:max-w-xs">
@@ -458,23 +466,32 @@ const toggleItemFeatured = (item: any) => {
                     <Input
                         v-model="listSearch"
                         placeholder="Cari item keahlian..."
-                        class="pl-9"
+                        class="pl-9 pr-8 bg-background border-border/80 h-9 text-xs"
                     />
+                    <button
+                        v-if="listSearch"
+                        @click="listSearch = ''"
+                        class="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-0.5 rounded-full"
+                    >
+                        <X class="h-3.5 w-3.5" />
+                    </button>
                 </div>
 
                 <!-- Level Filters -->
-                <div class="flex items-center gap-1.5">
-                    <Award class="h-3.5 w-3.5 text-muted-foreground" />
-                    <select
-                        v-model="levelFilter"
-                        class="text-xs rounded-lg border border-input bg-card px-2.5 py-1.5 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                    >
-                        <option value="all">Semua Level</option>
-                        <option v-for="lvl in levels" :key="lvl.value" :value="lvl.value">
+                <Select :model-value="String(levelFilter)" @update:model-value="(v) => levelFilter = String(v)">
+                    <SelectTrigger class="h-9 min-w-[140px] text-xs bg-background border-border/80 font-medium">
+                        <div class="flex items-center gap-1.5 truncate">
+                            <Award class="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                            <SelectValue placeholder="Semua Level" />
+                        </div>
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">Semua Level</SelectItem>
+                        <SelectItem v-for="lvl in levels" :key="lvl.value" :value="lvl.value">
                             {{ lvl.label }}
-                        </option>
-                    </select>
-                </div>
+                        </SelectItem>
+                    </SelectContent>
+                </Select>
             </div>
 
             <!-- Featured Toggle -->
@@ -491,8 +508,8 @@ const toggleItemFeatured = (item: any) => {
         </div>
 
         <!-- Warning Drag & Drop disabled when filtered -->
-        <div v-if="isFilterActive" class="p-3 bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200/50 dark:border-amber-900/40 rounded-lg text-xs text-amber-700 dark:text-amber-300 flex items-center gap-2">
-            <AlertTriangle class="h-4 w-4 shrink-0" />
+        <div v-if="isFilterActive" class="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-xs text-amber-700 dark:text-amber-300 flex items-center gap-2">
+            <AlertTriangle class="h-4 w-4 shrink-0 text-amber-500" />
             <span>Fungsi drag-and-drop untuk mengurutkan dinonaktifkan sementara filter pencarian aktif.</span>
         </div>
 
@@ -505,7 +522,7 @@ const toggleItemFeatured = (item: any) => {
                 @dragstart="onGroupDragStart(groupIdx, $event)"
                 @dragover.prevent="onGroupDragOver(groupIdx, $event)"
                 @dragend="onGroupDragEnd"
-                class="group/card relative rounded-xl border border-border/60 bg-card p-5 shadow-xs transition-all duration-200"
+                class="group/card relative rounded-2xl border border-border/70 bg-card p-5 shadow-2xs transition-all duration-200"
                 :class="{
                     'opacity-40 bg-muted/20': groupIdx === draggedGroupIndex,
                     'border-t-2 border-t-primary': groupIdx === dragOverGroupIndex && groupIdx !== draggedGroupIndex
@@ -515,7 +532,7 @@ const toggleItemFeatured = (item: any) => {
                 <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-border/40 pb-3 mb-4">
                     <div class="flex items-center gap-2">
                         <!-- Group Drag handle -->
-                        <div v-if="!isFilterActive" class="text-muted-foreground/40 hover:text-foreground cursor-grab active:cursor-grabbing p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800">
+                        <div v-if="!isFilterActive" class="text-muted-foreground/40 hover:text-foreground cursor-grab active:cursor-grabbing p-1 rounded hover:bg-muted/50">
                             <GripVertical class="h-4.5 w-4.5" />
                         </div>
                         <div>
@@ -583,7 +600,8 @@ const toggleItemFeatured = (item: any) => {
                                 @dragstart="onItemDragStart(group.id, itemIdx, $event)"
                                 @dragover.prevent="onItemDragOver(group.id, itemIdx, $event)"
                                 @dragend="onItemDragEnd(group.id)"
-                                class="hover:bg-muted/10 transition-colors duration-150 border-l-2"
+                                @click="openEditItem(item)"
+                                class="hover:bg-muted/20 transition-colors duration-150 border-l-2 cursor-pointer"
                                 :class="{
                                     'opacity-40 bg-muted/20': itemIdx === draggedItemIndex && activeGroupDragId === group.id,
                                     'border-l-primary bg-primary/5': itemIdx === dragOverItemIndex && draggedItemIndex !== itemIdx && activeGroupDragId === group.id,
@@ -591,7 +609,7 @@ const toggleItemFeatured = (item: any) => {
                                 }"
                             >
                                 <!-- Item drag handle -->
-                                <td class="p-3 text-center" v-if="!isFilterActive">
+                                <td class="p-3 text-center" v-if="!isFilterActive" @click.stop>
                                     <div class="flex items-center justify-center text-muted-foreground/40 hover:text-foreground cursor-grab active:cursor-grabbing p-1 rounded">
                                         <GripVertical class="h-3.5 w-3.5" />
                                     </div>
@@ -653,7 +671,7 @@ const toggleItemFeatured = (item: any) => {
                                 </td>
 
                                 <!-- Featured Status -->
-                                <td class="p-3 text-center">
+                                <td class="p-3 text-center" @click.stop>
                                     <button
                                         type="button"
                                         @click="toggleItemFeatured(item)"
@@ -669,12 +687,12 @@ const toggleItemFeatured = (item: any) => {
                                 </td>
 
                                 <!-- Action Buttons -->
-                                <td class="p-3 text-right">
+                                <td class="p-3 text-right" @click.stop>
                                     <div class="flex items-center justify-end gap-1">
                                         <Button
                                             size="icon"
                                             variant="ghost"
-                                            class="h-7 w-7 text-neutral-500 hover:text-primary hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer"
+                                            class="h-7 w-7 text-muted-foreground hover:text-primary hover:bg-primary/10 cursor-pointer"
                                             @click="openEditItem(item)"
                                             title="Edit Item"
                                         >
@@ -683,7 +701,7 @@ const toggleItemFeatured = (item: any) => {
                                         <Button
                                             size="icon"
                                             variant="ghost"
-                                            class="h-7 w-7 text-neutral-500 hover:text-destructive hover:bg-red-50 dark:hover:bg-red-950/20 cursor-pointer"
+                                            class="h-7 w-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10 cursor-pointer"
                                             @click="confirmDeleteItem(item)"
                                             title="Hapus Item"
                                         >

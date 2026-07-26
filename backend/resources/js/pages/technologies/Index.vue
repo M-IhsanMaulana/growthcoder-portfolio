@@ -277,8 +277,15 @@ const toggleFeatured = (tech: any) => {
                     <Input
                         v-model="listSearch"
                         placeholder="Cari teknologi..."
-                        class="pl-9"
+                        class="pl-9 pr-8 bg-card border-border/80 h-9 text-xs"
                     />
+                    <button
+                        v-if="listSearch"
+                        @click="listSearch = ''"
+                        class="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-0.5 rounded-full"
+                    >
+                        <X class="h-3.5 w-3.5" />
+                    </button>
                 </div>
 
                 <!-- Category Pills Filter -->
@@ -352,13 +359,14 @@ const toggleFeatured = (tech: any) => {
                 <div
                     v-for="tech in filteredTechnologies"
                     :key="tech.id"
-                    class="group relative flex flex-col justify-between overflow-hidden rounded-xl border border-border/60 bg-card p-5 shadow-xs hover:shadow-md hover:border-primary/40 hover:-translate-y-0.5 transition-all duration-200"
+                    @click="openEdit(tech)"
+                    class="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border/70 bg-card p-5 shadow-2xs hover:shadow-md hover:border-primary/40 transition-all duration-200 cursor-pointer"
                 >
                     <div>
                         <!-- Header inside Card: Logo & Action Float -->
                         <div class="flex items-start justify-between gap-3 mb-4">
                             <!-- Logo / Placeholder -->
-                            <div class="h-12 w-12 shrink-0 rounded-xl overflow-hidden border border-border/50 bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center">
+                            <div class="h-12 w-12 shrink-0 rounded-xl overflow-hidden border border-border/60 bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
                                 <img
                                     v-if="tech.logo?.urls?.thumbnail"
                                     :src="tech.logo.urls.thumbnail"
@@ -373,11 +381,11 @@ const toggleFeatured = (tech: any) => {
                             </div>
 
                             <!-- Star Featured and Actions -->
-                            <div class="flex items-center gap-1">
+                            <div class="flex items-center gap-1" @click.stop>
                                 <button
                                     type="button"
                                     @click="toggleFeatured(tech)"
-                                    class="p-1.5 rounded-lg text-neutral-400 hover:text-amber-500 transition-colors cursor-pointer"
+                                    class="p-1.5 rounded-lg text-muted-foreground hover:text-amber-500 transition-colors cursor-pointer"
                                     :title="tech.is_featured ? 'Hapus dari Unggulan' : 'Jadikan Unggulan'"
                                 >
                                     <Star class="h-4 w-4" :class="{ 'fill-amber-400 text-amber-400': tech.is_featured }" />
@@ -385,7 +393,7 @@ const toggleFeatured = (tech: any) => {
                                 <button
                                     type="button"
                                     @click="openEdit(tech)"
-                                    class="p-1.5 rounded-lg text-neutral-400 hover:text-primary hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer"
+                                    class="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors cursor-pointer"
                                     title="Edit Teknologi"
                                 >
                                     <Edit2 class="h-3.5 w-3.5" />
@@ -393,7 +401,7 @@ const toggleFeatured = (tech: any) => {
                                 <button
                                     type="button"
                                     @click="confirmDelete(tech)"
-                                    class="p-1.5 rounded-lg text-neutral-400 hover:text-destructive hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors cursor-pointer"
+                                    class="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
                                     title="Hapus Teknologi"
                                 >
                                     <Trash2 class="h-3.5 w-3.5" />
@@ -423,7 +431,7 @@ const toggleFeatured = (tech: any) => {
                     </div>
 
                     <!-- Footer Details: Relations & External Link -->
-                    <div class="flex items-center justify-between border-t border-border/50 pt-3 mt-4 text-[11px] text-muted-foreground">
+                    <div class="flex items-center justify-between border-t border-border/50 pt-3 mt-4 text-[11px] text-muted-foreground" @click.stop>
                         <div class="flex gap-2">
                             <span>Proyek: <strong class="text-foreground">{{ tech.projects_count }}</strong></span>
                             <span>•</span>
@@ -443,11 +451,11 @@ const toggleFeatured = (tech: any) => {
             </div>
 
             <!-- Table Mode -->
-            <div v-else class="overflow-hidden rounded-xl border border-border/60 bg-card shadow-xs">
+            <div v-else class="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-2xs">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="border-b border-border/60 bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                            <tr class="border-b border-border/70 bg-muted/20 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                                 <th class="p-4 w-[80px] text-center">Logo</th>
                                 <th class="p-4">Nama</th>
                                 <th class="p-4">Kategori</th>
@@ -458,8 +466,13 @@ const toggleFeatured = (tech: any) => {
                                 <th class="p-4 w-[120px] text-right">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-border/50 text-sm">
-                            <tr v-for="tech in filteredTechnologies" :key="tech.id" class="hover:bg-muted/10 transition-colors duration-150">
+                        <tbody class="divide-y divide-border/60 text-sm">
+                            <tr
+                                v-for="tech in filteredTechnologies"
+                                :key="tech.id"
+                                @click="openEdit(tech)"
+                                class="hover:bg-muted/20 transition-colors duration-150 cursor-pointer"
+                            >
                                 <!-- Logo -->
                                 <td class="p-4 text-center">
                                     <div class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-neutral-50 dark:bg-neutral-900 overflow-hidden">

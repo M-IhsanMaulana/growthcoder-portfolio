@@ -79,7 +79,7 @@
       >
         <template #header>
           <!-- Card Cover Image -->
-          <div class="aspect-[4/3] w-full bg-gray-100 dark:bg-zinc-900 overflow-hidden relative">
+          <div class="aspect-video w-full bg-gray-100 dark:bg-zinc-900 overflow-hidden relative">
             <NuxtImg 
               v-if="project.cover_image?.urls?.medium || project.cover_image?.urls?.original"
               :src="project.cover_image.urls.medium || project.cover_image.urls.original" 
@@ -124,8 +124,14 @@
               <span 
                 v-for="tech in project.technologies.slice(0, 3)" 
                 :key="tech.id"
-                class="px-2.5 py-1 bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-350 text-[10px] font-semibold rounded-md border border-zinc-150/20 dark:border-zinc-800/10"
+                class="px-2 py-0.5 bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-350 text-[10px] font-semibold rounded-md border border-zinc-150/20 dark:border-zinc-800/10 flex items-center gap-1.5"
               >
+                <NuxtImg
+                  v-if="tech.logo?.urls?.thumbnail || tech.logo?.urls?.medium || tech.logo?.urls?.original"
+                  :src="tech.logo?.urls?.thumbnail || tech.logo?.urls?.medium || tech.logo?.urls?.original"
+                  :alt="tech.name"
+                  class="w-3.5 h-3.5 object-contain"
+                />
                 {{ tech.name }}
               </span>
             </div>
@@ -162,7 +168,7 @@
         }"
       >
         <template #header>
-          <Skeleton class="w-full aspect-[4/3] rounded-t-3xl" />
+          <Skeleton class="w-full aspect-video rounded-t-3xl" />
         </template>
         
         <template #content>

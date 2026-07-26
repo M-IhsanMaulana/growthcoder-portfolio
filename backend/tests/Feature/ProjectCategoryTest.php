@@ -3,7 +3,6 @@
 use App\Models\ProjectCategory;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 
 test('guests cannot access categories index', function () {
     $response = $this->get(route('project-categories.index'));
@@ -142,7 +141,7 @@ test('administrator cannot delete a category that is in use by projects', functi
         ->delete(route('project-categories.destroy', $category));
 
     $response->assertRedirect();
-    
+
     // Category should still be in database
     $this->assertDatabaseHas('project_categories', [
         'id' => $category->id,
@@ -169,7 +168,7 @@ test('administrator can swap/move display order of categories', function () {
         ]);
 
     $response->assertRedirect();
-    
+
     $cat1->refresh();
     $cat2->refresh();
 

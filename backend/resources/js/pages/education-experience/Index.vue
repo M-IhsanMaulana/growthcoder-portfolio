@@ -421,25 +421,27 @@ const confirmDelete = () => {
         <!-- ================================================================
              TABS BAR & ACTIONS
         ================================================================ -->
-        <div class="flex flex-col gap-4 border-b border-border pb-3 sm:flex-row sm:items-center sm:justify-between">
+        <div class="flex flex-col gap-4 border-b border-border/70 pb-4 sm:flex-row sm:items-center sm:justify-between">
             <!-- Tabs selection -->
-            <div class="flex gap-2">
+            <div class="flex bg-card p-1 rounded-2xl border border-border/60 gap-1">
                 <button
                     @click="activeTab = 'experience'"
-                    class="px-4 py-2 text-sm font-semibold border-b-2 -mb-[13px] transition-all duration-150 cursor-pointer"
+                    class="px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-2"
                     :class="activeTab === 'experience'
-                        ? 'border-primary text-primary font-bold'
-                        : 'border-transparent text-muted-foreground hover:text-foreground'"
+                        ? 'bg-primary/10 text-primary font-bold border-b-2 border-primary'
+                        : 'text-muted-foreground hover:text-foreground'"
                 >
+                    <Briefcase class="h-4 w-4" />
                     Pengalaman Kerja
                 </button>
                 <button
                     @click="activeTab = 'education'"
-                    class="px-4 py-2 text-sm font-semibold border-b-2 -mb-[13px] transition-all duration-150 cursor-pointer"
+                    class="px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-2"
                     :class="activeTab === 'education'
-                        ? 'border-primary text-primary font-bold'
-                        : 'border-transparent text-muted-foreground hover:text-foreground'"
+                        ? 'bg-primary/10 text-primary font-bold border-b-2 border-primary'
+                        : 'text-muted-foreground hover:text-foreground'"
                 >
+                    <GraduationCap class="h-4 w-4" />
                     Pendidikan
                 </button>
             </div>
@@ -452,8 +454,15 @@ const confirmDelete = () => {
                     <Input
                         v-model="searchQuery"
                         :placeholder="activeTab === 'experience' ? 'Cari pengalaman...' : 'Cari pendidikan...'"
-                        class="pl-9"
+                        class="pl-9 pr-8 bg-card border-border/80 h-9 text-xs"
                     />
+                    <button
+                        v-if="searchQuery"
+                        @click="searchQuery = ''"
+                        class="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-0.5 rounded-full"
+                    >
+                        <X class="h-3.5 w-3.5" />
+                    </button>
                 </div>
 
                 <!-- Add Button -->
@@ -468,14 +477,14 @@ const confirmDelete = () => {
              EXPERIENCE TAB CONTENT
         ================================================================ -->
         <div v-if="activeTab === 'experience'" class="space-y-4">
-            <div class="rounded-xl border border-sidebar-border/70 bg-card overflow-hidden shadow-sm">
+            <div class="rounded-2xl border border-border/70 bg-card overflow-hidden shadow-2xs">
                 <!-- Table header -->
-                <div class="grid grid-cols-[auto_1fr_200px_100px_100px] items-center gap-4 border-b border-sidebar-border/50 bg-muted/30 px-4 py-3">
+                <div class="grid grid-cols-[auto_1fr_200px_100px_100px] items-center gap-4 border-b border-border/70 bg-muted/20 px-4 py-3">
                     <div class="w-8"></div>
-                    <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Posisi & Perusahaan</span>
-                    <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Periode</span>
-                    <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground text-center">Urutan</span>
-                    <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground text-right">Aksi</span>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Posisi & Perusahaan</span>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Periode</span>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-center">Urutan</span>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-right">Aksi</span>
                 </div>
 
                 <!-- Empty state -->
@@ -507,15 +516,17 @@ const confirmDelete = () => {
                     @dragover="onDragOver(index, $event)"
                     @dragend="onDragEnd"
                     @dragleave="onDragLeave"
-                    class="grid grid-cols-[auto_1fr_200px_100px_100px] items-center gap-4 border-b border-sidebar-border/30 px-4 py-4 transition-all duration-150 last:border-b-0"
+                    @click="openEdit(exp)"
+                    class="grid grid-cols-[auto_1fr_200px_100px_100px] items-center gap-4 border-b border-border/40 px-4 py-4 transition-all duration-150 last:border-b-0 cursor-pointer"
                     :class="{
                         'bg-primary/5 scale-[1.01] shadow-md': dragOverIndex === index && draggedIndex !== index,
                         'opacity-40': draggedIndex === index,
-                        'hover:bg-muted/30': dragOverIndex !== index || draggedIndex === index,
+                        'hover:bg-muted/20': dragOverIndex !== index || draggedIndex === index,
                     }"
                 >
                     <!-- Drag handle -->
                     <div
+                        @click.stop
                         class="flex w-8 items-center justify-center"
                         :class="searchQuery ? 'cursor-not-allowed opacity-30' : 'cursor-grab text-muted-foreground hover:text-foreground active:cursor-grabbing'"
                     >
@@ -524,7 +535,7 @@ const confirmDelete = () => {
 
                     <!-- Experience Info -->
                     <div class="flex items-center gap-3 min-w-0">
-                        <div class="h-10 w-10 shrink-0 rounded-xl overflow-hidden border border-border bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center">
+                        <div class="h-10 w-10 shrink-0 rounded-xl overflow-hidden border border-border/60 bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
                             <img
                                 v-if="exp.logo?.urls?.thumbnail"
                                 :src="exp.logo.urls.thumbnail"
@@ -561,11 +572,11 @@ const confirmDelete = () => {
                     </div>
 
                     <!-- Actions -->
-                    <div class="flex items-center justify-end gap-1.5">
+                    <div class="flex items-center justify-end gap-1.5" @click.stop>
                         <Button
                             variant="ghost"
                             size="icon"
-                            class="h-8 w-8 text-muted-foreground hover:text-foreground"
+                            class="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10"
                             title="Edit"
                             @click="openEdit(exp)"
                         >
@@ -574,7 +585,7 @@ const confirmDelete = () => {
                         <Button
                             variant="ghost"
                             size="icon"
-                            class="h-8 w-8 text-muted-foreground hover:text-destructive"
+                            class="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                             title="Hapus"
                             @click="openDelete(exp)"
                         >
@@ -592,14 +603,14 @@ const confirmDelete = () => {
              EDUCATION TAB CONTENT
         ================================================================ -->
         <div v-else-if="activeTab === 'education'" class="space-y-4">
-            <div class="rounded-xl border border-sidebar-border/70 bg-card overflow-hidden shadow-sm">
+            <div class="rounded-2xl border border-border/70 bg-card overflow-hidden shadow-2xs">
                 <!-- Table header -->
-                <div class="grid grid-cols-[auto_1fr_200px_100px_100px] items-center gap-4 border-b border-sidebar-border/50 bg-muted/30 px-4 py-3">
+                <div class="grid grid-cols-[auto_1fr_200px_100px_100px] items-center gap-4 border-b border-border/70 bg-muted/20 px-4 py-3">
                     <div class="w-8"></div>
-                    <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Institusi & Gelar</span>
-                    <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Periode</span>
-                    <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground text-center">Urutan</span>
-                    <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground text-right">Aksi</span>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Institusi & Gelar</span>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Periode</span>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-center">Urutan</span>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-right">Aksi</span>
                 </div>
 
                 <!-- Empty state -->
@@ -631,15 +642,17 @@ const confirmDelete = () => {
                     @dragover="onDragOver(index, $event)"
                     @dragend="onDragEnd"
                     @dragleave="onDragLeave"
-                    class="grid grid-cols-[auto_1fr_200px_100px_100px] items-center gap-4 border-b border-sidebar-border/30 px-4 py-4 transition-all duration-150 last:border-b-0"
+                    @click="openEdit(edu)"
+                    class="grid grid-cols-[auto_1fr_200px_100px_100px] items-center gap-4 border-b border-border/40 px-4 py-4 transition-all duration-150 last:border-b-0 cursor-pointer"
                     :class="{
                         'bg-primary/5 scale-[1.01] shadow-md': dragOverIndex === index && draggedIndex !== index,
                         'opacity-40': draggedIndex === index,
-                        'hover:bg-muted/30': dragOverIndex !== index || draggedIndex === index,
+                        'hover:bg-muted/20': dragOverIndex !== index || draggedIndex === index,
                     }"
                 >
                     <!-- Drag handle -->
                     <div
+                        @click.stop
                         class="flex w-8 items-center justify-center"
                         :class="searchQuery ? 'cursor-not-allowed opacity-30' : 'cursor-grab text-muted-foreground hover:text-foreground active:cursor-grabbing'"
                     >
@@ -648,7 +661,7 @@ const confirmDelete = () => {
 
                     <!-- Education Info -->
                     <div class="flex items-center gap-3 min-w-0">
-                        <div class="h-10 w-10 shrink-0 rounded-xl overflow-hidden border border-border bg-neutral-50 dark:bg-neutral-900 flex items-center justify-center">
+                        <div class="h-10 w-10 shrink-0 rounded-xl overflow-hidden border border-border/60 bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
                             <img
                                 v-if="edu.logo?.urls?.thumbnail"
                                 :src="edu.logo.urls.thumbnail"
@@ -690,11 +703,11 @@ const confirmDelete = () => {
                     </div>
 
                     <!-- Actions -->
-                    <div class="flex items-center justify-end gap-1.5">
+                    <div class="flex items-center justify-end gap-1.5" @click.stop>
                         <Button
                             variant="ghost"
                             size="icon"
-                            class="h-8 w-8 text-muted-foreground hover:text-foreground"
+                            class="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10"
                             title="Edit"
                             @click="openEdit(edu)"
                         >
@@ -703,7 +716,7 @@ const confirmDelete = () => {
                         <Button
                             variant="ghost"
                             size="icon"
-                            class="h-8 w-8 text-muted-foreground hover:text-destructive"
+                            class="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                             title="Hapus"
                             @click="openDelete(edu)"
                         >
@@ -722,54 +735,57 @@ const confirmDelete = () => {
          SHEET FORM: EXPERIENCE
     ================================================================ -->
     <Sheet v-model:open="expSheetOpen">
-        <SheetContent side="right" class="w-full sm:max-w-2xl overflow-y-auto flex flex-col gap-0 p-0">
+        <SheetContent side="right" class="w-full sm:max-w-2xl overflow-y-auto flex flex-col gap-6 p-6">
             <!-- Header -->
-            <SheetHeader class="border-b border-sidebar-border/50 px-6 py-5">
-                <SheetTitle class="text-lg font-bold">
+            <SheetHeader class="border-b border-border/70 pb-4 text-left">
+                <SheetTitle class="text-lg font-bold tracking-tight text-foreground">
                     {{ isEditing ? 'Edit Riwayat Pengalaman Kerja' : 'Tambah Pengalaman Kerja Baru' }}
                 </SheetTitle>
-                <SheetDescription class="text-sm text-muted-foreground">
+                <SheetDescription class="text-xs text-muted-foreground">
                     Isi detail rekam jejak karir profesional Anda pada form di bawah.
                 </SheetDescription>
             </SheetHeader>
 
             <!-- Form body -->
-            <form @submit.prevent="submitExpForm" class="flex-1 space-y-5 px-6 py-6">
+            <form @submit.prevent="submitExpForm" class="flex-1 space-y-5">
                 <!-- Company -->
-                <div class="grid gap-2">
-                    <Label for="exp-company" class="text-xs font-bold text-foreground">
+                <div class="grid gap-1.5">
+                    <Label for="exp-company" class="text-xs font-semibold text-foreground">
                         Nama Perusahaan <span class="text-destructive">*</span>
                     </Label>
                     <Input
                         id="exp-company"
                         v-model="expForm.company"
                         placeholder="Contoh: PT. Solusi Digital Indonesia"
+                        class="h-9 text-xs bg-card border-border/80"
                         required
                     />
                     <InputError :message="expForm.errors.company" />
                 </div>
 
                 <!-- Title/Position -->
-                <div class="grid gap-2">
-                    <Label for="exp-title" class="text-xs font-bold text-foreground">
+                <div class="grid gap-1.5">
+                    <Label for="exp-title" class="text-xs font-semibold text-foreground">
                         Jabatan / Posisi <span class="text-destructive">*</span>
                     </Label>
                     <Input
                         id="exp-title"
                         v-model="expForm.title_position"
                         placeholder="Contoh: Full-Stack Developer"
+                        class="h-9 text-xs bg-card border-border/80"
                         required
                     />
                     <InputError :message="expForm.errors.title_position" />
                 </div>
 
                 <!-- Location -->
-                <div class="grid gap-2">
-                    <Label for="exp-location" class="text-xs font-bold text-foreground">Lokasi</Label>
+                <div class="grid gap-1.5">
+                    <Label for="exp-location" class="text-xs font-semibold text-foreground">Lokasi</Label>
                     <Input
                         id="exp-location"
                         v-model="expForm.location"
                         placeholder="Contoh: Jakarta (Remote) atau Bandung (Hybrid)"
+                        class="h-9 text-xs bg-card border-border/80"
                     />
                     <InputError :message="expForm.errors.location" />
                 </div>
@@ -777,22 +793,23 @@ const confirmDelete = () => {
                 <!-- Period (Start & End dates) -->
                 <div class="grid grid-cols-2 gap-4">
                     <!-- Start Date -->
-                    <div class="grid gap-2">
-                        <Label for="exp-start-date" class="text-xs font-bold text-foreground">
+                    <div class="grid gap-1.5">
+                        <Label for="exp-start-date" class="text-xs font-semibold text-foreground">
                             Bulan Mulai <span class="text-destructive">*</span>
                         </Label>
                         <Input
                             id="exp-start-date"
                             v-model="expForm.start_date"
                             type="month"
+                            class="h-9 text-xs bg-card border-border/80"
                             required
                         />
                         <InputError :message="expForm.errors.start_date" />
                     </div>
 
                     <!-- End Date -->
-                    <div class="grid gap-2">
-                        <Label for="exp-end-date" class="text-xs font-bold text-foreground flex items-center justify-between">
+                    <div class="grid gap-1.5">
+                        <Label for="exp-end-date" class="text-xs font-semibold text-foreground flex items-center justify-between">
                             <span>Bulan Selesai</span>
                             <span class="text-[10px] text-muted-foreground font-normal">(Biarkan kosong jika masih bekerja)</span>
                         </Label>
@@ -800,28 +817,30 @@ const confirmDelete = () => {
                             id="exp-end-date"
                             v-model="expForm.end_date"
                             type="month"
+                            class="h-9 text-xs bg-card border-border/80"
                         />
                         <InputError :message="expForm.errors.end_date" />
                     </div>
                 </div>
 
                 <!-- Website URL -->
-                <div class="grid gap-2">
-                    <Label for="exp-url" class="text-xs font-bold text-foreground">URL Website Perusahaan</Label>
+                <div class="grid gap-1.5">
+                    <Label for="exp-url" class="text-xs font-semibold text-foreground">URL Website Perusahaan</Label>
                     <Input
                         id="exp-url"
                         v-model="expForm.website_url"
                         type="url"
                         placeholder="Contoh: https://solusidigital.id"
+                        class="h-9 text-xs bg-card border-border/80"
                     />
                     <InputError :message="expForm.errors.website_url" />
                 </div>
 
                 <!-- Logo Picker -->
-                <div class="grid gap-2">
-                    <Label class="text-xs font-bold text-foreground">Logo Perusahaan</Label>
+                <div class="grid gap-2 rounded-2xl border border-border/70 bg-card p-4 shadow-2xs">
+                    <Label class="text-xs font-semibold text-foreground">Logo Perusahaan</Label>
                     <div class="flex items-center gap-3">
-                        <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl border border-border bg-neutral-50 dark:bg-neutral-900 overflow-hidden">
+                        <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl border border-border/80 bg-muted/20 overflow-hidden">
                             <img
                                 v-if="selectedLogo?.urls?.thumbnail"
                                 :src="selectedLogo.urls.thumbnail"
@@ -835,7 +854,7 @@ const confirmDelete = () => {
                                 type="button"
                                 variant="outline"
                                 size="sm"
-                                class="font-semibold text-xs cursor-pointer"
+                                class="font-semibold text-xs cursor-pointer border-border/80 h-8"
                                 @click="openMediaPicker"
                             >
                                 Pilih dari Media Library
@@ -845,7 +864,7 @@ const confirmDelete = () => {
                                 type="button"
                                 variant="ghost"
                                 size="sm"
-                                class="text-[11px] text-muted-foreground hover:text-destructive hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer w-fit p-1"
+                                class="text-[11px] text-muted-foreground hover:text-destructive cursor-pointer w-fit p-1 h-6"
                                 @click="removeLogo"
                             >
                                 Hapus Logo
@@ -856,22 +875,23 @@ const confirmDelete = () => {
                 </div>
 
                 <!-- Order -->
-                <div class="grid gap-2">
-                    <Label for="exp-order" class="text-xs font-bold text-foreground">Urutan Urutan Tampil</Label>
+                <div class="grid gap-1.5">
+                    <Label for="exp-order" class="text-xs font-semibold text-foreground">Urutan Urutan Tampil</Label>
                     <Input
                         id="exp-order"
                         v-model.number="expForm.order"
                         type="number"
                         min="0"
                         placeholder="0"
+                        class="h-9 text-xs bg-card border-border/80"
                         required
                     />
                     <InputError :message="expForm.errors.order" />
                 </div>
 
                 <!-- Description -->
-                <div class="grid gap-2">
-                    <Label class="text-xs font-bold text-foreground">Kontribusi & Deskripsi Kerja</Label>
+                <div class="grid gap-1.5">
+                    <Label class="text-xs font-semibold text-foreground">Kontribusi & Deskripsi Kerja</Label>
                     <CKEditor
                         v-model="expForm.description"
                         placeholder="Tuliskan kontribusi Anda, peran, serta projek yang dikerjakan di perusahaan ini..."
@@ -880,21 +900,22 @@ const confirmDelete = () => {
                 </div>
 
                 <!-- Footer buttons -->
-                <div class="flex items-center justify-end gap-3 border-t border-sidebar-border/50 pt-6">
+                <div class="flex items-center justify-end gap-2.5 border-t border-border/70 pt-4">
                     <Button
                         type="button"
-                        variant="ghost"
+                        variant="outline"
                         @click="expSheetOpen = false"
                         :disabled="expForm.processing"
+                        class="h-9 text-xs px-4 cursor-pointer border-border/80"
                     >
                         Batal
                     </Button>
                     <Button
                         type="submit"
                         :disabled="expForm.processing"
-                        class="gap-2 min-w-28"
+                        class="h-9 text-xs px-5 bg-primary text-white hover:bg-primary/90 font-semibold cursor-pointer shadow-xs gap-1.5"
                     >
-                        <Loader2 v-if="expForm.processing" class="h-4 w-4 animate-spin" />
+                        <Loader2 v-if="expForm.processing" class="h-3.5 w-3.5 animate-spin" />
                         <span>{{ isEditing ? 'Simpan Perubahan' : 'Simpan Pengalaman' }}</span>
                     </Button>
                 </div>
@@ -906,76 +927,81 @@ const confirmDelete = () => {
          SHEET FORM: EDUCATION
     ================================================================ -->
     <Sheet v-model:open="eduSheetOpen">
-        <SheetContent side="right" class="w-full sm:max-w-2xl overflow-y-auto flex flex-col gap-0 p-0">
+        <SheetContent side="right" class="w-full sm:max-w-2xl overflow-y-auto flex flex-col gap-6 p-6">
             <!-- Header -->
-            <SheetHeader class="border-b border-sidebar-border/50 px-6 py-5">
-                <SheetTitle class="text-lg font-bold">
+            <SheetHeader class="border-b border-border/70 pb-4 text-left">
+                <SheetTitle class="text-lg font-bold tracking-tight text-foreground">
                     {{ isEditing ? 'Edit Riwayat Pendidikan' : 'Tambah Riwayat Pendidikan Baru' }}
                 </SheetTitle>
-                <SheetDescription class="text-sm text-muted-foreground">
+                <SheetDescription class="text-xs text-muted-foreground">
                     Isi detail riwayat akademis pendidikan formal Anda pada form di bawah.
                 </SheetDescription>
             </SheetHeader>
 
             <!-- Form body -->
-            <form @submit.prevent="submitEduForm" class="flex-1 space-y-5 px-6 py-6">
+            <form @submit.prevent="submitEduForm" class="flex-1 space-y-5">
                 <!-- Institution -->
-                <div class="grid gap-2">
-                    <Label for="edu-inst" class="text-xs font-bold text-foreground">
+                <div class="grid gap-1.5">
+                    <Label for="edu-inst" class="text-xs font-semibold text-foreground">
                         Nama Institusi / Universitas <span class="text-destructive">*</span>
                     </Label>
                     <Input
                         id="edu-inst"
                         v-model="eduForm.institution"
                         placeholder="Contoh: Universitas Brawijaya"
+                        class="h-9 text-xs bg-card border-border/80"
                         required
                     />
                     <InputError :message="eduForm.errors.institution" />
                 </div>
 
                 <!-- Degree -->
-                <div class="grid gap-2">
-                    <Label for="edu-degree" class="text-xs font-bold text-foreground">Gelar Akademis</Label>
+                <div class="grid gap-1.5">
+                    <Label for="edu-degree" class="text-xs font-semibold text-foreground">Gelar Akademis</Label>
                     <Input
                         id="edu-degree"
                         v-model="eduForm.degree"
                         placeholder="Contoh: S1, D3, SMK, atau Sertifikasi"
+                        class="h-9 text-xs bg-card border-border/80"
                     />
                     <InputError :message="eduForm.errors.degree" />
                 </div>
 
                 <!-- Major -->
-                <div class="grid gap-2">
-                    <Label for="edu-major" class="text-xs font-bold text-foreground">
+                <div class="grid gap-1.5">
+                    <Label for="edu-major" class="text-xs font-semibold text-foreground">
                         Jurusan / Bidang Studi <span class="text-destructive">*</span>
                     </Label>
                     <Input
                         id="edu-major"
                         v-model="eduForm.major"
                         placeholder="Contoh: Teknik Informatika"
+                        class="h-9 text-xs bg-card border-border/80"
                         required
                     />
                     <InputError :message="eduForm.errors.major" />
                 </div>
 
                 <!-- GPA -->
-                <div class="grid gap-2">
-                    <Label for="edu-gpa" class="text-xs font-bold text-foreground">GPA / IPK / Nilai</Label>
+                <div class="grid gap-1.5">
+                    <Label for="edu-gpa" class="text-xs font-semibold text-foreground">GPA / IPK / Nilai</Label>
                     <Input
                         id="edu-gpa"
                         v-model="eduForm.gpa"
                         placeholder="Contoh: 3.85 / 4.00"
+                        class="h-9 text-xs bg-card border-border/80"
                     />
                     <InputError :message="eduForm.errors.gpa" />
                 </div>
 
                 <!-- Location -->
-                <div class="grid gap-2">
-                    <Label for="edu-location" class="text-xs font-bold text-foreground">Lokasi</Label>
+                <div class="grid gap-1.5">
+                    <Label for="edu-location" class="text-xs font-semibold text-foreground">Lokasi</Label>
                     <Input
                         id="edu-location"
                         v-model="eduForm.location"
                         placeholder="Contoh: Malang, Jawa Timur"
+                        class="h-9 text-xs bg-card border-border/80"
                     />
                     <InputError :message="eduForm.errors.location" />
                 </div>
@@ -983,22 +1009,23 @@ const confirmDelete = () => {
                 <!-- Period (Start & End dates) -->
                 <div class="grid grid-cols-2 gap-4">
                     <!-- Start Date -->
-                    <div class="grid gap-2">
-                        <Label for="edu-start-date" class="text-xs font-bold text-foreground">
+                    <div class="grid gap-1.5">
+                        <Label for="edu-start-date" class="text-xs font-semibold text-foreground">
                             Bulan Mulai <span class="text-destructive">*</span>
                         </Label>
                         <Input
                             id="edu-start-date"
                             v-model="eduForm.start_date"
                             type="month"
+                            class="h-9 text-xs bg-card border-border/80"
                             required
                         />
                         <InputError :message="eduForm.errors.start_date" />
                     </div>
 
                     <!-- End Date -->
-                    <div class="grid gap-2">
-                        <Label for="edu-end-date" class="text-xs font-bold text-foreground flex items-center justify-between">
+                    <div class="grid gap-1.5">
+                        <Label for="edu-end-date" class="text-xs font-semibold text-foreground flex items-center justify-between">
                             <span>Bulan Kelulusan</span>
                             <span class="text-[10px] text-muted-foreground font-normal">(Kosongkan jika belum lulus)</span>
                         </Label>
@@ -1006,16 +1033,17 @@ const confirmDelete = () => {
                             id="edu-end-date"
                             v-model="eduForm.end_date"
                             type="month"
+                            class="h-9 text-xs bg-card border-border/80"
                         />
                         <InputError :message="eduForm.errors.end_date" />
                     </div>
                 </div>
 
                 <!-- Logo Picker -->
-                <div class="grid gap-2">
-                    <Label class="text-xs font-bold text-foreground">Logo Institusi</Label>
+                <div class="grid gap-2 rounded-2xl border border-border/70 bg-card p-4 shadow-2xs">
+                    <Label class="text-xs font-semibold text-foreground">Logo Institusi</Label>
                     <div class="flex items-center gap-3">
-                        <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl border border-border bg-neutral-50 dark:bg-neutral-900 overflow-hidden">
+                        <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl border border-border/80 bg-muted/20 overflow-hidden">
                             <img
                                 v-if="selectedLogo?.urls?.thumbnail"
                                 :src="selectedLogo.urls.thumbnail"
@@ -1029,7 +1057,7 @@ const confirmDelete = () => {
                                 type="button"
                                 variant="outline"
                                 size="sm"
-                                class="font-semibold text-xs cursor-pointer"
+                                class="font-semibold text-xs cursor-pointer border-border/80 h-8"
                                 @click="openMediaPicker"
                             >
                                 Pilih dari Media Library
@@ -1039,7 +1067,7 @@ const confirmDelete = () => {
                                 type="button"
                                 variant="ghost"
                                 size="sm"
-                                class="text-[11px] text-muted-foreground hover:text-destructive hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer w-fit p-1"
+                                class="text-[11px] text-muted-foreground hover:text-destructive cursor-pointer w-fit p-1 h-6"
                                 @click="removeLogo"
                             >
                                 Hapus Logo
@@ -1050,22 +1078,23 @@ const confirmDelete = () => {
                 </div>
 
                 <!-- Order -->
-                <div class="grid gap-2">
-                    <Label for="edu-order" class="text-xs font-bold text-foreground">Urutan Urutan Tampil</Label>
+                <div class="grid gap-1.5">
+                    <Label for="edu-order" class="text-xs font-semibold text-foreground">Urutan Urutan Tampil</Label>
                     <Input
                         id="edu-order"
                         v-model.number="eduForm.order"
                         type="number"
                         min="0"
                         placeholder="0"
+                        class="h-9 text-xs bg-card border-border/80"
                         required
                     />
                     <InputError :message="eduForm.errors.order" />
                 </div>
 
                 <!-- Description -->
-                <div class="grid gap-2">
-                    <Label class="text-xs font-bold text-foreground">Aktivitas & Pencapaian Akademis</Label>
+                <div class="grid gap-1.5">
+                    <Label class="text-xs font-semibold text-foreground">Aktivitas & Pencapaian Akademis</Label>
                     <CKEditor
                         v-model="eduForm.description"
                         placeholder="Tuliskan organisasi yang diikuti, kejuaraan, riset tugas akhir, dll..."
@@ -1074,21 +1103,22 @@ const confirmDelete = () => {
                 </div>
 
                 <!-- Footer buttons -->
-                <div class="flex items-center justify-end gap-3 border-t border-sidebar-border/50 pt-6">
+                <div class="flex items-center justify-end gap-2.5 border-t border-border/70 pt-4">
                     <Button
                         type="button"
-                        variant="ghost"
+                        variant="outline"
                         @click="eduSheetOpen = false"
                         :disabled="eduForm.processing"
+                        class="h-9 text-xs px-4 cursor-pointer border-border/80"
                     >
                         Batal
                     </Button>
                     <Button
                         type="submit"
                         :disabled="eduForm.processing"
-                        class="gap-2 min-w-28"
+                        class="h-9 text-xs px-5 bg-primary text-white hover:bg-primary/90 font-semibold cursor-pointer shadow-xs gap-1.5"
                     >
-                        <Loader2 v-if="eduForm.processing" class="h-4 w-4 animate-spin" />
+                        <Loader2 v-if="eduForm.processing" class="h-3.5 w-3.5 animate-spin" />
                         <span>{{ isEditing ? 'Simpan Perubahan' : 'Simpan Pendidikan' }}</span>
                     </Button>
                 </div>

@@ -75,7 +75,7 @@
         <!-- Right: Cover Mockup Image -->
         <div ref="headerImage" class="lg:col-span-5 flex justify-center opacity-0 translate-x-4">
           <div
-            class="relative w-full aspect-[4/3] rounded-[2rem] overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 shadow-2xl group flex flex-col">
+            class="relative w-full aspect-video rounded-[2rem] overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 shadow-2xl group flex flex-col">
             <!-- Glowing border effect -->
             <div
               class="absolute -inset-1 bg-gradient-to-r from-brand-purple to-brand-green rounded-[2rem] blur opacity-15 group-hover:opacity-25 transition duration-700">
@@ -107,8 +107,8 @@
               Overview
             </h2>
             <div v-if="project.full_description"
-              class="rich-text-content text-zinc-600 dark:text-zinc-300 leading-relaxed text-sm font-light prose dark:prose-invert max-w-none space-y-4"
-              v-html="project.full_description"></div>
+              class="rich-text-content text-zinc-600 dark:text-zinc-300 leading-relaxed text-sm font-light max-w-none space-y-4"
+              v-html="sanitizeHtml(project.full_description)"></div>
             <p v-else class="text-sm text-zinc-400 italic font-light">
               Belum ada deskripsi mendalam yang ditambahkan untuk proyek ini.
             </p>
@@ -123,30 +123,24 @@
           }">
             <template #content>
               <h3
-                class="text-base font-extrabold text-zinc-900 dark:text-white pb-3 border-b border-zinc-150 dark:border-zinc-900/80 mb-6 flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor"
-                  stroke-width="2.5">
-                  <circle cx="12" cy="12" r="10" />
-                  <line x1="12" y1="16" x2="12" y2="12" />
-                  <line x1="12" y1="8" x2="12.01" y2="8" />
-                </svg>
-                Detail Informasi
+                class="text-sm font-extrabold text-zinc-900 dark:text-white pb-3.5 border-b border-zinc-150 dark:border-zinc-800/80 mb-5 flex items-center gap-2.5">
+                <div class="w-7 h-7 rounded-lg bg-brand-purple/10 text-brand-purple dark:text-indigo-400 flex items-center justify-center shrink-0">
+                  <Info class="w-4 h-4" />
+                </div>
+                <span>Detail Informasi</span>
               </h3>
 
-              <div class="space-y-6">
+              <div class="space-y-5">
                 <!-- Category -->
-                <div class="flex items-start space-x-4">
+                <div class="flex items-start space-x-3.5">
                   <div
-                    class="flex-shrink-0 w-9 h-9 rounded-xl bg-indigo-500/10 flex items-center justify-center text-brand-purple dark:text-indigo-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor"
-                      stroke-width="2.5">
-                      <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
-                    </svg>
+                    class="shrink-0 w-9 h-9 rounded-xl bg-indigo-500/10 dark:bg-indigo-400/10 flex items-center justify-center text-brand-purple dark:text-indigo-400">
+                    <FolderKanban class="w-4.5 h-4.5" />
                   </div>
                   <div>
-                    <p
-                      class="text-[10px] text-zinc-400 dark:text-zinc-550 font-bold uppercase tracking-wider leading-none">
-                      Kategori</p>
+                    <p class="text-[10px] text-zinc-400 dark:text-zinc-500 font-bold uppercase tracking-wider leading-none">
+                      Kategori
+                    </p>
                     <p class="text-xs sm:text-sm font-bold text-zinc-900 dark:text-zinc-100 mt-1 leading-snug">
                       {{ project.category?.name || '-' }}
                     </p>
@@ -154,19 +148,15 @@
                 </div>
 
                 <!-- Role -->
-                <div class="flex items-start space-x-4">
+                <div class="flex items-start space-x-3.5">
                   <div
-                    class="flex-shrink-0 w-9 h-9 rounded-xl bg-emerald-500/10 flex items-center justify-center text-brand-green">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor"
-                      stroke-width="2.5">
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                      <circle cx="12" cy="7" r="4" />
-                    </svg>
+                    class="shrink-0 w-9 h-9 rounded-xl bg-emerald-500/10 dark:bg-emerald-400/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                    <UserCheck class="w-4.5 h-4.5" />
                   </div>
                   <div>
-                    <p
-                      class="text-[10px] text-zinc-400 dark:text-zinc-550 font-bold uppercase tracking-wider leading-none">
-                      Peran</p>
+                    <p class="text-[10px] text-zinc-400 dark:text-zinc-500 font-bold uppercase tracking-wider leading-none">
+                      Peran
+                    </p>
                     <p class="text-xs sm:text-sm font-bold text-zinc-900 dark:text-zinc-100 mt-1 leading-snug">
                       {{ project.role || '-' }}
                     </p>
@@ -174,21 +164,15 @@
                 </div>
 
                 <!-- Year -->
-                <div class="flex items-start space-x-4">
+                <div class="flex items-start space-x-3.5">
                   <div
-                    class="flex-shrink-0 w-9 h-9 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-600 dark:text-purple-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor"
-                      stroke-width="2.5">
-                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                      <line x1="16" y1="2" x2="16" y2="6" />
-                      <line x1="8" y1="2" x2="8" y2="6" />
-                      <line x1="3" y1="10" x2="21" y2="10" />
-                    </svg>
+                    class="shrink-0 w-9 h-9 rounded-xl bg-purple-500/10 dark:bg-purple-400/10 flex items-center justify-center text-purple-600 dark:text-purple-400">
+                    <Calendar class="w-4.5 h-4.5" />
                   </div>
                   <div>
-                    <p
-                      class="text-[10px] text-zinc-400 dark:text-zinc-550 font-bold uppercase tracking-wider leading-none">
-                      Tahun</p>
+                    <p class="text-[10px] text-zinc-400 dark:text-zinc-500 font-bold uppercase tracking-wider leading-none">
+                      Tahun
+                    </p>
                     <p class="text-xs sm:text-sm font-bold text-zinc-900 dark:text-zinc-100 mt-1 leading-snug">
                       {{ projectYear }}
                     </p>
@@ -197,46 +181,38 @@
 
                 <!-- Live link details -->
                 <div v-if="project.live_url || project.github_url || project.telegram_url"
-                  class="flex items-start space-x-4">
+                  class="flex items-start space-x-3.5 pt-1">
                   <div
-                    class="flex-shrink-0 w-9 h-9 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor"
-                      stroke-width="2.5">
-                      <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" />
-                      <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" />
-                    </svg>
+                    class="shrink-0 w-9 h-9 rounded-xl bg-blue-500/10 dark:bg-blue-400/10 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                    <Globe class="w-4.5 h-4.5" />
                   </div>
-                  <div class="space-y-1">
-                    <p
-                      class="text-[10px] text-zinc-400 dark:text-zinc-550 font-bold uppercase tracking-wider leading-none mb-1.5">
-                      Tautan Resmi</p>
+                  <div class="space-y-2 flex-1 min-w-0">
+                    <p class="text-[10px] text-zinc-400 dark:text-zinc-500 font-bold uppercase tracking-wider leading-none">
+                      Tautan Resmi
+                    </p>
 
-                    <a v-if="project.live_url" :href="project.live_url" target="_blank"
-                      class="text-xs font-bold text-brand-purple dark:text-indigo-400 hover:underline flex items-center gap-1.5">
-                      Demo Website
-                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                      </svg>
-                    </a>
+                    <div class="flex flex-col gap-2 pt-0.5">
+                      <a v-if="project.live_url" :href="project.live_url" target="_blank"
+                        class="inline-flex items-center gap-1.5 text-xs font-bold text-brand-purple dark:text-indigo-400 hover:text-brand-purple/80 dark:hover:text-indigo-300 transition-colors group">
+                        <Globe class="w-3.5 h-3.5 text-brand-purple/70 dark:text-indigo-400/70" />
+                        <span>Demo Website</span>
+                        <ExternalLink class="w-3 h-3 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                      </a>
 
-                    <a v-if="project.github_url" :href="project.github_url" target="_blank"
-                      class="text-xs font-bold text-brand-purple dark:text-indigo-400 hover:underline flex items-center gap-1.5">
-                      Source Code GitHub
-                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                      </svg>
-                    </a>
+                      <a v-if="project.github_url" :href="project.github_url" target="_blank"
+                        class="inline-flex items-center gap-1.5 text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:text-brand-purple dark:hover:text-indigo-400 transition-colors group">
+                        <Github class="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" />
+                        <span>Source Code GitHub</span>
+                        <ExternalLink class="w-3 h-3 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                      </a>
 
-                    <a v-if="project.telegram_url" :href="project.telegram_url" target="_blank"
-                      class="text-xs font-bold text-brand-purple dark:text-indigo-400 hover:underline flex items-center gap-1.5">
-                      Telegram Bot Link
-                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                      </svg>
-                    </a>
+                      <a v-if="project.telegram_url" :href="project.telegram_url" target="_blank"
+                        class="inline-flex items-center gap-1.5 text-xs font-bold text-sky-600 dark:text-sky-400 hover:text-sky-500 transition-colors group">
+                        <Send class="w-3.5 h-3.5 text-sky-500" />
+                        <span>Telegram Bot Link</span>
+                        <ExternalLink class="w-3 h-3 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -257,11 +233,19 @@
         <div class="flex flex-wrap gap-3.5">
           <div v-for="tech in project.technologies" :key="tech.id"
             class="flex items-center space-x-3 px-5 py-3 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/50 dark:border-zinc-800/60 shadow-xs group">
-            <!-- Render dynamic icon if available -->
-            <div v-if="tech.icon"
-              class="w-7 h-7 flex items-center justify-center text-zinc-500 [&_svg]:w-4.5 [&_svg]:h-4.5"
-              v-html="tech.icon"></div>
-            <div v-else class="w-7 h-7 flex items-center justify-center text-base">🛠️</div>
+            <!-- Render dynamic logo/icon if available -->
+            <div class="w-6 h-6 flex items-center justify-center shrink-0">
+              <NuxtImg
+                v-if="tech.logo?.urls?.medium || tech.logo?.urls?.thumbnail || tech.logo?.urls?.original"
+                :src="tech.logo?.urls?.medium || tech.logo?.urls?.thumbnail || tech.logo?.urls?.original"
+                :alt="tech.name"
+                class="w-full h-full object-contain"
+              />
+              <div v-else-if="tech.icon"
+                class="w-full h-full flex items-center justify-center text-zinc-500 [&_svg]:w-4.5 [&_svg]:h-4.5"
+                v-html="tech.icon"></div>
+              <div v-else class="text-base">🛠️</div>
+            </div>
             <span class="text-xs sm:text-sm font-bold text-zinc-800 dark:text-zinc-200 pr-1">{{ tech.name }}</span>
           </div>
         </div>
@@ -278,7 +262,7 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <div v-for="(image, idx) in project.gallery" :key="image.id" @click="openLightbox(idx)"
-            class="relative aspect-[4/3] rounded-3xl overflow-hidden border border-zinc-200/50 dark:border-zinc-800/80 bg-white dark:bg-zinc-900 shadow-sm cursor-zoom-in group">
+            class="relative aspect-video rounded-3xl overflow-hidden border border-zinc-200/50 dark:border-zinc-800/80 bg-white dark:bg-zinc-900 shadow-sm cursor-zoom-in group">
             <NuxtImg :src="image.urls.medium || image.urls.original" :alt="image.alt_text || 'Gallery Image'"
               class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-103"
               loading="lazy" />
@@ -372,56 +356,96 @@
         </div>
       </section>
 
-      <!-- ─── LIGHTBOX MODAL DIALOG ────────────────────────────────────── -->
+      <!-- ─── ULTRA-MODERN LIGHTBOX MODAL DIALOG ───────────────────────── -->
       <Dialog v-model:visible="isLightboxOpen" modal :dismissableMask="true"
-        class="!bg-black/95 !border-0 !shadow-none !w-full !max-w-6xl" :pt="{
+        class="!bg-white/95 dark:!bg-zinc-950/95 !border-0 !shadow-none !w-full !max-w-7xl !m-0" :pt="{
           header: { class: '!hidden' },
-          content: { class: '!p-2 !bg-transparent flex flex-col items-center justify-center relative' },
-          mask: { class: '!backdrop-blur-md !bg-black/85' }
+          content: { class: '!p-0 !bg-transparent flex flex-col h-screen max-h-screen relative overflow-hidden select-none' },
+          mask: { class: '!backdrop-blur-xl !bg-zinc-900/40 dark:!bg-zinc-950/90 !p-0' }
         }">
-        <div v-if="activeImage" class="relative max-h-[85vh] max-w-full flex items-center justify-center">
-          <!-- Main lightbox Image -->
-          <NuxtImg :src="activeImage.urls.original" :alt="activeImage.alt_text || 'Lightbox Preview'"
-            class="max-h-[80vh] max-w-full object-contain rounded-2xl shadow-2xl" />
+        <div v-if="activeImage" class="flex flex-col h-full w-full relative">
+          <!-- Top Header Bar (Glassmorphism) -->
+          <div class="h-16 px-4 sm:px-6 flex items-center justify-between z-50 bg-white/80 dark:bg-zinc-900/60 backdrop-blur-md border-b border-zinc-200/80 dark:border-white/10 shrink-0">
+            <!-- Counter Pill & Caption -->
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="px-3 py-1 rounded-full bg-zinc-100 dark:bg-white/10 border border-zinc-200/80 dark:border-white/10 text-zinc-800 dark:text-white text-xs font-semibold flex items-center gap-1.5 shrink-0">
+                <ImageIcon class="w-3.5 h-3.5 text-brand-purple dark:text-brand-green" />
+                <span>{{ activeImageIndex + 1 }} / {{ project.gallery.length }}</span>
+              </div>
+              <span v-if="activeImage.caption" class="hidden md:inline-block text-xs text-zinc-600 dark:text-zinc-300 font-medium truncate max-w-md">
+                {{ activeImage.caption }}
+              </span>
+            </div>
 
-          <!-- Floating close action -->
-          <button @click="isLightboxOpen = false"
-            class="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/60 hover:bg-black/80 flex items-center justify-center text-white border border-white/10 hover:scale-105 transition-all cursor-pointer z-50"
-            title="Tutup">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor"
-              stroke-width="2.5" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+            <!-- Header Actions -->
+            <div class="flex items-center gap-2 shrink-0">
+              <!-- Zoom Toggle Button -->
+              <button @click="toggleZoom"
+                class="w-9 h-9 rounded-full bg-zinc-100 dark:bg-white/10 hover:bg-zinc-200 dark:hover:bg-white/20 border border-zinc-200/80 dark:border-white/10 flex items-center justify-center text-zinc-700 dark:text-white transition-all cursor-pointer"
+                :title="isZoomed ? 'Zoom Out' : 'Zoom In'">
+                <ZoomOut v-if="isZoomed" class="w-4 h-4" />
+                <ZoomIn v-else class="w-4 h-4" />
+              </button>
 
-          <!-- Floating navigation buttons -->
-          <button v-if="project.gallery.length > 1" @click="prevImage"
-            class="absolute left-4 w-12 h-12 rounded-full bg-black/60 hover:bg-black/80 flex items-center justify-center text-white border border-white/10 hover:scale-105 transition-all cursor-pointer z-50"
-            title="Sebelumnya">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor"
-              stroke-width="2.5" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
+              <!-- Open Original Image -->
+              <a :href="activeImage.urls.original" target="_blank"
+                class="w-9 h-9 rounded-full bg-zinc-100 dark:bg-white/10 hover:bg-zinc-200 dark:hover:bg-white/20 border border-zinc-200/80 dark:border-white/10 flex items-center justify-center text-zinc-700 dark:text-white transition-all cursor-pointer"
+                title="Buka Gambar Asli">
+                <Maximize2 class="w-4 h-4" />
+              </a>
 
-          <button v-if="project.gallery.length > 1" @click="nextImage"
-            class="absolute right-4 w-12 h-12 rounded-full bg-black/60 hover:bg-black/80 flex items-center justify-center text-white border border-white/10 hover:scale-105 transition-all cursor-pointer z-50"
-            title="Berikutnya">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="currentColor"
-              stroke-width="2.5" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
+              <!-- Close Button -->
+              <button @click="isLightboxOpen = false"
+                class="w-9 h-9 rounded-full bg-zinc-100 dark:bg-white/10 hover:bg-red-500/80 hover:text-white border border-zinc-200/80 dark:border-white/10 hover:border-red-500/80 flex items-center justify-center text-zinc-700 dark:text-white transition-all cursor-pointer ml-1"
+                title="Tutup (Esc)">
+                <X class="w-4.5 h-4.5" />
+              </button>
+            </div>
+          </div>
 
-        <!-- Lightbox Caption Footer -->
-        <div v-if="activeImage" class="text-center text-white py-3 px-6 max-w-xl mx-auto space-y-1">
-          <p class="text-xs text-zinc-400 font-bold uppercase tracking-wider font-mono">
-            Screenshot {{ activeImageIndex + 1 }} dari {{ project.gallery.length }}
-          </p>
-          <p v-if="activeImage.caption" class="text-sm text-zinc-200 font-medium leading-relaxed">
-            {{ activeImage.caption }}
-          </p>
+          <!-- Main Image Canvas Viewport -->
+          <div class="flex-1 relative flex items-center justify-center p-4 sm:p-8 overflow-hidden">
+            <!-- Floating Previous Image Button -->
+            <button v-if="project.gallery.length > 1" @click="prevImage"
+              class="absolute left-4 sm:left-6 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-white/80 dark:bg-zinc-900/80 hover:bg-brand-purple dark:hover:bg-brand-purple backdrop-blur-md text-zinc-800 dark:text-white hover:text-white dark:hover:text-white border border-zinc-200/80 dark:border-white/20 flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all cursor-pointer z-50 group"
+              title="Sebelumnya (Kiri)">
+              <ChevronLeft class="w-6 h-6 transform group-hover:-translate-x-0.5 transition-transform" />
+            </button>
+
+            <!-- Active Image Container -->
+            <div class="relative max-h-full max-w-full flex items-center justify-center transition-all duration-300"
+              :class="isZoomed ? 'scale-125 cursor-zoom-out' : 'cursor-zoom-in'"
+              @click="toggleZoom">
+              <NuxtImg :src="activeImage.urls.original" :alt="activeImage.caption || 'Gallery Image Preview'"
+                class="max-h-[72vh] max-w-[85vw] object-contain rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] dark:shadow-[0_25px_60px_rgba(0,0,0,0.9)] border border-zinc-200/80 dark:border-white/10 transition-all duration-300 bg-white dark:bg-zinc-900" />
+            </div>
+
+            <!-- Floating Next Image Button -->
+            <button v-if="project.gallery.length > 1" @click="nextImage"
+              class="absolute right-4 sm:right-6 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-white/80 dark:bg-zinc-900/80 hover:bg-brand-purple dark:hover:bg-brand-purple backdrop-blur-md text-zinc-800 dark:text-white hover:text-white dark:hover:text-white border border-zinc-200/80 dark:border-white/20 flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all cursor-pointer z-50 group"
+              title="Berikutnya (Kanan)">
+              <ChevronRight class="w-6 h-6 transform group-hover:translate-x-0.5 transition-transform" />
+            </button>
+          </div>
+
+          <!-- Bottom Footer Bar & Thumbnails Row -->
+          <div class="px-4 py-3 bg-white/80 dark:bg-zinc-900/70 backdrop-blur-md border-t border-zinc-200/80 dark:border-white/10 flex flex-col items-center gap-2 shrink-0 z-50">
+            <!-- Active Image Caption -->
+            <p v-if="activeImage.caption" class="text-xs text-zinc-700 dark:text-zinc-300 font-medium text-center max-w-xl truncate">
+              {{ activeImage.caption }}
+            </p>
+
+            <!-- Thumbnails Strip (Carousel) -->
+            <div v-if="project.gallery.length > 1" class="flex items-center justify-center gap-2.5 max-w-full overflow-x-auto py-1 px-2 scrollbar-none">
+              <button v-for="(img, idx) in project.gallery" :key="img.id"
+                @click="openLightbox(idx)"
+                class="w-12 h-9 rounded-lg overflow-hidden border-2 transition-all cursor-pointer shrink-0 relative group"
+                :class="idx === activeImageIndex ? 'border-brand-purple scale-105 shadow-md shadow-brand-purple/30 opacity-100' : 'border-transparent opacity-60 hover:opacity-100 hover:scale-100'">
+                <NuxtImg :src="img.urls.thumbnail || img.urls.medium" :alt="img.caption || 'Thumbnail'"
+                  class="w-full h-full object-cover" />
+              </button>
+            </div>
+          </div>
         </div>
       </Dialog>
     </div>
@@ -429,7 +453,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, nextTick } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import {
   Zap,
@@ -439,8 +463,23 @@ import {
   ShieldCheck,
   Layers,
   Sparkles,
-  Rocket
-} from '@lucide/vue'
+  Rocket,
+  Info,
+  FolderKanban,
+  UserCheck,
+  Calendar,
+  Globe,
+  Github,
+  Send,
+  ExternalLink,
+  ChevronLeft,
+  ChevronRight,
+  ZoomIn,
+  ZoomOut,
+  Maximize2,
+  ImageIcon,
+  X
+} from 'lucide-vue-next'
 
 definePageMeta({ layout: 'default' })
 
@@ -526,6 +565,7 @@ const projectYear = computed(() => {
 // ── LIGHTBOX SCREENSHOTS VIEWER ───────────────────────────────────────
 const isLightboxOpen = ref(false)
 const activeImageIndex = ref(0)
+const isZoomed = ref(false)
 
 const activeImage = computed(() => {
   if (project.value?.gallery && project.value.gallery.length > 0) {
@@ -536,20 +576,43 @@ const activeImage = computed(() => {
 
 const openLightbox = (index: number) => {
   activeImageIndex.value = index
+  isZoomed.value = false
   isLightboxOpen.value = true
+}
+
+const toggleZoom = () => {
+  isZoomed.value = !isZoomed.value
 }
 
 const nextImage = () => {
   if (project.value?.gallery) {
+    isZoomed.value = false
     activeImageIndex.value = (activeImageIndex.value + 1) % project.value.gallery.length
   }
 }
 
 const prevImage = () => {
   if (project.value?.gallery) {
+    isZoomed.value = false
     activeImageIndex.value = (activeImageIndex.value - 1 + project.value.gallery.length) % project.value.gallery.length
   }
 }
+
+// Keyboard shortcuts for Lightbox
+const handleKeyDown = (e: KeyboardEvent) => {
+  if (!isLightboxOpen.value) return
+  if (e.key === 'ArrowRight') nextImage()
+  if (e.key === 'ArrowLeft') prevImage()
+  if (e.key === 'Escape') isLightboxOpen.value = false
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', handleKeyDown)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', handleKeyDown)
+})
 
 // ── LUCIDE DYNAMIC ICONS MAPPING ──────────────────────────────────────
 const getLucideIcon = (iconName: string | null) => {
@@ -642,8 +705,24 @@ onMounted(() => {
 @reference "../../assets/css/main.css";
 
 /* CKEditor / Rich Text content styling overrides */
+:deep(.rich-text-content) h1 {
+  @apply text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white mt-8 mb-4 tracking-tight leading-tight;
+}
+
+:deep(.rich-text-content) h2 {
+  @apply text-xl sm:text-2xl font-bold text-zinc-900 dark:text-white mt-7 mb-3.5 tracking-tight leading-snug flex items-center gap-2;
+}
+
+:deep(.rich-text-content) h3 {
+  @apply text-lg sm:text-xl font-bold text-zinc-900 dark:text-white mt-6 mb-3 leading-snug;
+}
+
+:deep(.rich-text-content) h4 {
+  @apply text-base font-bold text-zinc-900 dark:text-white mt-5 mb-2.5;
+}
+
 :deep(.rich-text-content) p {
-  @apply mb-4 leading-relaxed text-zinc-600 dark:text-zinc-300;
+  @apply mb-4 leading-relaxed text-zinc-600 dark:text-zinc-300 font-light;
 }
 
 :deep(.rich-text-content) p:last-child {
@@ -664,6 +743,21 @@ onMounted(() => {
 }
 
 :deep(.rich-text-content) a {
-  @apply text-brand-purple hover:underline font-semibold;
+  @apply text-brand-purple dark:text-indigo-400 hover:underline font-semibold;
+}
+
+:deep(.rich-text-content) figure,
+:deep(.rich-text-content) .image {
+  @apply my-6 flex flex-col items-center justify-center text-center w-full;
+}
+
+:deep(.rich-text-content) img {
+  @apply rounded-2xl max-w-full h-auto shadow-sm border border-zinc-200/60 dark:border-zinc-800/60 mx-auto block object-cover;
+}
+
+:deep(.rich-text-content) figcaption,
+:deep(.rich-text-content) figure caption,
+:deep(.rich-text-content) .image-caption {
+  @apply text-xs font-medium text-zinc-500 dark:text-zinc-400 mt-3 text-center italic block max-w-md mx-auto leading-normal;
 }
 </style>

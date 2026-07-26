@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Media;
-use App\Services\HashidsHelper;
 use Illuminate\Support\Facades\Storage;
 
 test('public route can stream a media asset and its variants with caching headers', function () {
@@ -37,7 +36,7 @@ test('public route can stream a media asset and its variants with caching header
         ],
     ]);
 
-    $slugId = $media->filename . '-' . $media->encoded_id;
+    $slugId = $media->filename.'-'.$media->encoded_id;
 
     // Test main webp streaming
     $response = $this->get(route('media.show', ['slug_id' => $slugId]));
@@ -72,7 +71,7 @@ test('media stream returns 404 for non-existent file', function () {
         'height' => 400,
     ]);
 
-    $slugId = $media->filename . '-' . $media->encoded_id;
+    $slugId = $media->filename.'-'.$media->encoded_id;
 
     $response = $this->get(route('media.show', ['slug_id' => $slugId]));
     $response->assertStatus(404);

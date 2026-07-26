@@ -158,30 +158,49 @@ const submit = () => {
 <template>
     <Head title="Tulis Artikel Baru" />
 
-    <div class="flex h-full flex-1 flex-col gap-6 p-4 md:p-6 overflow-y-auto max-w-5xl mx-auto w-full">
-        <!-- Header -->
-        <div class="flex items-center gap-3 border-b border-sidebar-border/70 pb-4">
-            <Link :href="postsIndex()">
-                <Button variant="ghost" size="icon" class="h-9 w-9 rounded-lg border border-sidebar-border/70 cursor-pointer">
-                    <ArrowLeft class="h-4 w-4" />
+    <div class="flex h-full flex-1 flex-col gap-6 p-4 md:p-6 overflow-y-auto w-full">
+        <!-- Header & Action Bar -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border/70 pb-4">
+            <div class="flex items-center gap-3">
+                <Link :href="postsIndex()">
+                    <Button variant="ghost" size="icon" class="h-9 w-9 rounded-xl border border-border/80 cursor-pointer">
+                        <ArrowLeft class="h-4 w-4" />
+                    </Button>
+                </Link>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-foreground">Tulis Artikel Baru</h1>
+                    <p class="text-xs text-muted-foreground">
+                        Buat postingan blog baru dengan editor rich text, jadwalkan tayang, dan optimasi SEO.
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <Link :href="postsIndex()">
+                    <Button type="button" variant="outline" class="cursor-pointer h-9 text-xs px-4">
+                        Batal
+                    </Button>
+                </Link>
+                <Button
+                    type="button"
+                    @click="submit"
+                    :disabled="form.processing"
+                    class="bg-primary text-white hover:bg-primary/90 font-semibold cursor-pointer h-9 text-xs px-5 shadow-xs flex items-center gap-2"
+                >
+                    <Check class="h-4 w-4" v-if="!form.processing" />
+                    {{ form.processing ? 'Menyimpan...' : 'Simpan Artikel' }}
                 </Button>
-            </Link>
-            <div>
-                <h1 class="text-xl font-bold tracking-tight">Tulis Artikel Baru</h1>
-                <p class="text-xs text-muted-foreground">
-                    Buat postingan blog baru dengan editor rich text, jadwalkan tayang, dan optimasi SEO.
-                </p>
             </div>
         </div>
 
         <form @submit.prevent="submit" class="flex flex-col gap-6">
             <!-- Navigation Tabs -->
-            <div class="flex border-b border-sidebar-border/70 pb-px">
+            <div class="flex border-b border-border/70 gap-2 bg-card p-1 rounded-2xl border border-border/60">
                 <button
                     type="button"
                     @click="activeTab = 'content'"
-                    class="px-4 py-2 border-b-2 text-sm font-medium transition-colors cursor-pointer flex items-center gap-2"
-                    :class="activeTab === 'content' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'"
+                    class="py-2.5 px-4 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-2"
+                    :class="activeTab === 'content' ? 'bg-primary/10 text-primary font-bold border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'"
                 >
                     <FileText class="h-4 w-4" />
                     Konten Utama
@@ -189,8 +208,8 @@ const submit = () => {
                 <button
                     type="button"
                     @click="activeTab = 'media'"
-                    class="px-4 py-2 border-b-2 text-sm font-medium transition-colors cursor-pointer flex items-center gap-2"
-                    :class="activeTab === 'media' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'"
+                    class="py-2.5 px-4 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-2"
+                    :class="activeTab === 'media' ? 'bg-primary/10 text-primary font-bold border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'"
                 >
                     <ImageIcon class="h-4 w-4" />
                     Kategori & Media
@@ -198,8 +217,8 @@ const submit = () => {
                 <button
                     type="button"
                     @click="activeTab = 'publishing'"
-                    class="px-4 py-2 border-b-2 text-sm font-medium transition-colors cursor-pointer flex items-center gap-2"
-                    :class="activeTab === 'publishing' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'"
+                    class="py-2.5 px-4 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-2"
+                    :class="activeTab === 'publishing' ? 'bg-primary/10 text-primary font-bold border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'"
                 >
                     <Calendar class="h-4 w-4" />
                     Status & Jadwal
@@ -207,8 +226,8 @@ const submit = () => {
                 <button
                     type="button"
                     @click="activeTab = 'related'"
-                    class="px-4 py-2 border-b-2 text-sm font-medium transition-colors cursor-pointer flex items-center gap-2"
-                    :class="activeTab === 'related' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'"
+                    class="py-2.5 px-4 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-2"
+                    :class="activeTab === 'related' ? 'bg-primary/10 text-primary font-bold border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'"
                 >
                     <LinkIcon class="h-4 w-4" />
                     Artikel Terkait
@@ -216,8 +235,8 @@ const submit = () => {
                 <button
                     type="button"
                     @click="activeTab = 'seo'"
-                    class="px-4 py-2 border-b-2 text-sm font-medium transition-colors cursor-pointer flex items-center gap-2"
-                    :class="activeTab === 'seo' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'"
+                    class="py-2.5 px-4 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-2"
+                    :class="activeTab === 'seo' ? 'bg-primary/10 text-primary font-bold border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'"
                 >
                     <Globe class="h-4 w-4" />
                     Pengaturan SEO
@@ -225,7 +244,7 @@ const submit = () => {
             </div>
 
             <!-- Tab Content Panel -->
-            <div class="bg-card border border-sidebar-border/70 rounded-xl p-5 md:p-6 shadow-xs min-h-[400px]">
+            <div class="bg-card border border-border/70 rounded-2xl p-6 md:p-8 shadow-2xs min-h-[400px]">
                 
                 <!-- Tab 1: Konten Utama -->
                 <div v-show="activeTab === 'content'" class="space-y-6">

@@ -354,8 +354,15 @@ const confirmDelete = () => {
                     id="philosophies-search"
                     v-model="searchQuery"
                     placeholder="Cari filosofi..."
-                    class="pl-9"
+                    class="pl-9 pr-8 bg-card border-border/80 h-9 text-xs"
                 />
+                <button
+                    v-if="searchQuery"
+                    @click="searchQuery = ''"
+                    class="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-0.5 rounded-full"
+                >
+                    <X class="h-3.5 w-3.5" />
+                </button>
             </div>
 
             <!-- Right side: Stats + Add button -->
@@ -382,14 +389,14 @@ const confirmDelete = () => {
         <!-- ================================================================
              PHILOSOPHIES TABLE
         ================================================================ -->
-        <div class="rounded-xl border border-sidebar-border/70 bg-card overflow-hidden shadow-sm">
+        <div class="rounded-2xl border border-border/70 bg-card overflow-hidden shadow-2xs">
             <!-- Table header -->
-            <div class="grid grid-cols-[auto_1fr_120px_100px_80px] items-center gap-4 border-b border-sidebar-border/50 bg-muted/30 px-4 py-3">
+            <div class="grid grid-cols-[auto_1fr_120px_100px_80px] items-center gap-4 border-b border-border/70 bg-muted/20 px-4 py-3">
                 <div class="w-8"></div>
-                <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Filosofi</span>
-                <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground text-center">Status</span>
-                <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground text-center">Urutan</span>
-                <span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground text-right">Aksi</span>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Filosofi</span>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-center">Status</span>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-center">Urutan</span>
+                <span class="text-[11px] font-bold uppercase tracking-wider text-muted-foreground text-right">Aksi</span>
             </div>
 
             <!-- Empty state -->
@@ -425,15 +432,17 @@ const confirmDelete = () => {
                 @dragover="onDragOver(index, $event)"
                 @dragend="onDragEnd"
                 @dragleave="onDragLeave"
-                class="grid grid-cols-[auto_1fr_120px_100px_80px] items-center gap-4 border-b border-sidebar-border/30 px-4 py-4 transition-all duration-150 last:border-b-0"
+                @click="openEdit(philosophy)"
+                class="grid grid-cols-[auto_1fr_120px_100px_80px] items-center gap-4 border-b border-border/40 px-4 py-4 transition-all duration-150 last:border-b-0 cursor-pointer"
                 :class="{
                     'bg-primary/5 scale-[1.01] shadow-md': dragOverIndex === index && draggedIndex !== index,
                     'opacity-40': draggedIndex === index,
-                    'hover:bg-muted/30': dragOverIndex !== index || draggedIndex === index,
+                    'hover:bg-muted/20': dragOverIndex !== index || draggedIndex === index,
                 }"
             >
                 <!-- Drag Handle -->
                 <div 
+                    @click.stop
                     class="flex h-8 w-8 cursor-grab items-center justify-center rounded-lg text-muted-foreground/40 hover:bg-muted hover:text-muted-foreground active:cursor-grabbing"
                     :class="{ 'pointer-events-none opacity-20': searchQuery }"
                 >
@@ -460,37 +469,38 @@ const confirmDelete = () => {
                 </div>
 
                 <!-- Status Badge -->
-                <div class="flex justify-center">
+                <div class="flex justify-center" @click.stop>
                     <button
                         @click="toggleActive(philosophy)"
                         :disabled="togglingId === philosophy.id"
-                        class="inline-flex rounded-full transition-opacity disabled:opacity-50"
+                        class="inline-flex rounded-full transition-opacity disabled:opacity-50 cursor-pointer"
                         title="Klik untuk mengubah status"
                     >
-                        <Badge 
-                            :variant="philosophy.is_active ? 'default' : 'secondary'"
-                            class="gap-1 px-2.5 py-0.5 text-[10px] font-medium"
+                        <span
+                            :class="[
+                                'inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border',
+                                philosophy.is_active
+                                    ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
+                                    : 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20'
+                            ]"
                         >
-                            <Loader2 v-if="togglingId === philosophy.id" class="h-2.5 w-2.5 animate-spin" />
-                            <template v-else>
-                                <span class="h-1.5 w-1.5 rounded-full" :class="philosophy.is_active ? 'bg-emerald-500' : 'bg-zinc-400'"></span>
-                                {{ philosophy.is_active ? 'Aktif' : 'Draft' }}
-                            </template>
-                        </Badge>
+                            <Loader2 v-if="togglingId === philosophy.id" class="h-2.5 w-2.5 animate-spin mr-1" />
+                            {{ philosophy.is_active ? 'Aktif' : 'Draft' }}
+                        </span>
                     </button>
                 </div>
 
                 <!-- Order Indicator -->
-                <div class="text-center text-xs font-medium text-muted-foreground">
-                    {{ philosophy.order }}
+                <div class="text-center text-xs font-mono font-medium text-muted-foreground">
+                    #{{ philosophy.order }}
                 </div>
 
                 <!-- Actions -->
-                <div class="flex items-center justify-end gap-1">
+                <div class="flex items-center justify-end gap-1" @click.stop>
                     <Button
                         variant="ghost"
                         size="icon"
-                        class="h-8 w-8 text-muted-foreground hover:text-foreground"
+                        class="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10"
                         @click="openEdit(philosophy)"
                     >
                         <Edit2 class="h-4 w-4" />
@@ -498,7 +508,7 @@ const confirmDelete = () => {
                     <Button
                         variant="ghost"
                         size="icon"
-                        class="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                        class="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                         @click="openDelete(philosophy)"
                     >
                         <Trash2 class="h-4 w-4" />
@@ -511,48 +521,48 @@ const confirmDelete = () => {
              CREATE / EDIT SHEET
         ================================================================ -->
         <Sheet v-model:open="sheetOpen">
-            <SheetContent class="w-full sm:max-w-lg overflow-y-auto">
-                <SheetHeader class="border-b border-sidebar-border/50 pb-4 mb-6">
-                    <SheetTitle>
+            <SheetContent class="sm:max-w-lg overflow-y-auto flex flex-col gap-6 p-6">
+                <SheetHeader class="border-b border-border/70 pb-4 text-left">
+                    <SheetTitle class="text-lg font-bold tracking-tight text-foreground">
                         {{ isEditing ? 'Edit Filosofi' : 'Tambah Filosofi Baru' }}
                     </SheetTitle>
-                    <SheetDescription>
-                        {{ isEditing 
-                            ? 'Ubah informasi filosofi pengembangan yang sudah ada di sini. Klik Simpan setelah selesai.' 
-                            : 'Isi formulir berikut untuk menambahkan prinsip filosofi baru.' }}
+                    <SheetDescription class="text-xs text-muted-foreground">
+                        {{ isEditing ? 'Ubah informasi filosofi pengembangan yang sudah ada di sini. Klik Simpan setelah selesai.' : 'Isi formulir berikut untuk menambahkan prinsip filosofi baru.' }}
                     </SheetDescription>
                 </SheetHeader>
 
-                <form @submit.prevent="submitForm" class="space-y-6">
+                <form @submit.prevent="submitForm" class="space-y-5 flex-1">
                     <!-- Title -->
-                    <div class="space-y-2">
-                        <Label for="title">Judul Filosofi</Label>
+                    <div class="space-y-1.5">
+                        <Label for="title" class="text-xs font-semibold text-foreground">Judul Filosofi <span class="text-destructive">*</span></Label>
                         <Input
                             id="title"
                             v-model="form.title"
                             placeholder="Contoh: Clean & Maintainable Code"
+                            class="h-9 text-xs bg-card border-border/80"
                             required
                         />
                         <InputError :message="form.errors.title" />
                     </div>
 
                     <!-- Slug -->
-                    <div class="space-y-2">
-                        <Label for="slug">Slug URL</Label>
+                    <div class="space-y-1.5">
+                        <Label for="slug" class="text-xs font-semibold text-foreground">Slug URL <span class="text-destructive">*</span></Label>
                         <Input
                             id="slug"
                             v-model="form.slug"
                             @input="onSlugInput"
-                            placeholder="auto-generated-slug"
+                            placeholder="clean-maintainable-code"
+                            class="h-9 text-xs font-mono bg-card border-border/80"
                             required
                         />
                         <InputError :message="form.errors.slug" />
                     </div>
 
                     <!-- Description -->
-                    <div class="space-y-2">
-                        <div class="flex justify-between">
-                            <Label for="description">Deskripsi Filosofi</Label>
+                    <div class="space-y-1.5">
+                        <div class="flex justify-between items-center">
+                            <Label for="description" class="text-xs font-semibold text-foreground">Deskripsi Filosofi <span class="text-destructive">*</span></Label>
                             <span 
                                 class="text-[10px] font-semibold"
                                 :class="isDescOverLimit ? 'text-destructive' : 'text-muted-foreground'"
@@ -564,7 +574,7 @@ const confirmDelete = () => {
                             id="description"
                             v-model="form.description"
                             rows="4"
-                            class="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                            class="flex w-full rounded-md border border-border/80 bg-card px-3 py-2 text-xs shadow-2xs placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                             placeholder="Tuliskan penjelasan filosofi pengembangan Anda (maks 300 karakter)..."
                             required
                         ></textarea>
@@ -573,67 +583,67 @@ const confirmDelete = () => {
 
                     <!-- Icon Picker -->
                     <div class="space-y-2">
-                        <Label>Pilih Ikon Pendukung</Label>
+                        <Label class="text-xs font-semibold text-foreground">Pilih Ikon Pendukung</Label>
                         
-                        <div class="flex border-b border-border mb-2">
+                        <div class="flex bg-card p-1 rounded-xl border border-border/60 gap-1 mb-3">
                             <button 
                                 type="button" 
                                 @click="activeIconTab = 'picker'" 
-                                class="px-4 py-2 text-xs font-medium border-b-2 transition-colors"
-                                :class="activeIconTab === 'picker' ? 'border-primary text-primary font-semibold' : 'border-transparent text-muted-foreground'"
+                                class="flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer"
+                                :class="activeIconTab === 'picker' ? 'bg-primary/10 text-primary font-bold' : 'text-muted-foreground hover:text-foreground'"
                             >
                                 Pilih dari Lucide
                             </button>
                             <button 
                                 type="button" 
                                 @click="activeIconTab = 'custom'" 
-                                class="px-4 py-2 text-xs font-medium border-b-2 transition-colors"
-                                :class="activeIconTab === 'custom' ? 'border-primary text-primary font-semibold' : 'border-transparent text-muted-foreground'"
+                                class="flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer"
+                                :class="activeIconTab === 'custom' ? 'bg-primary/10 text-primary font-bold' : 'text-muted-foreground hover:text-foreground'"
                             >
                                 Custom SVG
                             </button>
                         </div>
 
-                        <div v-if="activeIconTab === 'picker'" class="flex items-center gap-3">
+                        <div v-if="activeIconTab === 'picker'" class="flex items-center gap-3 bg-muted/20 p-3 rounded-xl border border-border/70">
                             <!-- Current Icon View -->
-                            <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-muted border text-foreground">
+                            <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-card border border-border/80 text-foreground shadow-2xs shrink-0">
                                 <div v-if="isSvgString(form.icon)" v-html="form.icon" class="h-6 w-6 flex items-center justify-center [&_svg]:h-6 [&_svg]:w-6 [&_svg]:text-current" />
-                                <component v-else :is="getIcon(form.icon) || Award" class="h-6 w-6" />
+                                <component v-else :is="getIcon(form.icon) || Award" class="h-6 w-6 text-primary" />
                             </div>
 
                             <!-- Controls -->
                             <div class="flex items-center gap-2">
                                 <Dialog v-model:open="iconPickerOpen">
-                                    <Button type="button" variant="outline" size="sm" @click="iconPickerOpen = true">
+                                    <Button type="button" variant="outline" size="sm" class="h-8 text-xs border-border/80" @click="iconPickerOpen = true">
                                         Pilih Ikon...
                                     </Button>
                                     <DialogContent class="sm:max-w-md">
                                         <DialogHeader>
-                                            <DialogTitle>Pilih Ikon Lucide</DialogTitle>
-                                            <DialogDescription>
+                                            <DialogTitle class="text-base font-bold">Pilih Ikon Lucide</DialogTitle>
+                                            <DialogDescription class="text-xs">
                                                 Cari dan pilih ikon yang paling relevan dengan filosofi ini.
                                             </DialogDescription>
                                         </DialogHeader>
 
                                         <!-- Search input inside picker -->
                                         <div class="relative my-2">
-                                            <Search class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                                            <Search class="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
                                             <Input
                                                 v-model="iconSearchQuery"
                                                 placeholder="Cari ikon..."
-                                                class="pl-9"
+                                                class="pl-9 h-8 text-xs"
                                                 @keydown.enter.prevent
                                             />
                                         </div>
 
                                         <!-- Grid of Icons -->
-                                        <div class="grid grid-cols-6 gap-2 max-h-[300px] overflow-y-auto p-1 border rounded-lg bg-muted/20">
+                                        <div class="grid grid-cols-6 gap-2 max-h-[300px] overflow-y-auto p-2 border border-border/70 rounded-xl bg-muted/20">
                                             <button
                                                 v-for="name in filteredIcons"
                                                 :key="name"
                                                 type="button"
                                                 @click="selectIcon(name)"
-                                                class="flex flex-col items-center justify-center p-2 rounded-lg hover:bg-primary/10 hover:text-primary transition-colors text-muted-foreground"
+                                                class="flex flex-col items-center justify-center p-2 rounded-lg hover:bg-primary/10 hover:text-primary transition-colors text-muted-foreground cursor-pointer"
                                                 :title="name"
                                             >
                                                 <component :is="getIcon(name)" class="h-5 w-5" />
@@ -647,10 +657,10 @@ const confirmDelete = () => {
                                     type="button" 
                                     variant="ghost" 
                                     size="sm" 
-                                    class="text-destructive hover:bg-destructive/10"
+                                    class="text-destructive hover:bg-destructive/10 h-8 text-xs cursor-pointer"
                                     @click="clearIcon"
                                 >
-                                    <X class="h-4 w-4 mr-1" /> Hapus
+                                    <X class="h-3.5 w-3.5 mr-1" /> Hapus
                                 </Button>
                             </div>
                         </div>
@@ -659,7 +669,7 @@ const confirmDelete = () => {
                             <textarea
                                 v-model="form.icon"
                                 rows="4"
-                                class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-xs font-mono ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                class="flex min-h-[90px] w-full rounded-xl border border-border/80 bg-card px-3 py-2 text-xs font-mono placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                                 placeholder="Tempel kode markup SVG Anda di sini (misal: <svg>...</svg>)"
                             ></textarea>
                             <div class="flex items-center justify-between">
@@ -669,7 +679,7 @@ const confirmDelete = () => {
                                     type="button" 
                                     variant="ghost" 
                                     size="sm" 
-                                    class="text-destructive hover:bg-destructive/10 h-7 text-[10px]"
+                                    class="text-destructive hover:bg-destructive/10 h-7 text-[10px] cursor-pointer"
                                     @click="clearIcon"
                                 >
                                     Hapus
@@ -679,41 +689,46 @@ const confirmDelete = () => {
                         <InputError :message="form.errors.icon" />
                     </div>
 
-                    <!-- Status (is_active) -->
-                    <div class="flex items-center justify-between rounded-lg border p-4 bg-muted/20">
+                    <!-- Status (is_active) Toggle Box -->
+                    <label
+                        class="flex items-center justify-between p-3.5 rounded-xl border transition-all cursor-pointer select-none"
+                        :class="form.is_active
+                            ? 'border-emerald-500/40 bg-emerald-500/10 dark:bg-emerald-500/15 shadow-2xs'
+                            : 'border-border/70 bg-card hover:bg-muted/30'"
+                    >
                         <div class="space-y-0.5">
-                            <Label for="is_active" class="text-sm font-semibold">Tampilkan ke Publik</Label>
-                            <p class="text-xs text-muted-foreground">
+                            <span class="text-xs font-bold text-foreground block">Tampilkan ke Publik</span>
+                            <p class="text-[10px] text-muted-foreground">
                                 Aktifkan agar filosofi ini langsung tayang di halaman portfolio Anda.
                             </p>
                         </div>
                         <button
-                            id="is_active"
                             type="button"
-                            @click="form.is_active = !form.is_active"
-                            class="text-primary transition-colors focus:outline-none"
+                            @click.prevent="form.is_active = !form.is_active"
+                            class="text-primary transition-colors focus:outline-none cursor-pointer"
                         >
                             <ToggleRight v-if="form.is_active" class="h-9 w-9 text-emerald-500" />
-                            <ToggleLeft v-else class="h-9 w-9 text-zinc-400" />
+                            <ToggleLeft v-else class="h-9 w-9 text-slate-400" />
                         </button>
-                    </div>
+                    </label>
 
                     <!-- Footer actions -->
-                    <div class="flex justify-end gap-3 border-t border-sidebar-border/50 pt-4">
+                    <div class="flex justify-end gap-2.5 border-t border-border/70 pt-4">
                         <Button 
                             type="button" 
                             variant="outline" 
                             @click="sheetOpen = false"
                             :disabled="form.processing"
+                            class="h-9 text-xs px-4 cursor-pointer border-border/80"
                         >
                             Batal
                         </Button>
                         <Button 
                             type="submit" 
                             :disabled="form.processing || isDescOverLimit"
-                            class="gap-1.5"
+                            class="h-9 text-xs px-5 bg-primary text-white hover:bg-primary/90 font-semibold cursor-pointer shadow-xs gap-1.5"
                         >
-                            <Loader2 v-if="form.processing" class="h-4 w-4 animate-spin" />
+                            <Loader2 v-if="form.processing" class="h-3.5 w-3.5 animate-spin" />
                             Simpan Perubahan
                         </Button>
                     </div>

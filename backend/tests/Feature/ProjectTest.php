@@ -28,7 +28,7 @@ test('administrator can view project preview page', function () {
     $category = ProjectCategory::create([
         'name' => 'Web App',
         'slug' => 'web-app',
-        'order' => 1
+        'order' => 1,
     ]);
     $project = Project::create([
         'title' => 'Project to Preview',
@@ -47,9 +47,9 @@ test('administrator can create a project with auto-generated slug', function () 
     $category = ProjectCategory::create([
         'name' => 'Mobile App',
         'slug' => 'mobile-app',
-        'order' => 1
+        'order' => 1,
     ]);
-    
+
     $response = $this->actingAs($user)->post('/admin-cms/projects', [
         'title' => 'My Mobile App',
         'short_description' => 'A short desc for mobile app.',
@@ -60,7 +60,7 @@ test('administrator can create a project with auto-generated slug', function () 
     ]);
 
     $response->assertRedirect();
-    
+
     $this->assertDatabaseHas('projects', [
         'title' => 'My Mobile App',
         'slug' => 'my-mobile-app',
@@ -77,7 +77,7 @@ test('administrator can create a project with technologies and visual gallery in
     $tech = Technology::create(['name' => 'Laravel', 'slug' => 'laravel', 'category' => 'backend']);
     $media = Media::create([
         'original_filename' => 'slide.png', 'filename' => 'slide', 'storage_path' => 'media/slide.png',
-        'mime_type' => 'image/png', 'file_size' => 1024, 'width' => 10, 'height' => 10
+        'mime_type' => 'image/png', 'file_size' => 1024, 'width' => 10, 'height' => 10,
     ]);
 
     $response = $this->actingAs($user)->post('/admin-cms/projects', [
@@ -94,9 +94,9 @@ test('administrator can create a project with technologies and visual gallery in
             [
                 'media_id' => $media->id,
                 'order' => 0,
-                'caption' => 'First visual screenshot'
-            ]
-        ]
+                'caption' => 'First visual screenshot',
+            ],
+        ],
     ]);
 
     $response->assertRedirect();
@@ -126,7 +126,7 @@ test('slug auto-generates sequential suffixes on duplicate title', function () {
     $category = ProjectCategory::create([
         'name' => 'Web',
         'slug' => 'web',
-        'order' => 1
+        'order' => 1,
     ]);
 
     Project::create([
@@ -159,7 +159,7 @@ test('administrator cannot create a project with invalid URL format', function (
     $category = ProjectCategory::create([
         'name' => 'Web',
         'slug' => 'web',
-        'order' => 1
+        'order' => 1,
     ]);
 
     $response = $this->actingAs($user)->post('/admin-cms/projects', [
@@ -180,9 +180,9 @@ test('administrator can update a project and sync relationships', function () {
     $category = ProjectCategory::create([
         'name' => 'Web',
         'slug' => 'web',
-        'order' => 1
+        'order' => 1,
     ]);
-    
+
     $project = Project::create([
         'title' => 'Initial Project',
         'slug' => 'initial-project',
@@ -194,7 +194,7 @@ test('administrator can update a project and sync relationships', function () {
     $tech = Technology::create([
         'name' => 'Laravel',
         'slug' => 'laravel',
-        'category' => 'backend'
+        'category' => 'backend',
     ]);
 
     $media = Media::create([
@@ -224,13 +224,13 @@ test('administrator can update a project and sync relationships', function () {
             [
                 'media_id' => $media->id,
                 'order' => 0,
-                'caption' => 'Initial Screenshot'
-            ]
-        ]
+                'caption' => 'Initial Screenshot',
+            ],
+        ],
     ]);
 
     $response->assertRedirect();
-    
+
     $this->assertDatabaseHas('projects', [
         'id' => $project->id,
         'title' => 'Updated Project Title',
@@ -270,7 +270,7 @@ test('administrator can delete a project and it cascades relationships', functio
     $tech = Technology::create(['name' => 'Vue', 'slug' => 'vue', 'category' => 'frontend']);
     $media = Media::create([
         'original_filename' => 'image.jpg', 'filename' => 'image', 'storage_path' => 'media/image.jpg',
-        'mime_type' => 'image/jpeg', 'file_size' => 1024, 'width' => 10, 'height' => 10
+        'mime_type' => 'image/jpeg', 'file_size' => 1024, 'width' => 10, 'height' => 10,
     ]);
 
     $project->technologies()->attach($tech->id);
@@ -282,7 +282,7 @@ test('administrator can delete a project and it cascades relationships', functio
     $this->assertDatabaseMissing('projects', ['id' => $project->id]);
     $this->assertDatabaseMissing('project_technology', ['project_id' => $project->id]);
     $this->assertDatabaseMissing('project_images', ['project_id' => $project->id]);
-    
+
     // Original media should NOT be deleted
     $this->assertDatabaseHas('media', ['id' => $media->id]);
 });
@@ -290,17 +290,17 @@ test('administrator can delete a project and it cascades relationships', functio
 test('administrator can reorder projects', function () {
     $user = User::factory()->create();
     $category = ProjectCategory::create(['name' => 'Web', 'slug' => 'web', 'order' => 1]);
-    
+
     $p1 = Project::create(['title' => 'P1', 'slug' => 'p1', 'short_description' => 'D', 'category_id' => $category->id, 'order' => 1]);
     $p2 = Project::create(['title' => 'P2', 'slug' => 'p2', 'short_description' => 'D', 'category_id' => $category->id, 'order' => 2]);
     $p3 = Project::create(['title' => 'P3', 'slug' => 'p3', 'short_description' => 'D', 'category_id' => $category->id, 'order' => 3]);
 
     $response = $this->actingAs($user)->post('/admin-cms/projects/reorder', [
-        'ids' => [$p3->id, $p1->id, $p2->id]
+        'ids' => [$p3->id, $p1->id, $p2->id],
     ]);
 
     $response->assertRedirect();
-    
+
     $this->assertEquals(0, $p3->refresh()->order);
     $this->assertEquals(1, $p1->refresh()->order);
     $this->assertEquals(2, $p2->refresh()->order);
@@ -309,7 +309,7 @@ test('administrator can reorder projects', function () {
 test('public api lists only published projects and supports filters', function () {
     $category = ProjectCategory::create(['name' => 'Web', 'slug' => 'web', 'order' => 1]);
     $category2 = ProjectCategory::create(['name' => 'Mobile', 'slug' => 'mobile', 'order' => 2]);
-    
+
     $p1 = Project::create(['title' => 'Pub Web Featured', 'slug' => 'p1', 'short_description' => 'D', 'category_id' => $category->id, 'status' => 'published', 'is_featured' => true, 'published_at' => now()]);
     $p2 = Project::create(['title' => 'Pub Mobile Standard', 'slug' => 'p2', 'short_description' => 'D', 'category_id' => $category2->id, 'status' => 'published', 'is_featured' => false, 'published_at' => now()]);
     $p3 = Project::create(['title' => 'Draft Web', 'slug' => 'p3', 'short_description' => 'D', 'category_id' => $category->id, 'status' => 'draft']);
@@ -357,9 +357,9 @@ test('administrator can create a project with a cover image caption', function (
     $category = ProjectCategory::create([
         'name' => 'Mobile App',
         'slug' => 'mobile-app',
-        'order' => 1
+        'order' => 1,
     ]);
-    
+
     $response = $this->actingAs($user)->post('/admin-cms/projects', [
         'title' => 'Project with Cover Caption',
         'short_description' => 'A short desc for mobile app.',
@@ -371,7 +371,7 @@ test('administrator can create a project with a cover image caption', function (
     ]);
 
     $response->assertRedirect();
-    
+
     $this->assertDatabaseHas('projects', [
         'title' => 'Project with Cover Caption',
         'cover_image_caption' => 'This is a cover image caption',
@@ -383,9 +383,9 @@ test('cover image caption must be at most 255 characters', function () {
     $category = ProjectCategory::create([
         'name' => 'Mobile App',
         'slug' => 'mobile-app',
-        'order' => 1
+        'order' => 1,
     ]);
-    
+
     $response = $this->actingAs($user)->post('/admin-cms/projects', [
         'title' => 'Project with Long Cover Caption',
         'short_description' => 'A short desc for mobile app.',
@@ -404,9 +404,9 @@ test('administrator can update a project with cover image caption', function () 
     $category = ProjectCategory::create([
         'name' => 'Web',
         'slug' => 'web',
-        'order' => 1
+        'order' => 1,
     ]);
-    
+
     $project = Project::create([
         'title' => 'Initial Project',
         'slug' => 'initial-project',
@@ -428,7 +428,7 @@ test('administrator can update a project with cover image caption', function () 
     ]);
 
     $response->assertRedirect();
-    
+
     $this->assertDatabaseHas('projects', [
         'id' => $project->id,
         'cover_image_caption' => 'New Caption',

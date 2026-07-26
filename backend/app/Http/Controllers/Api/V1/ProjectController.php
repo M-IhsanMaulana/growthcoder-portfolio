@@ -16,7 +16,7 @@ class ProjectController extends Controller
     public function index(Request $request)
     {
         $query = Project::query()
-            ->with(['category', 'coverImage', 'technologies'])
+            ->with(['category', 'coverImage', 'technologies.logo'])
             ->where('status', 'published')
             ->orderBy('order', 'asc')
             ->orderBy('published_at', 'desc');
@@ -45,7 +45,7 @@ class ProjectController extends Controller
     public function show(string $slug)
     {
         $project = Project::query()
-            ->with(['category', 'coverImage', 'technologies', 'galleryImages'])
+            ->with(['category', 'coverImage', 'technologies.logo', 'galleryImages'])
             ->where('slug', $slug)
             ->where('status', 'published')
             ->firstOrFail();

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class MediaController extends Controller
@@ -18,25 +19,65 @@ class MediaController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Media::query()->latest();
+        $query = Media::query();
 
+        // Search by filename or alt text
         if ($request->filled('q')) {
             $search = $request->input('q');
             $query->where(function ($q) use ($search) {
                 $q->where('original_filename', 'like', "%{$search}%")
-                  ->orWhere('alt_text', 'like', "%{$search}%");
+                    ->orWhere('alt_text', 'like', "%{$search}%");
             });
         }
 
-        // Using simplePaginate to skip the expensive SELECT COUNT(*) query
-        $media = $query->simplePaginate(24);
+        // Filter by file type
+        if ($request->filled('type')) {
+            $type = $request->input('type');
+            if ($type === 'svg') {
+                $query->where(function ($q) {
+                    $q->where('mime_type', 'image/svg+xml')
+                        ->orWhere('mime_type', 'image/svg');
+                });
+            } elseif ($type === 'png') {
+                $query->where('mime_type', 'image/png');
+            } elseif ($type === 'jpeg') {
+                $query->whereIn('mime_type', ['image/jpeg', 'image/jpg']);
+            } elseif ($type === 'webp') {
+                $query->where('mime_type', 'image/webp');
+            }
+        }
+
+        // Sorting
+        $sort = $request->input('sort', 'latest');
+        if ($sort === 'oldest') {
+            $query->oldest();
+        } elseif ($sort === 'name') {
+            $query->orderBy('original_filename', 'asc');
+        } elseif ($sort === 'size_desc') {
+            $query->orderBy('file_size', 'desc');
+        } else {
+            $query->latest();
+        }
+
+        $perPage = (int) $request->input('per_page', 24);
+        if ($perPage <= 0 || $perPage > 100) {
+            $perPage = 24;
+        }
+
+        $media = $query->paginate($perPage)->withQueryString();
 
         if ($request->wantsJson()) {
             return response()->json($media);
         }
 
         return Inertia::render('media/Index', [
-            'media' => $media
+            'media' => $media,
+            'filters' => [
+                'q' => $request->input('q', ''),
+                'type' => $request->input('type', ''),
+                'sort' => $sort,
+                'per_page' => $perPage,
+            ],
         ]);
     }
 
@@ -47,7 +88,7 @@ class MediaController extends Controller
     {
         if ($request->has('filename')) {
             $request->merge([
-                'filename' => \Illuminate\Support\Str::slug($request->input('filename'))
+                'filename' => Str::slug($request->input('filename')),
             ]);
         }
 
@@ -80,10 +121,10 @@ class MediaController extends Controller
 
                 // Slugify filename
                 if ($request->filled('filename')) {
-                    $filename = \Illuminate\Support\Str::slug($request->input('filename'));
+                    $filename = Str::slug($request->input('filename'));
                 } else {
                     $filenameWithoutExt = pathinfo($originalName, PATHINFO_FILENAME);
-                    $filename = \Illuminate\Support\Str::slug($filenameWithoutExt);
+                    $filename = Str::slug($filenameWithoutExt);
                 }
 
                 // Save to private media disk
@@ -104,8 +145,8 @@ class MediaController extends Controller
                             'path' => $storedPath,
                             'width' => $width,
                             'height' => $height,
-                        ]
-                    ]
+                        ],
+                    ],
                 ]);
 
                 // Dispatch resizing & converting job for regular images
@@ -120,7 +161,7 @@ class MediaController extends Controller
 
         return response()->json([
             'message' => __('Upload successful'),
-            'media' => count($uploadedMedia) === 1 ? $uploadedMedia[0] : $uploadedMedia
+            'media' => count($uploadedMedia) === 1 ? $uploadedMedia[0] : $uploadedMedia,
         ], 201);
     }
 
@@ -139,7 +180,7 @@ class MediaController extends Controller
 
         return response()->json([
             'message' => __('Alt text updated successfully'),
-            'media' => $media
+            'media' => $media,
         ]);
     }
 
@@ -167,7 +208,7 @@ class MediaController extends Controller
                     $usages[] = [
                         'type' => $table,
                         'label' => $info['label'],
-                        'count' => $count
+                        'count' => $count,
                     ];
                 }
             }
@@ -175,7 +216,7 @@ class MediaController extends Controller
 
         return response()->json([
             'in_use' => count($usages) > 0,
-            'usages' => $usages
+            'usages' => $usages,
         ]);
     }
 
@@ -209,7 +250,7 @@ class MediaController extends Controller
         $media->delete();
 
         return response()->json([
-            'message' => __('Media deleted successfully')
+            'message' => __('Media deleted successfully'),
         ]);
     }
 
@@ -223,7 +264,7 @@ class MediaController extends Controller
         $encoded_id = $lastHyphenPos !== false ? substr($slug_id, $lastHyphenPos + 1) : $slug_id;
 
         $id = HashidsHelper::decode($encoded_id);
-        if (!$id) {
+        if (! $id) {
             abort(404);
         }
 
@@ -240,11 +281,11 @@ class MediaController extends Controller
         }
 
         // Fallback to primary webp if variant doesn't exist
-        if (!$filePath || !$disk->exists($filePath)) {
+        if (! $filePath || ! $disk->exists($filePath)) {
             $filePath = $media->storage_path;
         }
 
-        if (!$disk->exists($filePath)) {
+        if (! $disk->exists($filePath)) {
             abort(404);
         }
 

@@ -235,24 +235,36 @@ const submitSettings = () => {
 <template>
     <Head title="Pengaturan Global" />
 
-    <div class="flex h-full flex-1 flex-col gap-6 p-4 md:p-6 overflow-y-auto max-w-5xl mx-auto w-full">
-        <!-- Header -->
-        <div class="flex items-center justify-between border-b border-sidebar-border/70 pb-4">
+    <div class="flex h-full flex-1 flex-col gap-6 p-4 md:p-6 overflow-y-auto w-full">
+        <!-- Header & Action Bar -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border/70 pb-4">
             <div>
-                <h1 class="text-xl font-bold tracking-tight">Pengaturan Global & SEO</h1>
+                <h1 class="text-xl font-bold tracking-tight text-foreground">Pengaturan Global & SEO</h1>
                 <p class="text-xs text-muted-foreground">
                     Kelola data identitas profil, teks hero, link media sosial, SEO meta data, dan file resume CV Anda.
                 </p>
             </div>
+
+            <div class="flex items-center gap-2">
+                <Button
+                    type="button"
+                    @click="submitSettings"
+                    :disabled="settingsForm.processing"
+                    class="bg-primary text-white hover:bg-primary/90 font-semibold cursor-pointer h-9 text-xs px-5 shadow-xs flex items-center gap-2"
+                >
+                    <Check class="h-4 w-4" v-if="!settingsForm.processing" />
+                    {{ settingsForm.processing ? 'Menyimpan...' : 'Simpan Pengaturan' }}
+                </Button>
+            </div>
         </div>
 
         <!-- Custom tabs navigation -->
-        <div class="flex border-b border-sidebar-border/70 gap-1 md:gap-2 overflow-x-auto pb-px">
+        <div class="flex border-b border-border/70 gap-2 bg-card p-1.5 rounded-2xl border border-border/60 overflow-x-auto">
             <button
                 type="button"
                 @click="activeTab = 'profile'"
-                :class="activeTab === 'profile' ? 'border-primary text-primary font-bold' : 'border-transparent text-muted-foreground hover:text-foreground'"
-                class="pb-3 px-3 border-b-2 text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap"
+                :class="activeTab === 'profile' ? 'bg-primary/10 text-primary font-bold border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'"
+                class="py-2.5 px-4 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap"
             >
                 <User class="h-4 w-4" />
                 Profil & Identitas
@@ -260,8 +272,8 @@ const submitSettings = () => {
             <button
                 type="button"
                 @click="activeTab = 'hero'"
-                :class="activeTab === 'hero' ? 'border-primary text-primary font-bold' : 'border-transparent text-muted-foreground hover:text-foreground'"
-                class="pb-3 px-3 border-b-2 text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap"
+                :class="activeTab === 'hero' ? 'bg-primary/10 text-primary font-bold border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'"
+                class="py-2.5 px-4 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap"
             >
                 <Sparkles class="h-4 w-4" />
                 Beranda & Hero
@@ -269,8 +281,8 @@ const submitSettings = () => {
             <button
                 type="button"
                 @click="activeTab = 'socials'"
-                :class="activeTab === 'socials' ? 'border-primary text-primary font-bold' : 'border-transparent text-muted-foreground hover:text-foreground'"
-                class="pb-3 px-3 border-b-2 text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap"
+                :class="activeTab === 'socials' ? 'bg-primary/10 text-primary font-bold border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'"
+                class="py-2.5 px-4 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap"
             >
                 <Share2 class="h-4 w-4" />
                 Tautan Sosial
@@ -278,8 +290,8 @@ const submitSettings = () => {
             <button
                 type="button"
                 @click="activeTab = 'seo'"
-                :class="activeTab === 'seo' ? 'border-primary text-primary font-bold' : 'border-transparent text-muted-foreground hover:text-foreground'"
-                class="pb-3 px-3 border-b-2 text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap"
+                :class="activeTab === 'seo' ? 'bg-primary/10 text-primary font-bold border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'"
+                class="py-2.5 px-4 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap"
             >
                 <Globe class="h-4 w-4" />
                 SEO & Metadata
@@ -287,8 +299,8 @@ const submitSettings = () => {
             <button
                 type="button"
                 @click="activeTab = 'security'"
-                :class="activeTab === 'security' ? 'border-primary text-primary font-bold' : 'border-transparent text-muted-foreground hover:text-foreground'"
-                class="pb-3 px-3 border-b-2 text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap"
+                :class="activeTab === 'security' ? 'bg-primary/10 text-primary font-bold border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'"
+                class="py-2.5 px-4 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap"
             >
                 <Key class="h-4 w-4" />
                 Keamanan API
@@ -296,8 +308,8 @@ const submitSettings = () => {
             <button
                 type="button"
                 @click="activeTab = 'cv'"
-                :class="activeTab === 'cv' ? 'border-primary text-primary font-bold' : 'border-transparent text-muted-foreground hover:text-foreground'"
-                class="pb-3 px-3 border-b-2 text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap"
+                :class="activeTab === 'cv' ? 'bg-primary/10 text-primary font-bold border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'"
+                class="py-2.5 px-4 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap"
             >
                 <FileText class="h-4 w-4" />
                 Unggah CV
@@ -305,8 +317,8 @@ const submitSettings = () => {
             <button
                 type="button"
                 @click="activeTab = 'about'"
-                :class="activeTab === 'about' ? 'border-primary text-primary font-bold' : 'border-transparent text-muted-foreground hover:text-foreground'"
-                class="pb-3 px-3 border-b-2 text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap"
+                :class="activeTab === 'about' ? 'bg-primary/10 text-primary font-bold border-b-2 border-primary' : 'text-muted-foreground hover:text-foreground'"
+                class="py-2.5 px-4 rounded-xl text-xs font-semibold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap"
             >
                 <Info class="h-4 w-4" />
                 Halaman About
@@ -320,24 +332,24 @@ const submitSettings = () => {
             <form v-show="activeTab !== 'cv' && activeTab !== 'about'" @submit.prevent="submitSettings" class="space-y-6">
                 
                 <!-- PROFILE TAB CONTENT -->
-                <div v-show="activeTab === 'profile'" class="rounded-xl border border-sidebar-border bg-card p-5 space-y-4 shadow-xs">
+                <div v-show="activeTab === 'profile'" class="rounded-2xl border border-border/70 bg-card p-6 space-y-5 shadow-2xs">
                     <h2 class="text-sm font-bold text-foreground flex items-center gap-2">
                         <User class="h-4 w-4 text-primary" />
                         Informasi Identitas Diri
                     </h2>
                     <p class="text-xs text-muted-foreground">Detail nama lengkap, deskripsi peran profesional, dan foto profil Anda yang akan ditampilkan di seluruh situs.</p>
-                    <hr class="border-sidebar-border/50" />
+                    <hr class="border-border/50" />
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <!-- Profile Photo Picker -->
                         <div class="space-y-2">
                             <Label class="font-semibold text-xs text-foreground">Foto Profil</Label>
-                            <div class="flex flex-col items-center justify-center border border-dashed border-sidebar-border rounded-xl p-4 bg-muted-foreground/5 relative min-h-[200px] gap-3">
+                            <div class="flex flex-col items-center justify-center border border-dashed border-border/80 rounded-2xl p-4 bg-muted/20 relative min-h-[200px] gap-3">
                                 <div v-if="selectedProfilePhoto" class="relative group">
                                     <img 
                                         :src="selectedProfilePhoto.urls?.medium || selectedProfilePhoto.urls?.original" 
                                         alt="Profile Photo" 
-                                        class="h-32 w-32 object-cover rounded-full border border-sidebar-border shadow-md"
+                                        class="h-32 w-32 object-cover rounded-full border border-border/80 shadow-md"
                                     />
                                     <button 
                                         type="button" 
@@ -368,23 +380,25 @@ const submitSettings = () => {
 
                         <!-- Name and Title -->
                         <div class="md:col-span-2 space-y-4">
-                            <div class="grid gap-2">
-                                <Label for="owner_full_name" class="font-semibold text-xs text-foreground">Nama Lengkap <span class="text-red-500">*</span></Label>
+                            <div class="grid gap-1.5">
+                                <Label for="owner_full_name" class="font-semibold text-xs text-foreground">Nama Lengkap <span class="text-destructive">*</span></Label>
                                 <Input
                                     id="owner_full_name"
                                     v-model="settingsForm.owner_full_name"
                                     placeholder="Masukkan nama lengkap Anda"
+                                    class="h-9 text-xs bg-card border-border/80"
                                     required
                                 />
                                 <InputError :message="settingsForm.errors.owner_full_name" />
                             </div>
 
-                            <div class="grid gap-2">
+                            <div class="grid gap-1.5">
                                 <Label for="owner_title" class="font-semibold text-xs text-foreground">Jabatan / Peran Profesional</Label>
                                 <Input
                                     id="owner_title"
                                     v-model="settingsForm.owner_title"
                                     placeholder="Contoh: Full-Stack Developer & Automation Specialist"
+                                    class="h-9 text-xs bg-card border-border/80"
                                 />
                                 <InputError :message="settingsForm.errors.owner_title" />
                             </div>
@@ -393,55 +407,58 @@ const submitSettings = () => {
                 </div>
 
                 <!-- HERO SECTION TAB CONTENT -->
-                <div v-show="activeTab === 'hero'" class="rounded-xl border border-sidebar-border bg-card p-5 space-y-4 shadow-xs">
+                <div v-show="activeTab === 'hero'" class="rounded-2xl border border-border/70 bg-card p-6 space-y-5 shadow-2xs">
                     <h2 class="text-sm font-bold text-foreground flex items-center gap-2">
                         <Sparkles class="h-4 w-4 text-primary" />
                         Tampilan Hero Beranda
                     </h2>
                     <p class="text-xs text-muted-foreground">Sesuaikan kalimat pembuka (headline) dan ajakan bertindak (CTA) utama pada halaman beranda Anda.</p>
-                    <hr class="border-sidebar-border/50" />
+                    <hr class="border-border/50" />
 
                     <div class="space-y-4">
-                        <div class="grid gap-2">
-                            <Label for="hero_headline" class="font-semibold text-xs text-foreground">Headline Utama <span class="text-red-500">*</span></Label>
+                        <div class="grid gap-1.5">
+                            <Label for="hero_headline" class="font-semibold text-xs text-foreground">Headline Utama <span class="text-destructive">*</span></Label>
                             <Input
                                 id="hero_headline"
                                 v-model="settingsForm.hero_headline"
                                 placeholder="Masukkan kalimat headline utama hero beranda"
+                                class="h-9 text-xs bg-card border-border/80"
                                 required
                             />
                             <InputError :message="settingsForm.errors.hero_headline" />
                         </div>
 
-                        <div class="grid gap-2">
+                        <div class="grid gap-1.5">
                             <Label for="hero_subheadline" class="font-semibold text-xs text-foreground">Sub-headline / Tagline</Label>
                             <textarea
                                 id="hero_subheadline"
                                 v-model="settingsForm.hero_subheadline"
                                 placeholder="Masukkan deskripsi pelengkap headline"
                                 rows="3"
-                                class="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                                class="flex min-h-[80px] w-full rounded-xl border border-border/80 bg-card px-3 py-2 text-xs focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
                             ></textarea>
                             <InputError :message="settingsForm.errors.hero_subheadline" />
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="grid gap-2">
+                            <div class="grid gap-1.5">
                                 <Label for="hero_cta_text" class="font-semibold text-xs text-foreground">Teks Tombol CTA</Label>
                                 <Input
                                     id="hero_cta_text"
                                     v-model="settingsForm.hero_cta_text"
                                     placeholder="Contoh: Hubungi Saya, Lihat Proyek"
+                                    class="h-9 text-xs bg-card border-border/80"
                                 />
                                 <InputError :message="settingsForm.errors.hero_cta_text" />
                             </div>
 
-                            <div class="grid gap-2">
+                            <div class="grid gap-1.5">
                                 <Label for="hero_cta_url" class="font-semibold text-xs text-foreground">Link URL Tombol CTA</Label>
                                 <Input
                                     id="hero_cta_url"
                                     v-model="settingsForm.hero_cta_url"
                                     placeholder="Contoh: /projects, /contact, atau URL eksternal"
+                                    class="h-9 text-xs bg-card border-border/80"
                                 />
                                 <InputError :message="settingsForm.errors.hero_cta_url" />
                             </div>
@@ -450,72 +467,78 @@ const submitSettings = () => {
                 </div>
 
                 <!-- SOCIAL LINKS TAB CONTENT -->
-                <div v-show="activeTab === 'socials'" class="rounded-xl border border-sidebar-border bg-card p-5 space-y-4 shadow-xs">
+                <div v-show="activeTab === 'socials'" class="rounded-2xl border border-border/70 bg-card p-6 space-y-5 shadow-2xs">
                     <h2 class="text-sm font-bold text-foreground flex items-center gap-2">
                         <Share2 class="h-4 w-4 text-primary" />
                         Tautan Media Sosial & Kontak
                     </h2>
                     <p class="text-xs text-muted-foreground">Tautan jejaring profesional yang akan ditampilkan di header, footer, dan menu kontak Anda.</p>
-                    <hr class="border-sidebar-border/50" />
+                    <hr class="border-border/50" />
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="grid gap-2">
+                        <div class="grid gap-1.5">
                             <Label for="social_linkedin" class="font-semibold text-xs text-foreground">LinkedIn URL</Label>
                             <Input
                                 id="social_linkedin"
                                 v-model="settingsForm.social_linkedin"
                                 placeholder="https://linkedin.com/in/username"
+                                class="h-9 text-xs bg-card border-border/80"
                             />
                             <InputError :message="settingsForm.errors.social_linkedin" />
                         </div>
 
-                        <div class="grid gap-2">
+                        <div class="grid gap-1.5">
                             <Label for="social_github" class="font-semibold text-xs text-foreground">GitHub URL</Label>
                             <Input
                                 id="social_github"
                                 v-model="settingsForm.social_github"
                                 placeholder="https://github.com/username"
+                                class="h-9 text-xs bg-card border-border/80"
                             />
                             <InputError :message="settingsForm.errors.social_github" />
                         </div>
 
-                        <div class="grid gap-2">
+                        <div class="grid gap-1.5">
                             <Label for="social_telegram" class="font-semibold text-xs text-foreground">Telegram URL</Label>
                             <Input
                                 id="social_telegram"
                                 v-model="settingsForm.social_telegram"
                                 placeholder="https://t.me/username"
+                                class="h-9 text-xs bg-card border-border/80"
                             />
                             <InputError :message="settingsForm.errors.social_telegram" />
                         </div>
 
-                        <div class="grid gap-2">
+                        <div class="grid gap-1.5">
                             <Label for="social_instagram" class="font-semibold text-xs text-foreground">Instagram URL</Label>
                             <Input
                                 id="social_instagram"
                                 v-model="settingsForm.social_instagram"
                                 placeholder="https://instagram.com/username"
+                                class="h-9 text-xs bg-card border-border/80"
                             />
                             <InputError :message="settingsForm.errors.social_instagram" />
                         </div>
 
-                        <div class="grid gap-2">
+                        <div class="grid gap-1.5">
                             <Label for="social_twitter" class="font-semibold text-xs text-foreground">Twitter / X URL</Label>
                             <Input
                                 id="social_twitter"
                                 v-model="settingsForm.social_twitter"
                                 placeholder="https://x.com/username"
+                                class="h-9 text-xs bg-card border-border/80"
                             />
                             <InputError :message="settingsForm.errors.social_twitter" />
                         </div>
 
-                        <div class="grid gap-2">
+                        <div class="grid gap-1.5">
                             <Label for="contact_email" class="font-semibold text-xs text-foreground">Email Kontak Resmi</Label>
                             <Input
                                 id="contact_email"
                                 type="email"
                                 v-model="settingsForm.contact_email"
                                 placeholder="yourname@domain.com"
+                                class="h-9 text-xs bg-card border-border/80"
                             />
                             <InputError :message="settingsForm.errors.contact_email" />
                         </div>
@@ -523,24 +546,24 @@ const submitSettings = () => {
                 </div>
 
                 <!-- SEO METADATA TAB CONTENT -->
-                <div v-show="activeTab === 'seo'" class="rounded-xl border border-sidebar-border bg-card p-5 space-y-4 shadow-xs">
+                <div v-show="activeTab === 'seo'" class="rounded-2xl border border-border/70 bg-card p-6 space-y-5 shadow-2xs">
                     <h2 class="text-sm font-bold text-foreground flex items-center gap-2">
                         <Globe class="h-4 w-4 text-primary" />
                         SEO & Metadata Fallback
                     </h2>
                     <p class="text-xs text-muted-foreground">Konfigurasi SEO bawaan yang digunakan untuk mesin pencari Google dan kartu social media sharing.</p>
-                    <hr class="border-sidebar-border/50" />
+                    <hr class="border-border/50" />
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <!-- Default OG Image Picker -->
                         <div class="space-y-2">
                             <Label class="font-semibold text-xs text-foreground">Default OG Image</Label>
-                            <div class="flex flex-col items-center justify-center border border-dashed border-sidebar-border rounded-xl p-4 bg-muted-foreground/5 relative min-h-[160px] gap-3">
+                            <div class="flex flex-col items-center justify-center border border-dashed border-border/80 rounded-2xl p-4 bg-muted/20 relative min-h-[160px] gap-3">
                                 <div v-if="selectedOgImage" class="relative group w-full">
                                     <img 
                                         :src="selectedOgImage.urls?.medium || selectedOgImage.urls?.original" 
                                         alt="Default OG Image" 
-                                        class="h-28 w-full object-cover rounded-lg border border-sidebar-border shadow-sm"
+                                        class="h-28 w-full object-cover rounded-xl border border-border/80 shadow-sm"
                                     />
                                     <button 
                                         type="button" 
@@ -559,7 +582,7 @@ const submitSettings = () => {
                                     size="sm" 
                                     variant="outline" 
                                     @click="ogImageOpen = true"
-                                    class="mt-2 text-xs cursor-pointer"
+                                    class="mt-2 text-xs cursor-pointer border-border/80 h-8"
                                 >
                                     Pilih Gambar
                                 </Button>
@@ -569,28 +592,30 @@ const submitSettings = () => {
 
                         <!-- Site name, suffix, and meta description -->
                         <div class="md:col-span-2 space-y-4">
-                            <div class="grid gap-2">
-                                <Label for="site_name" class="font-semibold text-xs text-foreground">Nama Situs <span class="text-red-500">*</span></Label>
+                            <div class="grid gap-1.5">
+                                <Label for="site_name" class="font-semibold text-xs text-foreground">Nama Situs <span class="text-destructive">*</span></Label>
                                 <Input
                                     id="site_name"
                                     v-model="settingsForm.site_name"
                                     placeholder="Masukkan nama situs utama (contoh: growthcoder.id)"
+                                    class="h-9 text-xs bg-card border-border/80"
                                     required
                                 />
                                 <InputError :message="settingsForm.errors.site_name" />
                             </div>
 
-                            <div class="grid gap-2">
+                            <div class="grid gap-1.5">
                                 <Label for="meta_title_suffix" class="font-semibold text-xs text-foreground">Akhiran Judul Tab (Title Suffix)</Label>
                                 <Input
                                     id="meta_title_suffix"
                                     v-model="settingsForm.meta_title_suffix"
                                     placeholder="Contoh: | growthcoder.id"
+                                    class="h-9 text-xs bg-card border-border/80"
                                 />
                                 <InputError :message="settingsForm.errors.meta_title_suffix" />
                             </div>
 
-                            <div class="grid gap-2">
+                            <div class="grid gap-1.5">
                                 <Label for="default_meta_desc" class="font-semibold text-xs text-foreground">Deskripsi Meta Default (Max 160 Karakter)</Label>
                                 <textarea
                                     id="default_meta_desc"
@@ -598,33 +623,35 @@ const submitSettings = () => {
                                     placeholder="Masukkan deskripsi singkat ringkasan situs Anda untuk hasil penelusuran Google."
                                     rows="3"
                                     maxlength="160"
-                                    class="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                                    class="flex min-h-[80px] w-full rounded-xl border border-border/80 bg-card px-3 py-2 text-xs focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
                                 ></textarea>
                                 <span class="text-[10px] text-muted-foreground text-right block">{{ settingsForm.default_meta_desc?.length || 0 }}/160 karakter</span>
                                 <InputError :message="settingsForm.errors.default_meta_desc" />
                             </div>
 
-                            <div class="grid gap-2 border-t border-sidebar-border/50 pt-4">
+                            <div class="grid gap-2 border-t border-border/70 pt-4">
                                 <h3 class="text-xs font-bold text-foreground">Integrasi Analytics & Search Console</h3>
                                 <p class="text-[10px] text-muted-foreground">Tambahkan integrasi Google Analytics 4 dan kode verifikasi Google Search Console.</p>
                             </div>
 
-                            <div class="grid gap-2">
+                            <div class="grid gap-1.5">
                                 <Label for="google_analytics_id" class="font-semibold text-xs text-foreground">Google Analytics 4 Measurement ID</Label>
                                 <Input
                                     id="google_analytics_id"
                                     v-model="settingsForm.google_analytics_id"
                                     placeholder="Contoh: G-XXXXXXXXXX"
+                                    class="h-9 text-xs bg-card border-border/80"
                                 />
                                 <InputError :message="settingsForm.errors.google_analytics_id" />
                             </div>
 
-                            <div class="grid gap-2">
+                            <div class="grid gap-1.5">
                                 <Label for="google_site_verification" class="font-semibold text-xs text-foreground">Google Search Console Verification Code</Label>
                                 <Input
                                     id="google_site_verification"
                                     v-model="settingsForm.google_site_verification"
                                     placeholder="Masukkan kode verifikasi (isi dari atribut content di meta tag)"
+                                    class="h-9 text-xs bg-card border-border/80"
                                 />
                                 <InputError :message="settingsForm.errors.google_site_verification" />
                             </div>
@@ -633,19 +660,19 @@ const submitSettings = () => {
                 </div>
 
                 <!-- API SECURITY TAB CONTENT -->
-                <div v-show="activeTab === 'security'" class="rounded-xl border border-sidebar-border bg-card p-5 space-y-4 shadow-xs">
+                <div v-show="activeTab === 'security'" class="rounded-2xl border border-border/70 bg-card p-6 space-y-5 shadow-2xs">
                     <h2 class="text-sm font-bold text-foreground flex items-center gap-2">
                         <Key class="h-4 w-4 text-primary" />
                         Keamanan & API Key
                     </h2>
                     <p class="text-xs text-muted-foreground flex flex-col gap-1">
                         <span>Konfigurasikan kunci otorisasi (API Key) untuk mengamankan data API backend growthcoder.id.</span>
-                        <span class="text-red-500 font-semibold">Penting: Jangan bagikan API Key ini kepada siapapun! Pastikan frontend Nuxt Anda menyertakan key ini di header HTTP <code>X-API-Key</code>.</span>
+                        <span class="text-destructive font-semibold">Penting: Jangan bagikan API Key ini kepada siapapun! Pastikan frontend Nuxt Anda menyertakan key ini di header HTTP <code>X-API-Key</code>.</span>
                     </p>
-                    <hr class="border-sidebar-border/50" />
+                    <hr class="border-border/50" />
 
                     <div class="space-y-4">
-                        <div class="grid gap-2">
+                        <div class="grid gap-1.5">
                             <Label for="api_key" class="font-semibold text-xs text-foreground">API Key Token</Label>
                             <div class="flex gap-2">
                                 <div class="relative flex-1">
@@ -654,7 +681,7 @@ const submitSettings = () => {
                                         type="text"
                                         v-model="settingsForm.api_key"
                                         placeholder="Masukkan atau buat token baru..."
-                                        class="pr-10"
+                                        class="pr-10 h-9 text-xs bg-card border-border/80"
                                     />
                                     <div class="absolute inset-y-0 right-0 flex items-center pr-3">
                                         <Key class="h-4 w-4 text-muted-foreground" />
@@ -664,7 +691,7 @@ const submitSettings = () => {
                                     type="button" 
                                     variant="outline" 
                                     @click="generateApiKey"
-                                    class="text-xs cursor-pointer flex items-center gap-1.5"
+                                    class="text-xs cursor-pointer border-border/80 h-9 px-3 flex items-center gap-1.5"
                                 >
                                     <Sparkles class="h-3.5 w-3.5" />
                                     Generate
@@ -673,10 +700,10 @@ const submitSettings = () => {
                                     type="button" 
                                     variant="outline" 
                                     @click="copyApiKey"
-                                    class="text-xs cursor-pointer flex items-center gap-1.5 min-w-[80px] justify-center"
+                                    class="text-xs cursor-pointer border-border/80 h-9 px-3 flex items-center gap-1.5 min-w-[80px] justify-center"
                                 >
                                     <Copy class="h-3.5 w-3.5" v-if="!copied" />
-                                    <Check class="h-3.5 w-3.5 text-green-600" v-else />
+                                    <Check class="h-3.5 w-3.5 text-emerald-500" v-else />
                                     {{ copied ? 'Tersalin' : 'Salin' }}
                                 </Button>
                             </div>
@@ -687,14 +714,14 @@ const submitSettings = () => {
                 </div>
 
                 <!-- SAVE BAR -->
-                <div class="flex items-center justify-between border-t border-sidebar-border/70 pt-4 mt-6">
+                <div class="flex items-center justify-between border-t border-border/70 pt-4 mt-6">
                     <span class="text-xs text-muted-foreground italic">
                         {{ settingsForm.isDirty ? '* Ada input belum disimpan' : 'Semua perubahan terinput' }}
                     </span>
                     <Button
                         type="submit"
                         :disabled="settingsForm.processing"
-                        class="bg-primary text-white hover:bg-primary/90 font-medium cursor-pointer h-10 px-6 shadow-sm flex items-center gap-2"
+                        class="bg-primary text-white hover:bg-primary/90 font-semibold cursor-pointer h-9 text-xs px-5 shadow-xs flex items-center gap-2"
                     >
                         <Check class="h-4 w-4" v-if="!settingsForm.processing" />
                         {{ settingsForm.processing ? 'Menyimpan...' : 'Simpan Pengaturan' }}
@@ -707,16 +734,16 @@ const submitSettings = () => {
             <form v-show="activeTab === 'about'" @submit.prevent="submitSettings" class="space-y-6">
 
                 <!-- Bio / Biografi Section -->
-                <div class="rounded-xl border border-sidebar-border bg-card p-5 space-y-4 shadow-xs">
+                <div class="rounded-2xl border border-border/70 bg-card p-6 space-y-5 shadow-2xs">
                     <h2 class="text-sm font-bold text-foreground flex items-center gap-2">
                         <Info class="h-4 w-4 text-primary" />
                         Biografi & Narasi Profil
                     </h2>
                     <p class="text-xs text-muted-foreground">Tulis biografi profesional Anda yang akan ditampilkan di halaman About. Mendukung format teks kaya (heading, list, bold, dll).</p>
-                    <hr class="border-sidebar-border/50" />
+                    <hr class="border-border/50" />
 
                     <!-- Bio Rich Text -->
-                    <div class="grid gap-2">
+                    <div class="grid gap-1.5">
                         <Label class="font-semibold text-xs text-foreground">Biografi / Bio</Label>
                         <CKEditor
                             v-model="settingsForm.about_bio"
@@ -726,33 +753,34 @@ const submitSettings = () => {
                     </div>
 
                     <!-- Location -->
-                    <div class="grid gap-2">
+                    <div class="grid gap-1.5">
                         <Label for="about_location" class="font-semibold text-xs text-foreground">Lokasi</Label>
                         <Input
                             id="about_location"
                             v-model="settingsForm.about_location"
                             placeholder="Contoh: Indonesia, Bandung"
+                            class="h-9 text-xs bg-card border-border/80"
                         />
                         <InputError :message="settingsForm.errors.about_location" />
                     </div>
 
                     <!-- Specialities Chip Input -->
-                    <div class="grid gap-2">
+                    <div class="grid gap-1.5">
                         <Label class="font-semibold text-xs text-foreground">Spesialisasi (Keahlian Utama)</Label>
                         <p class="text-[10px] text-muted-foreground">Tambahkan tag keahlian utama Anda. Tekan Enter atau koma untuk menambah.</p>
 
                         <!-- Chip Tags Display -->
-                        <div class="flex flex-wrap gap-1.5 min-h-[36px] p-2 rounded-md border border-input bg-transparent">
+                        <div class="flex flex-wrap gap-1.5 min-h-[36px] p-2 rounded-xl border border-border/80 bg-card">
                             <span
                                 v-for="(spec, idx) in settingsForm.about_specialities"
                                 :key="idx"
-                                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium border border-primary/20"
+                                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-primary/10 text-primary text-xs font-medium border border-primary/20"
                             >
                                 {{ spec }}
                                 <button
                                     type="button"
                                     @click="removeSpeciality(idx)"
-                                    class="text-primary/60 hover:text-red-500 transition-colors cursor-pointer ml-0.5"
+                                    class="text-primary/60 hover:text-destructive transition-colors cursor-pointer ml-0.5"
                                 >
                                     <X class="h-3 w-3" />
                                 </button>
@@ -771,7 +799,7 @@ const submitSettings = () => {
                 </div>
 
                 <!-- Stats Section -->
-                <div class="rounded-xl border border-sidebar-border bg-card p-5 space-y-4 shadow-xs">
+                <div class="rounded-2xl border border-border/70 bg-card p-6 space-y-5 shadow-2xs">
                     <div class="flex items-center justify-between">
                         <div>
                             <h2 class="text-sm font-bold text-foreground flex items-center gap-2">
@@ -787,23 +815,23 @@ const submitSettings = () => {
                             size="sm"
                             @click="syncAboutStats"
                             :disabled="isSyncing"
-                            class="text-xs cursor-pointer flex items-center gap-1.5 shrink-0"
+                            class="text-xs cursor-pointer border-border/80 h-8 flex items-center gap-1.5 shrink-0"
                         >
                             <RefreshCw class="h-3.5 w-3.5" :class="{ 'animate-spin': isSyncing }" />
                             {{ isSyncing ? 'Menyinkronkan...' : 'Sinkronisasi dari Data Real' }}
                         </Button>
                     </div>
-                    <p class="text-[10px] text-muted-foreground bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-2.5">
+                    <p class="text-[10px] text-muted-foreground bg-amber-500/10 border border-amber-500/20 rounded-xl p-3">
                         💡 Tombol sinkronisasi hanya memperbarui nilai <strong>Projects</strong> dan <strong>Technologies</strong> dari database secara otomatis. Stat lain (Years Learning, Passion) tetap manual.
                     </p>
-                    <hr class="border-sidebar-border/50" />
+                    <hr class="border-border/50" />
 
                     <!-- Stats Repeater -->
                     <div class="space-y-3">
                         <div
                             v-for="(stat, idx) in settingsForm.about_stats"
                             :key="idx"
-                            class="flex items-center gap-3 p-3 rounded-xl border border-sidebar-border bg-muted/30 hover:bg-muted/50 transition-colors"
+                            class="flex items-center gap-3 p-3 rounded-xl border border-border/60 bg-muted/20 hover:bg-muted/40 transition-colors"
                         >
                             <!-- Emoji -->
                             <div class="grid gap-1 w-16 shrink-0">
@@ -811,7 +839,7 @@ const submitSettings = () => {
                                 <Input
                                     v-model="stat.emoji"
                                     placeholder="📁"
-                                    class="text-center text-base h-9"
+                                    class="text-center text-base h-9 bg-card border-border/80"
                                 />
                             </div>
                             <!-- Value -->
@@ -820,7 +848,7 @@ const submitSettings = () => {
                                 <Input
                                     v-model="stat.value"
                                     placeholder="15+"
-                                    class="h-9"
+                                    class="h-9 text-xs bg-card border-border/80"
                                 />
                             </div>
                             <!-- Label -->
@@ -829,14 +857,14 @@ const submitSettings = () => {
                                 <Input
                                     v-model="stat.label"
                                     placeholder="Projects Completed"
-                                    class="h-9"
+                                    class="h-9 text-xs bg-card border-border/80"
                                 />
                             </div>
                             <!-- Remove -->
                             <button
                                 type="button"
                                 @click="removeStat(idx)"
-                                class="mt-4 p-1.5 rounded-lg text-muted-foreground hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors cursor-pointer shrink-0"
+                                class="mt-4 p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer shrink-0"
                             >
                                 <Trash2 class="h-4 w-4" />
                             </button>
@@ -845,7 +873,7 @@ const submitSettings = () => {
                         <!-- Empty state -->
                         <div
                             v-if="settingsForm.about_stats.length === 0"
-                            class="text-center py-8 text-xs text-muted-foreground border border-dashed border-sidebar-border rounded-xl"
+                            class="text-center py-8 text-xs text-muted-foreground border border-dashed border-border/80 rounded-2xl"
                         >
                             Belum ada statistik. Tambahkan dengan tombol di bawah.
                         </div>
@@ -856,7 +884,7 @@ const submitSettings = () => {
                             variant="outline"
                             size="sm"
                             @click="addStat"
-                            class="w-full text-xs cursor-pointer flex items-center gap-1.5 border-dashed"
+                            class="w-full text-xs cursor-pointer border-border/80 border-dashed h-9 flex items-center gap-1.5"
                         >
                             <Plus class="h-3.5 w-3.5" />
                             Tambah Statistik
@@ -865,14 +893,14 @@ const submitSettings = () => {
                 </div>
 
                 <!-- SAVE BAR -->
-                <div class="flex items-center justify-between border-t border-sidebar-border/70 pt-4 mt-6">
+                <div class="flex items-center justify-between border-t border-border/70 pt-4 mt-6">
                     <span class="text-xs text-muted-foreground italic">
                         {{ settingsForm.isDirty ? '* Ada input belum disimpan' : 'Semua perubahan terinput' }}
                     </span>
                     <Button
                         type="submit"
                         :disabled="settingsForm.processing"
-                        class="bg-primary text-white hover:bg-primary/90 font-medium cursor-pointer h-10 px-6 shadow-sm flex items-center gap-2"
+                        class="bg-primary text-white hover:bg-primary/90 font-semibold cursor-pointer h-9 text-xs px-5 shadow-xs flex items-center gap-2"
                     >
                         <Check class="h-4 w-4" v-if="!settingsForm.processing" />
                         {{ settingsForm.processing ? 'Menyimpan...' : 'Simpan Pengaturan' }}
@@ -883,19 +911,19 @@ const submitSettings = () => {
 
             <!-- UPLOAD CV TAB CONTENT (SEPARATE FORM) -->
             <div v-show="activeTab === 'cv'" class="space-y-6">
-                <form @submit.prevent="submitCv" class="rounded-xl border border-sidebar-border bg-card p-5 space-y-4 shadow-xs">
+                <form @submit.prevent="submitCv" class="rounded-2xl border border-border/70 bg-card p-6 space-y-5 shadow-2xs">
                     <h2 class="text-sm font-bold text-foreground flex items-center gap-2">
                         <FileText class="h-4 w-4 text-primary" />
                         Unggah Resume / CV Terbaru
                     </h2>
                     <p class="text-xs text-muted-foreground">Unggah file CV/Resume Anda dalam format PDF dengan ukuran maksimal 5MB. File yang baru akan menggantikan CV yang lama.</p>
-                    <hr class="border-sidebar-border/50" />
+                    <hr class="border-border/50" />
 
                     <div class="space-y-6">
                         <!-- Current CV Status -->
-                        <div class="p-4 bg-neutral-50/50 dark:bg-neutral-900/50 border border-sidebar-border rounded-xl flex items-center justify-between">
+                        <div class="p-4 bg-muted/20 border border-border/70 rounded-2xl flex items-center justify-between">
                             <div class="flex items-center gap-3">
-                                <div class="h-10 w-10 rounded-lg bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 flex items-center justify-center border border-red-200 dark:border-red-800">
+                                <div class="h-10 w-10 rounded-xl bg-red-500/10 text-red-500 flex items-center justify-center border border-red-500/20">
                                     <FileText class="h-5 w-5" />
                                 </div>
                                 <div>
@@ -917,9 +945,9 @@ const submitSettings = () => {
                         </div>
 
                         <!-- Upload File Input -->
-                        <div class="grid gap-2">
+                        <div class="grid gap-1.5">
                             <Label for="cv_file" class="font-semibold text-xs text-foreground">Pilih File PDF CV Baru</Label>
-                            <div class="flex flex-col items-center justify-center border border-dashed border-sidebar-border rounded-xl p-8 bg-muted-foreground/5 relative gap-2 text-center">
+                            <div class="flex flex-col items-center justify-center border border-dashed border-border/80 rounded-2xl p-8 bg-muted/20 relative gap-2 text-center">
                                 <UploadCloud class="h-10 w-10 text-muted-foreground" />
                                 <span class="text-xs font-semibold text-foreground">Klik tombol di bawah atau seret file PDF ke sini</span>
                                 <span class="text-[10px] text-muted-foreground">Hanya menerima format .pdf (Maksimal 5MB)</span>
@@ -938,7 +966,7 @@ const submitSettings = () => {
                                     size="sm" 
                                     variant="outline" 
                                     @click="cvInput?.click()"
-                                    class="mt-2 cursor-pointer"
+                                    class="mt-2 cursor-pointer border-border/80 h-8 text-xs font-semibold"
                                 >
                                     Pilih File PDF
                                 </Button>
@@ -952,11 +980,11 @@ const submitSettings = () => {
                     </div>
 
                     <!-- Upload Action Bar -->
-                    <div class="flex items-center justify-end border-t border-sidebar-border/70 pt-4 mt-6">
+                    <div class="flex items-center justify-end border-t border-border/70 pt-4 mt-6">
                         <Button
                             type="submit"
                             :disabled="cvForm.processing || !cvForm.cv_file"
-                            class="bg-primary text-white hover:bg-primary/90 font-medium cursor-pointer h-10 px-6 shadow-sm flex items-center gap-2 disabled:opacity-50"
+                            class="bg-primary text-white hover:bg-primary/90 font-semibold cursor-pointer h-9 text-xs px-5 shadow-xs flex items-center gap-2 disabled:opacity-50"
                         >
                             <UploadCloud class="h-4 w-4" v-if="!cvForm.processing" />
                             {{ cvForm.processing ? 'Mengunggah...' : 'Unggah CV' }}

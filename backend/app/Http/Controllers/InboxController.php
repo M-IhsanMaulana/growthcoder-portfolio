@@ -37,9 +37,17 @@ class InboxController extends Controller
             ->paginate(10)
             ->withQueryString();
 
+        $statusCounts = [
+            'total' => ContactMessage::count(),
+            'unread' => ContactMessage::where('status', 'unread')->count(),
+            'read' => ContactMessage::where('status', 'read')->count(),
+            'replied' => ContactMessage::where('status', 'replied')->count(),
+        ];
+
         return Inertia::render('inbox/Index', [
             'messages' => $messages,
             'filters' => $request->only(['search', 'status']),
+            'statusCounts' => $statusCounts,
         ]);
     }
 

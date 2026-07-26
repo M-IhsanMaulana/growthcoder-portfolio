@@ -59,7 +59,7 @@ test('administrator can upload a valid image with custom filename and alt text a
     $media = Media::find($mediaId);
     $this->assertEquals('my-custom-slug-name', $media->filename);
     $this->assertEquals('This is custom alt text', $media->alt_text);
-    $this->assertStringContainsString('my-custom-slug-name-' . $media->encoded_id, $media->urls['original']);
+    $this->assertStringContainsString('my-custom-slug-name-'.$media->encoded_id, $media->urls['original']);
 
     // Assert file stored on media disk
     Storage::disk('media')->assertExists($media->storage_path);

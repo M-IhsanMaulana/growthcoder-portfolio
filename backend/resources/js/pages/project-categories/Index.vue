@@ -287,31 +287,38 @@ const showSlugWarning = computed(() => {
                 <Input
                     v-model="listSearch"
                     placeholder="Cari kategori berdasarkan nama..."
-                    class="pl-9"
+                    class="pl-9 pr-8 bg-card border-border/80 h-9 text-xs"
                 />
+                <button
+                    v-if="listSearch"
+                    @click="listSearch = ''"
+                    class="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-0.5 rounded-full"
+                >
+                    <X class="h-3.5 w-3.5" />
+                </button>
             </div>
         </div>
 
         <!-- Table List -->
-        <div v-if="filteredCategories.length > 0" class="overflow-hidden rounded-xl border border-sidebar-border/70 bg-card shadow-xs">
+        <div v-if="filteredCategories.length > 0" class="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-2xs">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="border-b border-sidebar-border/70 bg-muted/40 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        <tr class="border-b border-border/70 bg-muted/20 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                             <th class="p-4 w-[100px]">Urutan</th>
                             <th class="p-4 w-[80px] text-center">Ikon</th>
-                            <th class="p-4">Nama</th>
+                            <th class="p-4">Nama Kategori</th>
                             <th class="p-4">Slug</th>
                             <th class="p-4">Deskripsi</th>
-                            <th class="p-4 w-[150px] text-right">Aksi</th>
+                            <th class="p-4 w-[120px] text-right">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-sidebar-border/50 text-sm">
-                        <tr v-for="category in filteredCategories" :key="category.id" class="hover:bg-muted/15 transition-colors duration-150">
+                    <tbody class="divide-y divide-border/60 text-sm">
+                        <tr v-for="category in filteredCategories" :key="category.id" @click="openEdit(category)" class="hover:bg-muted/20 transition-colors duration-150 cursor-pointer">
                             <!-- Order Column with Up/Down buttons -->
-                            <td class="p-4 font-medium text-foreground">
+                            <td class="p-4 font-medium text-foreground" @click.stop>
                                 <div class="flex items-center gap-1.5">
-                                    <span class="w-6 text-center font-semibold text-neutral-600 dark:text-neutral-400">
+                                    <span class="w-6 text-center font-bold text-foreground text-xs">
                                         {{ category.order }}
                                     </span>
                                     <div class="flex flex-col">
@@ -339,10 +346,10 @@ const showSlugWarning = computed(() => {
 
                             <!-- Icon Column -->
                             <td class="p-4 text-center">
-                                <div class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300">
-                                    <div v-if="isSvgString(category.icon)" v-html="category.icon" class="h-5 w-5 flex items-center justify-center [&_svg]:h-5 [&_svg]:w-5 [&_svg]:text-current" />
-                                    <component :is="availableIcons[category.icon]" v-else-if="category.icon && availableIcons[category.icon]" class="h-5 w-5" />
-                                    <Folder v-else class="h-5 w-5 text-neutral-400" />
+                                <div class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border/60 bg-muted/30 text-primary">
+                                    <div v-if="isSvgString(category.icon)" v-html="category.icon" class="h-4.5 w-4.5 flex items-center justify-center [&_svg]:h-4.5 [&_svg]:w-4.5 [&_svg]:text-current" />
+                                    <component :is="availableIcons[category.icon]" v-else-if="category.icon && availableIcons[category.icon]" class="h-4.5 w-4.5" />
+                                    <Folder v-else class="h-4.5 w-4.5 text-muted-foreground/60" />
                                 </div>
                             </td>
 
@@ -357,17 +364,17 @@ const showSlugWarning = computed(() => {
                             </td>
 
                             <!-- Description -->
-                            <td class="p-4 text-muted-foreground max-w-xs truncate" :title="category.description">
+                            <td class="p-4 text-muted-foreground text-xs max-w-xs truncate" :title="category.description">
                                 {{ category.description || '-' }}
                             </td>
 
                             <!-- Actions -->
-                            <td class="p-4 text-right">
-                                <div class="flex items-center justify-end gap-2">
+                            <td class="p-4 text-right" @click.stop>
+                                <div class="flex items-center justify-end gap-1">
                                     <Button
                                         size="icon"
                                         variant="ghost"
-                                        class="h-8 w-8 text-neutral-500 hover:text-primary hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                                        class="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10"
                                         @click="openEdit(category)"
                                         title="Edit Kategori"
                                     >
@@ -376,7 +383,7 @@ const showSlugWarning = computed(() => {
                                     <Button
                                         size="icon"
                                         variant="ghost"
-                                        class="h-8 w-8 text-neutral-500 hover:text-destructive hover:bg-red-50 dark:hover:bg-red-950/20"
+                                        class="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                                         @click="confirmDelete(category)"
                                         title="Hapus Kategori"
                                     >

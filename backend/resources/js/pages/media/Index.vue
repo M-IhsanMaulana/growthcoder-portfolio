@@ -4,10 +4,7 @@ import MediaManager from '@/components/MediaManager.vue';
 import { index as mediaIndex } from '@/routes/media';
 
 defineProps<{
-    media: {
-        data: any[];
-        next_page_url: string | null;
-    };
+    media?: any;
 }>();
 
 defineOptions({

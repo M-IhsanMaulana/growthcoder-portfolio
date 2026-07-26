@@ -10,7 +10,7 @@
           <span>/</span>
           <NuxtLink to="/blog" class="hover:text-brand-purple dark:hover:text-indigo-400">Blog</NuxtLink>
           <span>/</span>
-          <span class="text-zinc-655 dark:text-zinc-350 truncate">Kategori: {{ category?.name || 'Loading...' }}</span>
+          <span class="text-zinc-600 dark:text-zinc-400 truncate">Kategori: {{ category?.name || 'Loading...' }}</span>
         </nav>
 
         <!-- Badge -->
@@ -35,7 +35,7 @@
     </div>
 
     <!-- ─── FILTER & SORT BAR SECTION ───────────────────────────────────── -->
-    <div ref="filterSection" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 opacity-0 translate-y-3">
+    <div ref="filterSection" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 opacity-0 translate-y-3 relative z-30">
       <div class="flex flex-col lg:flex-row gap-6 lg:items-center justify-between pb-6 border-b border-zinc-200/50 dark:border-zinc-800/40">
         <!-- Navigation Button Back to All Blogs -->
         <div class="flex items-center gap-2.5">
@@ -52,20 +52,11 @@
 
         <!-- Sort selection dropdown -->
         <div class="flex items-center gap-3 w-full lg:w-auto justify-end flex-shrink-0">
-          <div class="relative w-36 flex-shrink-0">
-            <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 pointer-events-none text-zinc-455">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                <path d="m6 9 6 6 6-6"/>
-              </svg>
-            </span>
-            <select 
-              v-model="sortBy" 
-              class="w-full !pl-4 !pr-10 !py-2.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs font-semibold text-zinc-750 dark:text-zinc-300 appearance-none focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple/30 transition-all duration-300 cursor-pointer shadow-xs"
-            >
-              <option value="latest">Terbaru</option>
-              <option value="oldest">Terlama</option>
-            </select>
-          </div>
+          <UiSelectFilter 
+            v-model="sortBy" 
+            :options="sortOptions" 
+            class="w-36 flex-shrink-0"
+          />
         </div>
       </div>
     </div>
@@ -86,7 +77,7 @@
             <Card 
               v-for="post in processedPosts" 
               :key="post.id"
-              class="blog-card group flex flex-col hover:shadow-md border border-zinc-150/70 dark:border-zinc-900/60 hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-300 relative overflow-hidden"
+              class="blog-card group flex flex-col hover:shadow-md border border-zinc-200/70 dark:border-zinc-900/60 hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-300 relative overflow-hidden"
               :pt="{
                 root: { class: '!bg-white dark:!bg-zinc-950 !border-0 !rounded-3xl !p-0 shadow-sm relative overflow-hidden flex flex-col' },
                 body: { class: '!p-5 !flex-grow !flex !flex-col !justify-between min-h-[220px]' }
@@ -145,8 +136,8 @@
                     loading="lazy"
                   />
                   <!-- Author Info Details line -->
-                  <div class="flex items-center space-x-1.5 text-[10px] font-semibold text-zinc-450 dark:text-zinc-500 whitespace-nowrap overflow-hidden">
-                    <span class="text-zinc-755 dark:text-zinc-350 truncate font-bold max-w-[80px] sm:max-w-none">{{ authorName }}</span>
+                  <div class="flex items-center space-x-1.5 text-[10px] font-semibold text-zinc-400 dark:text-zinc-500 whitespace-nowrap overflow-hidden">
+                    <span class="text-zinc-700 dark:text-zinc-300 truncate font-bold max-w-[80px] sm:max-w-none">{{ authorName }}</span>
                     <span>•</span>
                     <span>{{ formatDate(post.published_at) }}</span>
                     <span>•</span>
@@ -253,7 +244,7 @@
         <aside class="lg:col-span-4 xl:col-span-3 space-y-6">
           
           <!-- Widget 1: Search Box (Redirects to global blog search) -->
-          <div class="p-6 rounded-3xl bg-white dark:bg-zinc-955 border border-zinc-200/60 dark:border-zinc-900/60 shadow-xs">
+          <div class="p-6 rounded-3xl bg-white dark:bg-zinc-950 border border-zinc-200/60 dark:border-zinc-900/60 shadow-xs">
             <form @submit.prevent="handleSearch" class="relative w-full">
               <input 
                 v-model="searchInput" 
@@ -261,7 +252,7 @@
                 placeholder="Cari artikel..." 
                 class="w-full !pl-4 !pr-10 !py-3 rounded-2xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs font-semibold text-zinc-800 dark:text-zinc-200 placeholder-zinc-400 focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple/30 transition-all duration-300 shadow-inner"
               />
-              <button type="submit" class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-zinc-450 dark:text-zinc-500 hover:text-brand-purple dark:hover:text-brand-green cursor-pointer bg-transparent border-0">
+              <button type="submit" class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-zinc-400 dark:text-zinc-500 hover:text-brand-purple dark:hover:text-brand-green cursor-pointer bg-transparent border-0">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                   <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
                 </svg>
@@ -270,7 +261,7 @@
           </div>
 
           <!-- Widget 2: Kategori List -->
-          <div class="p-6 rounded-3xl bg-white dark:bg-zinc-955 border border-zinc-200/60 dark:border-zinc-900/60 shadow-xs space-y-4">
+          <div class="p-6 rounded-3xl bg-white dark:bg-zinc-950 border border-zinc-200/60 dark:border-zinc-900/60 shadow-xs space-y-4">
             <h5 class="text-sm font-extrabold text-zinc-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
               <svg class="w-4 h-4 text-brand-purple" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
@@ -282,7 +273,7 @@
                 v-for="cat in categories" 
                 :key="cat.slug"
                 :to="`/blog/kategori/${cat.slug}`"
-                class="w-full py-3.5 flex items-center justify-between text-left text-xs font-semibold text-zinc-605 dark:text-zinc-400 hover:text-brand-purple dark:hover:text-brand-green transition-colors cursor-pointer group"
+                class="w-full py-3.5 flex items-center justify-between text-left text-xs font-semibold text-zinc-600 dark:text-zinc-400 hover:text-brand-purple dark:hover:text-brand-green transition-colors cursor-pointer group"
                 :class="{'router-link-exact-active text-brand-purple dark:text-brand-green font-bold': cat.slug === slug}"
               >
                 <span class="flex items-center gap-2.5">
@@ -291,7 +282,7 @@
                   </svg>
                   {{ cat.name }}
                 </span>
-                <span class="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-900 text-zinc-505 dark:text-zinc-500 text-[10px] font-bold group-hover:bg-brand-purple/10 group-hover:text-brand-purple dark:group-hover:bg-brand-green/10 dark:group-hover:text-brand-green transition-all">
+                <span class="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-500 text-[10px] font-bold group-hover:bg-brand-purple/10 group-hover:text-brand-purple dark:group-hover:bg-brand-green/10 dark:group-hover:text-brand-green transition-all">
                   {{ cat.posts_count ?? 0 }}
                 </span>
               </NuxtLink>
@@ -299,7 +290,7 @@
           </div>
 
           <!-- Widget 3: Artikel Terbaru -->
-          <div class="p-6 rounded-3xl bg-white dark:bg-zinc-955 border border-zinc-200/60 dark:border-zinc-900/60 shadow-xs space-y-4">
+          <div class="p-6 rounded-3xl bg-white dark:bg-zinc-950 border border-zinc-200/60 dark:border-zinc-900/60 shadow-xs space-y-4">
             <h5 class="text-sm font-extrabold text-zinc-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
               <svg class="w-4 h-4 text-brand-purple" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
@@ -328,7 +319,7 @@
                 
                 <!-- Text contents -->
                 <div class="min-w-0 space-y-0.5">
-                  <h6 class="text-xs font-bold text-zinc-800 dark:text-zinc-205 group-hover:text-brand-purple dark:group-hover:text-brand-green transition-colors leading-tight line-clamp-2">
+                  <h6 class="text-xs font-bold text-zinc-800 dark:text-zinc-200 group-hover:text-brand-purple dark:group-hover:text-brand-green transition-colors leading-tight line-clamp-2">
                     <NuxtLink :to="`/blog/${recent.slug}`" class="cursor-pointer">
                       {{ recent.title }}
                     </NuxtLink>
@@ -348,6 +339,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch, nextTick } from 'vue'
+import UiSelectFilter from '~/components/ui/SelectFilter.vue'
 
 definePageMeta({ layout: 'default' })
 
@@ -403,6 +395,11 @@ useHead(() => ({
 const currentPage = ref(Number(route.query.page) || 1)
 const searchInput = ref('')
 const sortBy = ref((route.query.sort as string) || 'latest')
+
+const sortOptions = [
+  { label: 'Terbaru', value: 'latest' },
+  { label: 'Terlama', value: 'oldest' },
+]
 
 
 // DOM Refs for animations

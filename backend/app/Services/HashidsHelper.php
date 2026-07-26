@@ -5,7 +5,9 @@ namespace App\Services;
 class HashidsHelper
 {
     private const ALPHABET = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+
     private const BASE = 62;
+
     private const XOR_MASK = 987654321; // Simple mask to obfuscate sequential IDs
 
     /**
@@ -19,7 +21,7 @@ class HashidsHelper
 
         while ($obfuscated > 0) {
             $remainder = $obfuscated % self::BASE;
-            $encoded = $alphabet[$remainder] . $encoded;
+            $encoded = $alphabet[$remainder].$encoded;
             $obfuscated = intdiv($obfuscated, self::BASE);
         }
 

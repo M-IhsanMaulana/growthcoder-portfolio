@@ -62,7 +62,7 @@
     </div>
 
     <!-- ─── FILTER & SEARCH BAR SECTION ────────────────────────────────── -->
-    <div ref="filterSection" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 opacity-0 translate-y-3">
+    <div ref="filterSection" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 opacity-0 translate-y-3 relative z-30">
       <div class="flex flex-col lg:flex-row gap-6 lg:items-center justify-between pb-6 border-b border-zinc-200/50 dark:border-zinc-800/40">
         <!-- Dynamic Category Pills (Horizontal Scrollable) -->
         <div class="flex flex-nowrap items-center gap-2.5 overflow-x-auto pb-3 scrollbar-none w-full lg:w-auto flex-1 lg:flex-none pr-4">
@@ -106,21 +106,11 @@
           </div>
 
           <!-- Sort selection dropdown -->
-          <div class="relative w-32 sm:w-36 flex-shrink-0">
-            <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 pointer-events-none text-zinc-400">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                <path d="m6 9 6 6 6-6"/>
-              </svg>
-            </span>
-            <select 
-              v-model="sortBy" 
-              class="w-full !pl-4 !pr-10 !py-2.5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs font-semibold text-zinc-700 dark:text-zinc-300 appearance-none focus:outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple/30 transition-all duration-300 cursor-pointer shadow-xs"
-            >
-              <option value="latest">Terbaru</option>
-              <option value="oldest">Terlama</option>
-              <option value="order">Custom Urutan</option>
-            </select>
-          </div>
+          <UiSelectFilter 
+            v-model="sortBy" 
+            :options="sortOptions" 
+            class="w-36 sm:w-40 flex-shrink-0"
+          />
         </div>
       </div>
     </div>
@@ -145,7 +135,7 @@
         >
           <template #header>
             <!-- Cover image -->
-            <div class="aspect-[4/3] w-full bg-gray-100 dark:bg-zinc-900 overflow-hidden relative">
+            <div class="aspect-video w-full bg-gray-100 dark:bg-zinc-900 overflow-hidden relative">
               <NuxtImg 
                 v-if="project.cover_image?.urls?.medium || project.cover_image?.urls?.original"
                 :src="project.cover_image.urls.medium || project.cover_image.urls.original" 
@@ -190,8 +180,14 @@
                 <span 
                   v-for="tech in project.technologies.slice(0, 3)" 
                   :key="tech.id"
-                  class="px-2.5 py-1 bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-350 text-[10px] font-semibold rounded-md border border-zinc-150/20 dark:border-zinc-800/10"
+                  class="px-2 py-0.5 bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-350 text-[10px] font-semibold rounded-md border border-zinc-150/20 dark:border-zinc-800/10 flex items-center gap-1.5"
                 >
+                  <NuxtImg
+                    v-if="tech.logo?.urls?.thumbnail || tech.logo?.urls?.medium || tech.logo?.urls?.original"
+                    :src="tech.logo?.urls?.thumbnail || tech.logo?.urls?.medium || tech.logo?.urls?.original"
+                    :alt="tech.name"
+                    class="w-3.5 h-3.5 object-contain"
+                  />
                   {{ tech.name }}
                 </span>
               </div>
@@ -239,7 +235,7 @@
           }"
         >
           <template #header>
-            <Skeleton class="w-full aspect-[4/3] rounded-t-3xl" />
+            <Skeleton class="w-full aspect-video rounded-t-3xl" />
           </template>
           
           <template #content>
@@ -312,6 +308,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch, nextTick } from 'vue'
+import UiSelectFilter from '~/components/ui/SelectFilter.vue'
 
 definePageMeta({ layout: 'default' })
 
@@ -339,10 +336,16 @@ const { data: statsResponse } = await useFetchAPI<any>('/stats')
 const { data: categoriesResponse } = await useFetchAPI<any>('/project-categories')
 const { data: projectsResponse, pending } = await useFetchAPI<any>('/projects')
 
-// Refs
+// Refs & Options
 const activeCategory = ref<string>('all')
 const searchQuery = ref<string>('')
 const sortBy = ref<string>('latest')
+
+const sortOptions = [
+  { label: 'Terbaru', value: 'latest' },
+  { label: 'Terlama', value: 'oldest' },
+  { label: 'Custom Urutan', value: 'order' }
+]
 
 const projectsContainer = ref<HTMLElement | null>(null)
 const heroSection = ref<HTMLElement | null>(null)
