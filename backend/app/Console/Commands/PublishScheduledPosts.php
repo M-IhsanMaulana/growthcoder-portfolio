@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Enums\PostStatus;
+use App\Jobs\SendBlogPublishTelegramJob;
 use App\Models\Post;
 use Illuminate\Console\Command;
 
@@ -45,6 +46,11 @@ class PublishScheduledPosts extends Command
             $post->save();
             $count++;
             $this->info("Published: {$post->title} (ID: {$post->id})");
+
+            // Dispatch Telegram notification if not already notified
+            if (is_null($post->telegram_notified_at)) {
+                dispatch(new SendBlogPublishTelegramJob($post));
+            }
         }
 
         $this->info("Successfully published {$count} scheduled post(s).");

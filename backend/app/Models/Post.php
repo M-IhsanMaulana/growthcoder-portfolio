@@ -19,6 +19,7 @@ use Illuminate\Support\Carbon;
  * @property string $status
  * @property Carbon|null $published_at
  * @property Carbon|null $scheduled_at
+ * @property Carbon|null $telegram_notified_at
  * @property int|null $cover_image_id
  * @property int $reading_time
  * @property string|null $meta_title
@@ -34,6 +35,7 @@ use Illuminate\Support\Carbon;
     'status',
     'published_at',
     'scheduled_at',
+    'telegram_notified_at',
     'cover_image_id',
     'reading_time',
     'meta_title',
@@ -49,6 +51,7 @@ class Post extends Model
         return [
             'published_at' => 'datetime',
             'scheduled_at' => 'datetime',
+            'telegram_notified_at' => 'datetime',
             'status' => PostStatus::class,
         ];
     }

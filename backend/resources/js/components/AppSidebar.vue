@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
-import { LayoutGrid, Image, FolderOpen, Layers, Briefcase, Award, BookOpen, FileText, Handshake, Mail, Sliders, Terminal } from '@lucide/vue';
+import { LayoutGrid, Image, FolderOpen, Layers, Briefcase, Award, BookOpen, FileText, Handshake, Mail, Sliders, Terminal, Plug } from '@lucide/vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavMain from '@/components/NavMain.vue';
 import {
@@ -23,6 +23,7 @@ import { index as developmentPhilosophiesIndex } from '@/routes/development-phil
 import { index as educationExperienceIndex } from '@/routes/education-experience';
 import { index as inboxIndex } from '@/routes/inbox';
 import { edit as globalSettingsEdit } from '@/routes/global-settings';
+import { edit as integrationsEdit } from '@/routes/integrations';
 import { index as apiDocsIndex } from '@/routes/api-docs';
 import type { NavItem } from '@/types';
 
@@ -113,6 +114,11 @@ const mainNavItems = computed<NavItem[]>(() => [
         title: 'Pengaturan Global',
         href: globalSettingsEdit(),
         icon: Sliders,
+    },
+    {
+        title: 'Integrations',
+        href: integrationsEdit(),
+        icon: Plug,
     },
     {
         title: 'Dokumentasi API',

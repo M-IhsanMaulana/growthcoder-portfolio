@@ -2,13 +2,13 @@
 
 namespace App\Jobs;
 
-use App\Models\ContactMessage;
+use App\Models\Post;
 use App\Services\TelegramNotifierService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\SerializesModels;
 
-class SendTelegramNotificationJob implements ShouldQueue
+class SendBlogPublishTelegramJob implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -22,7 +22,7 @@ class SendTelegramNotificationJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(public ContactMessage $message)
+    public function __construct(public Post $post)
     {
         //
     }
@@ -32,9 +32,14 @@ class SendTelegramNotificationJob implements ShouldQueue
      */
     public function handle(TelegramNotifierService $service): void
     {
-        $service->sendContactMessage($this->message);
+        // Skip if already notified (prevent duplicate notifications)
+        if ($this->post->telegram_notified_at !== null) {
+            return;
+        }
 
-        $this->message->update([
+        $service->sendBlogPublishNotification($this->post);
+
+        $this->post->update([
             'telegram_notified_at' => now(),
         ]);
     }

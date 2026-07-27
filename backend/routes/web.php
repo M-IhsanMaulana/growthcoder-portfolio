@@ -9,6 +9,7 @@ use App\Http\Controllers\EducationExperienceController;
 use App\Http\Controllers\ExperienceController;
 use App\Http\Controllers\GlobalSettingController;
 use App\Http\Controllers\InboxController;
+use App\Http\Controllers\IntegrationController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProjectCategoryController;
@@ -93,6 +94,11 @@ Route::prefix('admin-cms')->group(function () {
         Route::put('global-settings', [GlobalSettingController::class, 'update'])->name('global-settings.update');
         Route::post('global-settings/cv', [GlobalSettingController::class, 'uploadCv'])->name('global-settings.upload-cv');
         Route::post('global-settings/sync-about-stats', [GlobalSettingController::class, 'syncAboutStats'])->name('global-settings.sync-about-stats');
+
+        // Integration Settings routes
+        Route::get('integrations', [IntegrationController::class, 'edit'])->name('integrations.edit');
+        Route::put('integrations/telegram', [IntegrationController::class, 'updateTelegram'])->name('integrations.telegram.update');
+        Route::post('integrations/telegram/test', [IntegrationController::class, 'testTelegram'])->name('integrations.telegram.test');
 
         // API Documentation routes
         Route::get('api-docs', [ApiDocsController::class, 'index'])->name('api-docs.index');

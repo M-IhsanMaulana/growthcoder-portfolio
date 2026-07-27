@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendBlogPublishTelegramJob;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\PostView;
@@ -127,6 +128,11 @@ class PostController extends Controller
             }
 
             DB::commit();
+
+            // Dispatch Telegram notification for published posts
+            if ($request->input('status') === 'published') {
+                dispatch(new SendBlogPublishTelegramJob($post));
+            }
 
             Inertia::flash('toast', [
                 'type' => 'success',
@@ -313,6 +319,11 @@ class PostController extends Controller
             }
 
             DB::commit();
+
+            // Dispatch Telegram notification only when newly becoming published
+            if ($status === 'published' && is_null($post->getOriginal('telegram_notified_at'))) {
+                dispatch(new SendBlogPublishTelegramJob($post->fresh()));
+            }
 
             Inertia::flash('toast', [
                 'type' => 'success',
