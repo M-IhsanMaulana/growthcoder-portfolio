@@ -1,0 +1,13 @@
+# Dependencies & OS Files
+.DS_Store
+Thumbs.db
+.idea
+.vscode
+*.log
+
+# Personal Planning & Mockups
+/plan/
+
+# Documentation (Exclude internal PRD, roadmaps, and personal user stories)
+/docs/*
+!/docs/deployment-aapanel-ubuntu.md
